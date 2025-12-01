@@ -102,7 +102,7 @@ class _SelectRoleState extends State<SelectRole> {
                           image: "assets/images/saloon_owner.png",
                           value: 1,
                         ),
-                        SizedBox(height: screenHeight * 0.02),
+                        
                         roleCard(
                           context,
                           title: "Are you a Customer",
@@ -138,7 +138,7 @@ class _SelectRoleState extends State<SelectRole> {
           selectedRole = value;
         });
         print(value);
-        Navigator.pushReplacement(
+        Navigator.push(
           context,
           MaterialPageRoute(builder: (context) => RegisterScreen(index: value)),
         );

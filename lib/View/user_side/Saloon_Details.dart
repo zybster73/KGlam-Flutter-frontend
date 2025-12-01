@@ -27,6 +27,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       body: SingleChildScrollView( 
         child: Stack(
           children: [
@@ -88,6 +89,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                   Text(
                     widget.description,
                     style: GoogleFonts.poppins(
+                      fontSize: 15.sp,
                       color: Colors.black87,
                       height: 1.4,
                     ),
@@ -121,8 +123,6 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-
-                  // 🔹 Location
                   Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -172,7 +172,8 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                   const SizedBox(height: 12),
 
                   const Service_Row(),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 35),
+            
 
                   SizedBox(
                     width: double.infinity,
@@ -202,7 +203,7 @@ class _SalonDetailScreenState extends State<SalonDetailScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 30.h),
+                
                 ],
               ),
             ),

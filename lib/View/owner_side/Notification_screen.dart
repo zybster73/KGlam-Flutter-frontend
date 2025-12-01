@@ -76,7 +76,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 Text(
                   "Stay updated with every important alert.",
                   style: GoogleFonts.poppins(
-                    fontSize: 14,
+                    fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
                     color: Color(0xFF717680),
                   ),
@@ -129,7 +129,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   Text(
                                     "John Doe has booked recently a facial massage at you saloon. Would you like to accept the request or not.",
                                     style: GoogleFonts.poppins(
-                                      fontSize: 14,
+                                      fontSize: 14.sp,
                                       color: Colors.black,
                                       height: 1.4,
                                     ),
@@ -138,7 +138,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                                   Text(
                                     "2 hours ago",
                                     style: GoogleFonts.poppins(
-                                      fontSize: 12,
+                                      fontSize: 12.sp,
                                       color: Color(0xFF717680),
                                     ),
                                   ),

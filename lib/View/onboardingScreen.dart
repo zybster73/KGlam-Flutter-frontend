@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloon_app/View/selectRole.dart';
 
@@ -52,7 +53,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: '“Beauty ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -61,7 +62,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Made ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF00C2A8),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -70,7 +71,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Simple\n',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -79,7 +80,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Wellness Made ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -88,7 +89,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Essential”',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF00C2A8),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -104,7 +105,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: Color(0xFF4F4F4F),
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                             height: 1.5,
                           ),
@@ -179,7 +180,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: '“Style That ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -197,7 +198,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Care ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF00C2A8),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -206,7 +207,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'That Comforts” ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -222,7 +223,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: Color(0xFF4F4F4F),
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                             height: 1.5,
                           ),
@@ -297,7 +298,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: '“Designed ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF00C2A8),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -315,7 +316,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Devoted To ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF1E1E1E),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -324,7 +325,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                                 text: 'Nourish” ',
                                 style: GoogleFonts.poppins(
                                   color: Color(0xFF00C2A8),
-                                  fontSize: 24,
+                                  fontSize: 24.sp,
                                   fontWeight: FontWeight.w800,
                                   height: 1.4,
                                 ),
@@ -340,7 +341,7 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
                           textAlign: TextAlign.center,
                           style: GoogleFonts.poppins(
                             color: Color(0xFF4F4F4F),
-                            fontSize: 14,
+                            fontSize: 14.sp,
                             fontWeight: FontWeight.w500,
                             height: 1.5,
                           ),
@@ -398,27 +399,27 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
         SizedBox(height: 60),
         currentPage == 0
             ? Icon(
-                Icons.linear_scale_outlined,
-                size: 50,
+                Icons.circle,
+                size: 12,
                 color: Color(0xFF00C2A8),
               )
-            : Icon(Icons.circle_outlined, size: 10, color: Color(0xFF4F4F4F)),
-        // SizedBox(width: 10),
+            : Icon(Icons.circle_outlined, size: 12, color: Color(0xFF4F4F4F)),
+         SizedBox(width: 8),
         currentPage == 1
             ? Icon(
-                Icons.linear_scale_outlined,
-                size: 50,
+                Icons.circle,
+                size: 12,
                 color: Color(0xFF00C2A8),
               )
-            : Icon(Icons.circle_outlined, size: 10, color: Color(0xFF4F4F4F)),
-        // SizedBox(width: 10),
+            : Icon(Icons.circle_outlined, size: 12, color: Color(0xFF4F4F4F)),
+         SizedBox(width: 8),
         currentPage == 2
             ? Icon(
-                Icons.linear_scale_outlined,
-                size: 50,
+                Icons.circle,
+                size: 12,
                 color: Color(0xFF00C2A8),
               )
-            : Icon(Icons.circle_outlined, size: 10, color: Color(0xFF4F4F4F)),
+            : Icon(Icons.circle_outlined, size: 12, color: Color(0xFF4F4F4F)),
       ],
     );
   }

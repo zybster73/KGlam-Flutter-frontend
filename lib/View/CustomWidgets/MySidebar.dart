@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
 import 'package:saloon_app/View/owner_side/Appoinments_screen.dart';
 import 'package:saloon_app/View/owner_side/Notification_screen.dart';
 import 'package:saloon_app/View/owner_side/Profile.dart';
@@ -9,6 +10,8 @@ import 'package:saloon_app/View/owner_side/Upload_services.dart';
 import 'package:saloon_app/View/owner_side/portfolio.dart';
 
 class CustomDrawer extends StatelessWidget {
+  //ustomDrawer({this.logicIndex});
+  int loginScreen = 1;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -20,7 +23,7 @@ class CustomDrawer extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: screenHeight * 0.3,
+              height: screenHeight * 0.28,
               child: Stack(
                 //alignment: Alignment.center,
                 children: [
@@ -49,7 +52,7 @@ class CustomDrawer extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 80.h,
+                    top: 60.h,
                     right: 20.w,
                     child: IconButton(
                       onPressed: () {
@@ -160,7 +163,17 @@ class CustomDrawer extends StatelessWidget {
 
                       SizedBox(height: 20),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(
+                                logicIndex : loginScreen,
+                              ),
+                            ),
+                            ModalRoute.withName('/'),
+                          );
+                        },
                         child: drawerItem(Icons.logout, 'Logout'),
                       ),
                     ],

@@ -139,18 +139,19 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ElevatedButton(
                               onPressed: () {
                                 if (widget.index == 1) {
-                                  Navigator.pushReplacement(
+                                  Navigator.push(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => SaloonInformation(),
                                     ),
                                   );
                                 } else if (widget.index == 2) {
-                                  Navigator.pushReplacement(
+                                  Navigator.pushAndRemoveUntil(
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) => Usernavigationbar(),
                                     ),
+                                    ModalRoute.withName('/'),
                                   );
                                 }
                               },

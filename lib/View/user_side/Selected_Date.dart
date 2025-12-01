@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
 import 'package:saloon_app/View/user_side/Time_Slots.dart';
 
 class Selected_Date extends StatefulWidget {
@@ -22,7 +23,17 @@ class Selected_Date extends StatefulWidget {
 }
 
 class _Selected_DateState extends State<Selected_Date> {
+
+
+Utils utils = Utils();
+
+@override
+void initState() {
+  super.initState();
+  utils.initToast(context);
+}
   int? selectedDay;
+  bool showToast = true;
 
   @override
   Widget build(BuildContext context) {
@@ -35,8 +46,6 @@ class _Selected_DateState extends State<Selected_Date> {
             height: widget.imageheight.toDouble(),
             fit: BoxFit.cover,
           ),
-
-         
 
           LayoutBuilder(
             builder: (context, constraints) {
@@ -93,6 +102,7 @@ class _Selected_DateState extends State<Selected_Date> {
                                 onTap: () {
                                   setState(() {
                                     selectedDay = day;
+                                    showToast = false;
                                   });
                                 },
                                 child: Container(
@@ -139,24 +149,28 @@ class _Selected_DateState extends State<Selected_Date> {
                         SizedBox(height: 20.h),
 
                         ElevatedButton(
-                          onPressed: selectedDay == null
-                              ? null
-                              : () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Time_Slots(
-                                        imagePath: widget.imagePath,
-                                        Servicename: widget.Servicename,
-                                        imageheight: widget.imageheight,
-                                        description: widget.description,
-                                      ),
-                                    ),
-                                  );
-                                },
+                          onPressed: () {
+                            if (selectedDay == null) {
+                              utils.toastMessage(
+                                "Please select a date first",
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => Time_Slots(
+                                    imagePath: widget.imagePath,
+                                    Servicename: widget.Servicename,
+                                    imageheight: widget.imageheight,
+                                    description: widget.description,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF01ABAB),
-                            disabledBackgroundColor: Colors.grey,
+                            backgroundColor: selectedDay!=null ?  Color(0xFF01ABAB) : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -179,7 +193,7 @@ class _Selected_DateState extends State<Selected_Date> {
               );
             },
           ),
-           Positioned(
+          Positioned(
             top: 50,
             left: 16,
             child: CircleAvatar(

@@ -26,9 +26,10 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
         children: [
           Positioned(
             top: -0.05 * screenHeight,
-            left: -20,
+            left: -10,
             child: Image.asset(
               'assets/images/Eclipse2.png',
+              fit: BoxFit.contain,
               height: screenHeight * 0.35,
               width: screenWidth * 0.9,
             ),
@@ -126,20 +127,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12.w),
-                    Container(
-                      height: 50,
-                      width: 54,
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xFF717680),
-                          width: 0.7,
-                        ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Image.asset('assets/images/Filter.png'),
-                    ),
+                   
                   ],
                 ),
 
@@ -288,13 +276,12 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                             ),
                             SizedBox(width: 12.w),
                           ],
-                          
                         ),
                       );
                     },
                   ),
                 ),
-                  SizedBox(height: 30.h,)
+                SizedBox(height: 30.h),
               ],
             ),
           ),

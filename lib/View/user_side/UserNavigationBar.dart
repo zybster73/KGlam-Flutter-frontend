@@ -65,21 +65,31 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
       ),
     ];
 
-    return Scaffold(
-      drawer: UserSidebar(),
-      backgroundColor: Colors.white,
-      extendBody: true,
-
-      body: screens[index],
-      bottomNavigationBar: CurvedNavigationBar(
-        color: Colors.white,
-        backgroundColor: Colors.transparent,
-        items: items,
-        height: 60,
-        index: index,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 300),
-        onTap: (i) => setState(() => index = i),
+    return PopScope(
+      canPop: index == 0,
+      onPopInvoked: (didPop) {
+        if (!didPop && index != 0) {
+          
+          setState(() {
+            index = 0;
+          });
+        }
+      },
+      child: Scaffold(
+        drawer: UserSidebar(),
+        backgroundColor: const Color.fromARGB(255, 175, 239, 250),
+        extendBody: true,
+        body: screens[index],
+        bottomNavigationBar: CurvedNavigationBar(
+          color: Colors.white,
+          backgroundColor: Colors.transparent,
+          items: items,
+          height: 60,
+          index: index,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 300),
+          onTap: (i) => setState(() => index = i),
+        ),
       ),
     );
   }

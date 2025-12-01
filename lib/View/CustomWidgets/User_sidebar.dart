@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
 import 'package:saloon_app/View/user_side/User_Notifications.dart';
+import 'package:saloon_app/View/user_side/feedback.dart';
 import 'package:saloon_app/View/user_side/user_appointmnets.dart';
 import 'package:saloon_app/View/user_side/user_profile.dart';
 
 class UserSidebar extends StatelessWidget {
+  int loginScreen = 2;
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -17,7 +20,7 @@ class UserSidebar extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             SizedBox(
-              height: screenHeight * 0.3,
+              height: screenHeight * 0.29,
               child: Stack(
                 //alignment: Alignment.center,
                 children: [
@@ -46,7 +49,7 @@ class UserSidebar extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    top: 80.h,
+                    top: 60.h,
                     right: 20.w,
                     child: IconButton(
                       onPressed: () {
@@ -89,7 +92,7 @@ class UserSidebar extends StatelessWidget {
                           'Appointment',
                         ),
                       ),
-                       InkWell(
+                      InkWell(
                         onTap: () {
                           Navigator.push(
                             context,
@@ -108,6 +111,17 @@ class UserSidebar extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
+                              builder: (context) => Feedbackscreen(),
+                            ),
+                          );
+                        },
+                        child: drawerItem(Icons.feedback_rounded, 'Feedback'),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
                               builder: (context) => UserProfile(),
                             ),
                           );
@@ -117,12 +131,20 @@ class UserSidebar extends StatelessWidget {
                           'Profile',
                         ),
                       ),
-                     
-                     
 
                       SizedBox(height: 20),
                       InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.pushAndRemoveUntil(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => LoginScreen(
+                                logicIndexUser : loginScreen,
+                              ),
+                            ),
+                            ModalRoute.withName('/'),
+                          );
+                        },
                         child: drawerItem(Icons.logout, 'Logout'),
                       ),
                     ],

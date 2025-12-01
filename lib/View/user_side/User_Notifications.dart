@@ -150,6 +150,7 @@ class _UserNotificationsState extends State<UserNotifications> {
                     },
                   ),
                 ),
+                SizedBox(height: 50,)
               ],
             ),
           ),

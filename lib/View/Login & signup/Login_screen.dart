@@ -3,6 +3,7 @@ import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
 import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
+import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
 import 'package:saloon_app/View/Login%20&%20signup/Forgot_password.dart';
 import 'package:saloon_app/View/Login%20&%20signup/Register_screen.dart';
 import 'package:saloon_app/View/Login%20&%20signup/saloon_information.dart';
@@ -10,12 +11,22 @@ import 'package:saloon_app/View/user_side/UserNavigationBar.dart';
 
 class LoginScreen extends StatefulWidget {
   final int? index;
-  LoginScreen({this.index});
+  final int? logicIndex;
+  final int? logicIndexUser;
+  LoginScreen({this.index, this.logicIndex, this.logicIndexUser});
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  Utils utils = Utils();
+
+  @override
+  void initState() {
+    super.initState();
+    utils.initToast(context);
+  }
+
   //TextEditingController UserName = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -23,6 +34,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     print(widget.index);
+    print(widget.logicIndex);
+    print(widget.logicIndexUser);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -171,6 +184,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                     ),
                                     ModalRoute.withName('/'),
                                   );
+                                } else if (widget.logicIndex == 1) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomNavigationBar(),
+                                    ),
+                                    ModalRoute.withName('/'),
+                                  );
+                                } else if (widget.logicIndexUser == 2) {
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Usernavigationbar(),
+                                    ),
+                                    ModalRoute.withName('/'),
+                                  );
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -208,17 +238,29 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => RegisterScreen(),
-                                      ),
-                                    );
+                                    if (widget.logicIndex == 1 ||
+                                        widget.logicIndexUser == 2) {
+                                      Utils().toastMessage(
+                                        'You are already Have an Account Please Log in',
+                                      );
+                                    } else {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              RegisterScreen(),
+                                        ),
+                                      );
+                                    }
                                   },
                                   child: Text(
                                     'Register',
                                     style: GoogleFonts.poppins(
-                                      color: Color(0xFF01ABAB),
+                                      color:
+                                          widget.logicIndex == 1 ||
+                                              widget.logicIndexUser == 2
+                                          ? Colors.grey
+                                          : Color(0xFF01ABAB),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                     ),

@@ -9,7 +9,7 @@ import 'package:saloon_app/View/Login%20&%20signup/service_inforamtion.dart';
 import 'package:saloon_app/View/owner_side/Profile.dart';
 import 'package:saloon_app/View/owner_side/Upload_services.dart';
 import 'package:saloon_app/View/splashScreen.dart';
-import 'package:saloon_app/View/user_side/Completed_appointments.dart';
+import 'package:saloon_app/View/user_side/feedBack.dart';
 import 'package:saloon_app/View/user_side/UserNavigationBar.dart';
 import 'package:saloon_app/View/user_side/user_portfolio.dart';
 import 'package:saloon_app/View/user_side/write_Feedback.dart';

@@ -62,20 +62,30 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       ),
     ];
 
-    return Scaffold(
-      backgroundColor: Colors.white,
-      extendBody: true,
-      drawer: CustomDrawer(),
-      body: screens[index],
-      bottomNavigationBar: CurvedNavigationBar(
-        color: Colors.white,
-        backgroundColor: Colors.transparent,
-        items: items,
-        height: 60,
-        index: index,
-        animationCurve: Curves.easeInOut,
-        animationDuration: Duration(milliseconds: 300),
-        onTap: (i) => setState(() => index = i),
+    return PopScope(
+      canPop: index == 0,
+      onPopInvoked: (didPop) {
+        if (!didPop && index != 0) {
+          setState(() {
+            index = 0;
+          });
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        extendBody: true,
+        drawer: CustomDrawer(),
+        body: screens[index],
+        bottomNavigationBar: CurvedNavigationBar(
+          color: Colors.white,
+          backgroundColor: Colors.transparent,
+          items: items,
+          height: 60,
+          index: index,
+          animationCurve: Curves.easeInOut,
+          animationDuration: Duration(milliseconds: 300),
+          onTap: (i) => setState(() => index = i),
+        ),
       ),
     );
   }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/user_side/Completed_appointments.dart';
+import 'package:saloon_app/View/user_side/feedBack.dart';
 
 class WriteFeedback extends StatefulWidget {
   @override
@@ -11,7 +11,7 @@ class WriteFeedback extends StatefulWidget {
 
 class _WriteFeedbackState extends State<WriteFeedback> {
   List<bool> selectedStars = List.generate(5, (_) => false);
-  final TextEditingController feedback = TextEditingController();
+  final TextEditingController feed_back = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -171,7 +171,7 @@ class _WriteFeedbackState extends State<WriteFeedback> {
 
                               CustomTextField(
                                 length: 6,
-                                controller: feedback,
+                                controller: feed_back,
                                 labelText: "Appointment Feedback",
                                 hintText:
                                     'Give your honest feedback about us....',
@@ -184,7 +184,7 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                                     context,
                                     MaterialPageRoute(
                                       builder: (context) =>
-                                          CompletedAppointments(),
+                                          Feedbackscreen(),
                                     ),
                                   );
                                 },

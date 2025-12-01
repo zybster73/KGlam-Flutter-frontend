@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
 import 'package:saloon_app/View/user_side/Request_Sent.dart';
 
 class Time_Slots extends StatefulWidget {
@@ -22,6 +23,15 @@ class Time_Slots extends StatefulWidget {
 }
 
 class _Time_SlotsState extends State<Time_Slots> {
+
+
+Utils utils = Utils();
+
+@override
+void initState() {
+  super.initState();
+  utils.initToast(context);
+}
   String? selectedTime;
 
   @override
@@ -91,14 +101,29 @@ class _Time_SlotsState extends State<Time_Slots> {
                           ),
                         ),
 
-                        SizedBox(height: 15.h),
+                        //SizedBox(height: 15.h),
 
                         Padding(
-                          padding: EdgeInsets.only(left: 15, bottom: 20),
-                          child: Wrap(
-                            spacing: 10,
-                            runSpacing: 8,
-                            children: List.generate(timeSlots.length, (index) {
+                          padding: const EdgeInsets.only(
+                            left: 15,
+                            bottom: 20,
+                            right: 15,
+                          ),
+                          child: GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount:
+                                      MediaQuery.of(context).size.width < 350
+                                      ? 2
+                                      : 3,
+                                  mainAxisSpacing: 10,
+                                  crossAxisSpacing: 10,
+                                  childAspectRatio: 2.2,
+                                ),
+                            itemCount: timeSlots.length,
+                            itemBuilder: (context, index) {
                               final time = timeSlots[index];
                               final isSelected = selectedTime == time;
 
@@ -109,8 +134,6 @@ class _Time_SlotsState extends State<Time_Slots> {
                                   });
                                 },
                                 child: Container(
-                                  width: 90,
-                                  height: 52,
                                   alignment: Alignment.center,
                                   decoration: BoxDecoration(
                                     color: isSelected
@@ -133,7 +156,7 @@ class _Time_SlotsState extends State<Time_Slots> {
                                   child: Text(
                                     time,
                                     style: GoogleFonts.poppins(
-                                      fontSize: 14,
+                                      fontSize: 13,
                                       color: isSelected
                                           ? Colors.white
                                           : Colors.black87,
@@ -144,31 +167,35 @@ class _Time_SlotsState extends State<Time_Slots> {
                                   ),
                                 ),
                               );
-                            }),
+                            },
                           ),
                         ),
 
                         SizedBox(height: 15.h),
 
                         ElevatedButton(
-                          onPressed: selectedTime == null
-                              ? null
-                              : () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => RequestSent(
-                                        imagePath: widget.imagePath,
-                                        imageHeight: widget.imageheight,
-                                        serviceName: widget.Servicename,
-                                        description: widget.description,
-                                      ),
-                                    ),
-                                  );
-                                },
+                          onPressed: () {
+                            if (selectedTime == null) {
+                              utils.toastMessage(
+                                "Please select a date first",
+                              );
+                            } else {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => RequestSent(
+                                    imagePath: widget.imagePath,
+                                    imageHeight: widget.imageheight,
+                                    serviceName: widget.Servicename,
+                                    description: widget.description,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF01ABAB),
-                            disabledBackgroundColor: Colors.grey,
+                            backgroundColor: selectedTime!=null ?  Color(0xFF01ABAB) : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

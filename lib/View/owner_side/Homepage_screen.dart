@@ -94,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                     'In this KPI you can view the analytics\n of your bookings.',
                     style: GoogleFonts.poppins(
                       fontWeight: FontWeight.w400,
-                      fontSize: 16,
+                      fontSize: 16.sp,
                       color: Color(0xFF717680),
                     ),
                   ),
@@ -103,7 +103,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
 
-          SizedBox(height: 20),
+          SizedBox(height: 10),
 
           Expanded(
             child: SingleChildScrollView(
@@ -141,7 +141,7 @@ class _HomePageState extends State<HomePage> {
 
   Widget CustomContainer(icon, text, text2, date) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(8.0),
       child: Container(
         width: double.infinity,
         height: 200,
@@ -168,7 +168,7 @@ class _HomePageState extends State<HomePage> {
                 text,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.bold,
-                  fontSize: 18,
+                  fontSize: 18.sp,
                   color: Colors.black,
                 ),
               ),
@@ -177,7 +177,7 @@ class _HomePageState extends State<HomePage> {
                 text2,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w400,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: Color(0xFF717680),
                 ),
               ),
@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
                 date,
                 style: GoogleFonts.poppins(
                   fontWeight: FontWeight.w800,
-                  fontSize: 14,
+                  fontSize: 14.sp,
                   color: Colors.black,
                 ),
               ),

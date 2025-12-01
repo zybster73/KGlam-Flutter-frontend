@@ -25,12 +25,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
+        
         children: [
           Positioned(
             top: -0.05 * screenHeight,
             left: -10,
             child: Image.asset(
               'assets/images/Eclipse2.png',
+              fit: BoxFit.contain,
               height: screenHeight * 0.35,
               width: screenWidth * 0.9,
             ),
@@ -57,7 +59,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   iconSize: 18,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
-
+      
                   icon: Icon(Icons.arrow_back_ios_sharp),
                 ),
               ),
@@ -69,7 +71,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 115.h),
-
+      
                 Text(
                   "Appointment's",
                   style: GoogleFonts.poppins(
@@ -79,7 +81,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 SizedBox(height: 6.h),
-
+      
                 Text(
                   "View your upcoming, in progress and\ncompleted bookings.",
                   style: GoogleFonts.poppins(
@@ -128,23 +130,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         ),
                       ),
                     ),
-                    SizedBox(width: 12.w),
-                    Container(
-                      height: 54.h,
-                      width: 54.h,
-                      padding: EdgeInsets.all(12.w),
-                      decoration: BoxDecoration(
-                        border: Border.all(
-                          color: const Color(0xFF717680),
-                          width: 0.7,
-                        ),
-                        borderRadius: BorderRadius.circular(12.r),
-                      ),
-                      child: Image.asset('assets/images/Filter.png'),
-                    ),
+                  
                   ],
                 ),
-
+      
                 SizedBox(height: 25.h),
                 Expanded(
                   child: ListView.builder(
@@ -169,7 +158,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             ),
                           ],
                         ),
-
+      
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -196,7 +185,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ),
                             ),
                             SizedBox(height: 8.h),
-
+      
                             Row(
                               children: [
                                 const Icon(
@@ -217,7 +206,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                             SizedBox(height: 8.h),
-
+      
                             Row(
                               children: [
                                 if (values[index] == 0)
