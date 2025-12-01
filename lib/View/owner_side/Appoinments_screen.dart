@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final VoidCallback? onBack;
@@ -12,7 +13,15 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  List<int> values = List.generate(5, (index) => 0); 
+  Utils utils = Utils();
+
+  @override
+  void initState() {
+    super.initState();
+    utils.initToast(context);
+  }
+
+  List<int> values = List.generate(5, (index) => 0);
 
   TextEditingController searchController = TextEditingController();
   int value = 0;
@@ -25,7 +34,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
-        
         children: [
           Positioned(
             top: -0.05 * screenHeight,
@@ -59,7 +67,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   iconSize: 18,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
-      
+
                   icon: Icon(Icons.arrow_back_ios_sharp),
                 ),
               ),
@@ -71,7 +79,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 115.h),
-      
+
                 Text(
                   "Appointment's",
                   style: GoogleFonts.poppins(
@@ -81,7 +89,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 SizedBox(height: 6.h),
-      
+
                 Text(
                   "View your upcoming, in progress and\ncompleted bookings.",
                   style: GoogleFonts.poppins(
@@ -130,10 +138,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         ),
                       ),
                     ),
-                  
                   ],
                 ),
-      
+
                 SizedBox(height: 25.h),
                 Expanded(
                   child: ListView.builder(
@@ -158,7 +165,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             ),
                           ],
                         ),
-      
+
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -185,7 +192,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ),
                             ),
                             SizedBox(height: 8.h),
-      
+
                             Row(
                               children: [
                                 const Icon(
@@ -206,7 +213,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                             SizedBox(height: 8.h),
-      
+
                             Row(
                               children: [
                                 if (values[index] == 0)
@@ -242,7 +249,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                 if (values[index] == 0)
                                   Expanded(
                                     child: GestureDetector(
-                                      onTap: () {},
+                                      onTap: () {
+                                        utils.toastMessage('Click Accept');
+                                      },
                                       child: Container(
                                         height: 48.h,
                                         decoration: BoxDecoration(

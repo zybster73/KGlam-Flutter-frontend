@@ -101,7 +101,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
     return Scaffold(
       backgroundColor: Colors.white,
       bottomNavigationBar: Padding(
-        padding: const EdgeInsets.all(20),
+        padding: const EdgeInsets.all(10),
         child: ElevatedButton(
           onPressed: () {
             Navigator.push(
@@ -223,7 +223,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
                     style: GoogleFonts.poppins(fontSize: 14),
                   ),
               
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 10),
               
                   Text(
                     "Customer rating:",

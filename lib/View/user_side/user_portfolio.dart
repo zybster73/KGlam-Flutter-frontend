@@ -108,7 +108,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                           child: TextFormField(
                             controller: searchController,
                             decoration: InputDecoration(
-                              hintText: 'Search t',
+                              hintText: 'Search services',
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 14.sp,
                                 color: const Color(0xFF717680),

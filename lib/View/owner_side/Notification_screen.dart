@@ -88,14 +88,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     padding: EdgeInsets.zero,
                     itemCount: 5,
                     itemBuilder: (context, index) {
-                      bool isHighlighted = index % 2 == 0;
+                      //bool isHighlighted = index % 2 == 0;
                       return Container(
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: isHighlighted
-                              ? const Color(0xFFE9FAFA)
-                              : const Color.fromARGB(255, 245, 228, 228),
+                          color:  const Color(0xFFE9FAFA),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
