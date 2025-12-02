@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:saloon_app/View/owner_side/manage_saloon_services.dart';
+import 'package:KGlam/View/owner_side/manage_saloon_services.dart';
 
 class UploadServices extends StatefulWidget {
   const UploadServices({super.key});

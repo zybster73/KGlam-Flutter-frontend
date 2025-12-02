@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Otp_screen.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Register_screen.dart';
-import 'package:saloon_app/View/Login%20&%20signup/saloon_information.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/Login%20&%20signup/Otp_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override

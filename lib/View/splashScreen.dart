@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 
-import 'package:saloon_app/View/onboardingScreen.dart';
+import 'package:KGlam/View/onboardingScreen.dart';
 
 class splash_screen extends StatefulWidget {
   const splash_screen({super.key});

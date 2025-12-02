@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 
 class ConfirmPassword extends StatefulWidget {
   @override

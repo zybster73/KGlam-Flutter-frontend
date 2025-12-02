@@ -1,4 +1,4 @@
-name: saloon_app
+name: KGlam
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -40,6 +40,11 @@ dependencies:
   curved_navigation_bar: ^1.0.6
   fluttertoast: ^9.0.0
   video_player: ^2.10.1
+  flutter_launcher_icons: ^0.14.4
+flutter_launcher_icons:
+    android: true
+    ios: true
+    image_path: "assets/images/Saloon_logo.png"
 
 dev_dependencies:
   flutter_test:

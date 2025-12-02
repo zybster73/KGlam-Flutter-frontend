@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/user_customWidgets/Service_Row.dart';
-import 'package:saloon_app/View/user_side/user_portfolio.dart';
+import 'package:KGlam/View/user_customWidgets/Service_Row.dart';
+import 'package:KGlam/View/user_side/user_portfolio.dart';
 
 class SalonDetailScreen extends StatefulWidget {
   final String imagePath;

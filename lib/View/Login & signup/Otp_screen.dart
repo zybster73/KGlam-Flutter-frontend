@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Confirm_password.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/Confirm_password.dart';
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 
 class OtpVerification extends StatefulWidget {
   @override

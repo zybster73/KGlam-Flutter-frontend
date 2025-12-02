@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
-import 'package:saloon_app/View/CustomWidgets/User_sidebar.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Confirm_password.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Register_screen.dart';
-import 'package:saloon_app/View/Login%20&%20signup/service_inforamtion.dart';
-import 'package:saloon_app/View/owner_side/Profile.dart';
-import 'package:saloon_app/View/owner_side/Upload_services.dart';
-import 'package:saloon_app/View/splashScreen.dart';
-import 'package:saloon_app/View/user_side/feedBack.dart';
-import 'package:saloon_app/View/user_side/UserNavigationBar.dart';
-import 'package:saloon_app/View/user_side/user_portfolio.dart';
-import 'package:saloon_app/View/user_side/write_Feedback.dart';
+import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/User_sidebar.dart';
+import 'package:KGlam/View/Login%20&%20signup/Confirm_password.dart';
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
+import 'package:KGlam/View/owner_side/Profile.dart';
+import 'package:KGlam/View/owner_side/Upload_services.dart';
+import 'package:KGlam/View/splashScreen.dart';
+import 'package:KGlam/View/user_side/feedBack.dart';
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
+import 'package:KGlam/View/user_side/user_portfolio.dart';
+import 'package:KGlam/View/user_side/write_Feedback.dart';
 
 void main() {
   runApp(const MyApp());

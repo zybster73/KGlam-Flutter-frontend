@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/User_sidebar.dart';
-import 'package:saloon_app/View/user_customWidgets/Service_Row.dart';
-import 'package:saloon_app/View/user_side/Saloon_Details.dart';
+import 'package:KGlam/View/CustomWidgets/User_sidebar.dart';
+import 'package:KGlam/View/user_customWidgets/Service_Row.dart';
+import 'package:KGlam/View/user_side/Saloon_Details.dart';
 
 class Customerhomescreen extends StatefulWidget {
   const Customerhomescreen({super.key});
@@ -115,7 +115,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                           child: TextFormField(
                             controller: searchController,
                             decoration: InputDecoration(
-                              hintText: 'Search Saloon or Service',
+                              hintText: 'Search Salon or Service',
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 14.sp,
                                 color: const Color(0xFF717680),
@@ -179,7 +179,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
               child: Row(
                 children: [
                   Text(
-                    'Top Saloons For You',
+                    'Top Salons For You',
                     style: GoogleFonts.poppins(
                       color: Colors.black,
                       fontSize: 20.sp,
@@ -193,7 +193,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 _buildSaloonCard(
-                  'Crown and Canvas Saloon :',
+                  'Crown and Canvas Salon :',
                   'assets/images/unsplash.jpg',
                   'Downtown Lahore, at 25-G Main Boulevard, Gulberg II',
                   'Every visit is more than just a beauty appointment — its a creative experience designed to bring out your true style. Our expert stylists treat every strand like a stroke on a canvas, blending precision, color, and care to craft your perfect look.',
@@ -201,7 +201,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                 ),
                 SizedBox(height: 10.h),
                 _buildSaloonCard(
-                  'Neil Brothers Hair Saloon :',
+                  'Neil Brothers Hair Salon :',
                   'assets/images/STRAIGHT.jpg',
                   'Uptown Lahore, at 47-B Liberty Avenue, Gulberg III',
                   'Each visit is more than just a salon session — its a personalized journey crafted to reveal your unique charm. Our skilled artists shape every detail with passion and finesse, blending texture, tone, and technique to design your signature style.',

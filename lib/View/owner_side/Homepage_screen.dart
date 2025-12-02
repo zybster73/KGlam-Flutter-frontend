@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/MySidebar.dart';
+import 'package:KGlam/View/CustomWidgets/MySidebar.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -52,7 +52,7 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           subtitle: Text(
-                            'Welcome, Saloon Owner',
+                            'Welcome, Salon Owner',
                             style: GoogleFonts.poppins(
                               color: Color(0xFF717680),
                               fontWeight: FontWeight.w400,

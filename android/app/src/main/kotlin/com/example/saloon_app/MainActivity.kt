@@ -1,4 +1,4 @@
-package com.example.saloon_app
+package app.jernash.kglam
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,15 +1,10 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:saloon_app/View/CustomWidgets/User_sidebar.dart';
-import 'package:saloon_app/View/owner_side/Appoinments_screen.dart';
-import 'package:saloon_app/View/owner_side/Homepage_screen.dart';
-import 'package:saloon_app/View/owner_side/Notification_screen.dart';
-import 'package:saloon_app/View/owner_side/Reviews_screen.dart';
-import 'package:saloon_app/View/owner_side/portfolio.dart';
-import 'package:saloon_app/View/user_side/User_Notifications.dart';
-import 'package:saloon_app/View/user_side/customerHomescreen.dart';
-import 'package:saloon_app/View/user_side/user_appointmnets.dart';
-import 'package:saloon_app/View/user_side/user_profile.dart';
+import 'package:KGlam/View/CustomWidgets/User_sidebar.dart';
+import 'package:KGlam/View/user_side/User_Notifications.dart';
+import 'package:KGlam/View/user_side/customerHomescreen.dart';
+import 'package:KGlam/View/user_side/user_appointmnets.dart';
+import 'package:KGlam/View/user_side/user_profile.dart';
 
 class Usernavigationbar extends StatefulWidget {
   @override

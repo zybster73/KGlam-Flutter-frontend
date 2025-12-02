@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomImagePicker.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/CustomWidgets/CustomImagePicker.dart';
+import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 
 class ServiceInforamtion extends StatefulWidget {
   @override
@@ -65,7 +65,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Saloon Services',
+                  'Salon Services',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.065,
@@ -74,7 +74,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                 ),
                 SizedBox(height: screenHeight * 0.008),
                 Text(
-                  'Enter your saloon services. ',
+                  'Enter your salon services. ',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,

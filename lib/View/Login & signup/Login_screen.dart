@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Forgot_password.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Register_screen.dart';
-import 'package:saloon_app/View/Login%20&%20signup/saloon_information.dart';
-import 'package:saloon_app/View/user_side/UserNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/Login%20&%20signup/Forgot_password.dart';
+import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 
 class LoginScreen extends StatefulWidget {
   final int? index;

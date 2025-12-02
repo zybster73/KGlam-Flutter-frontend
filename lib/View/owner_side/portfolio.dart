@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/owner_side/UpdatePortfolio.dart';
-import 'package:saloon_app/View/owner_side/Upload_portfolio.dart';
+import 'package:KGlam/View/owner_side/UpdatePortfolio.dart';
+import 'package:KGlam/View/owner_side/Upload_portfolio.dart';
 
 class portfolio extends StatefulWidget {
   const portfolio({super.key});

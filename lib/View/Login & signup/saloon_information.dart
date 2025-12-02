@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/Login%20&%20signup/service_inforamtion.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
 
 class SaloonInformation extends StatefulWidget {
   @override
@@ -64,7 +64,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Saloon Information',
+                  'Salon Information',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.065,
@@ -73,7 +73,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
                 ),
                 SizedBox(height: screenHeight * 0.008),
                 Text(
-                  'Enter your saloon information. ',
+                  'Enter your salon information. ',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,
@@ -112,20 +112,20 @@ class _SaloonInformationState extends State<SaloonInformation> {
                           children: [
                             CustomTextField(
                               controller: saloonName,
-                              hintText: "Enter Saloon Name",
-                              labelText: 'Saloon Name',
+                              hintText: "Enter Salon Name",
+                              labelText: 'Salon Name',
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonAddress,
-                              labelText: 'Saloon Address',
+                              labelText: 'Salon Address',
                               hintText: 'Enter Address',
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonContact,
-                              labelText: "Saloon Contact",
-                              hintText: "Saloon Contact",
+                              labelText: "Salon Contact",
+                              hintText: "Salon Contact",
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
@@ -136,7 +136,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonDescription,
-                              labelText: 'Saloon Description',
+                              labelText: 'Salon Description',
                               hintText: 'Enter Description...',
                               length: 4,
                             ),

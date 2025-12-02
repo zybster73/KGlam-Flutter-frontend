@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Register_screen.dart';
+import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
 
 class SelectRole extends StatefulWidget {
   final int? index;
@@ -68,7 +68,7 @@ class _SelectRoleState extends State<SelectRole> {
                 ),
                 SizedBox(height: screenHeight * 0.008),
                 Text(
-                  'Please select your role whether you are a\nBarber or Saloon Owner.',
+                  'Please select your role whether you are a\nBarber or Salon Owner.',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,
@@ -98,7 +98,7 @@ class _SelectRoleState extends State<SelectRole> {
                       children: [
                         roleCard(
                           context,
-                          title: "Are you a saloon owner",
+                          title: "Are you a salon owner",
                           image: "assets/images/saloon_owner.png",
                           value: 1,
                         ),

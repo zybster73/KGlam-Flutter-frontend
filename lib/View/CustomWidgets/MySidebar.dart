@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/Login%20&%20signup/Login_screen.dart';
-import 'package:saloon_app/View/owner_side/Appoinments_screen.dart';
-import 'package:saloon_app/View/owner_side/Notification_screen.dart';
-import 'package:saloon_app/View/owner_side/Profile.dart';
-import 'package:saloon_app/View/owner_side/Reviews_screen.dart';
-import 'package:saloon_app/View/owner_side/Upload_services.dart';
-import 'package:saloon_app/View/owner_side/portfolio.dart';
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
+import 'package:KGlam/View/owner_side/Appoinments_screen.dart';
+import 'package:KGlam/View/owner_side/Notification_screen.dart';
+import 'package:KGlam/View/owner_side/Profile.dart';
+import 'package:KGlam/View/owner_side/Reviews_screen.dart';
+import 'package:KGlam/View/owner_side/Upload_services.dart';
+import 'package:KGlam/View/owner_side/portfolio.dart';
 
 class CustomDrawer extends StatelessWidget {
   //ustomDrawer({this.logicIndex});

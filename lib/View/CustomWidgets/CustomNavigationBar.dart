@@ -1,11 +1,11 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:saloon_app/View/CustomWidgets/MySidebar.dart';
-import 'package:saloon_app/View/owner_side/Appoinments_screen.dart';
-import 'package:saloon_app/View/owner_side/Homepage_screen.dart';
-import 'package:saloon_app/View/owner_side/Notification_screen.dart';
-import 'package:saloon_app/View/owner_side/Reviews_screen.dart';
-import 'package:saloon_app/View/owner_side/portfolio.dart';
+import 'package:KGlam/View/CustomWidgets/MySidebar.dart';
+import 'package:KGlam/View/owner_side/Appoinments_screen.dart';
+import 'package:KGlam/View/owner_side/Homepage_screen.dart';
+import 'package:KGlam/View/owner_side/Notification_screen.dart';
+import 'package:KGlam/View/owner_side/Reviews_screen.dart';
+import 'package:KGlam/View/owner_side/portfolio.dart';
 
 class CustomNavigationBar extends StatefulWidget {
   @override

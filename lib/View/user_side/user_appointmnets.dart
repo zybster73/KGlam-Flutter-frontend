@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:saloon_app/View/user_side/write_Feedback.dart';
+import 'package:KGlam/View/user_side/write_Feedback.dart';
 
 class UserAppointmnets extends StatefulWidget {
   final VoidCallback? onBack;

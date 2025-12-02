@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomTextField.dart';
-import 'package:saloon_app/View/user_side/feedBack.dart';
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/user_side/feedBack.dart';
 
 class WriteFeedback extends StatefulWidget {
   @override

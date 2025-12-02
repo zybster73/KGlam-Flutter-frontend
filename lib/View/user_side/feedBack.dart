@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/user_side/Saloon_Details.dart';
-import 'package:saloon_app/View/user_side/UserNavigationBar.dart';
-import 'package:saloon_app/View/user_side/customerHomescreen.dart';
+import 'package:KGlam/View/user_side/Saloon_Details.dart';
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
+import 'package:KGlam/View/user_side/customerHomescreen.dart';
 
 class Feedbackscreen extends StatefulWidget {
   const Feedbackscreen({super.key});
@@ -168,7 +168,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     '05:00 PM, Monday',
                     'Abdullah Khan',
                     'Crown and Canvas',
-                    'I got my hairstyle done at Canvas Saloon — the result was amazing! The staff is very professional and the atmosphere is relaxing. I’ll definitely come back again. ⭐⭐⭐⭐⭐',
+                    'I got my hairstyle done at Canvas Salon — the result was amazing! The staff is very professional and the atmosphere is relaxing. I’ll definitely come back again. ⭐⭐⭐⭐⭐',
                   ),
       
                   SizedBox(height: 10.h),
@@ -179,7 +179,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     '05:00 PM, Monday',
                     'Abdullah Khan',
                     'Crown and Canvas',
-                    'I got my hairstyle done at Canvas Saloon — the result was amazing! The staff is very professional and the atmosphere is relaxing. I’ll definitely come back again. ⭐⭐⭐⭐⭐',
+                    'I got my hairstyle done at Canvas Salon — the result was amazing! The staff is very professional and the atmosphere is relaxing. I’ll definitely come back again. ⭐⭐⭐⭐⭐',
                   ),
                 ],
               ),

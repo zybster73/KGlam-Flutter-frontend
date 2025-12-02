@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
-import 'package:saloon_app/View/user_side/Request_Sent.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/user_side/Request_Sent.dart';
 
 class Time_Slots extends StatefulWidget {
   final String imagePath;

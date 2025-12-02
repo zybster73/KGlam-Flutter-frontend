@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:saloon_app/View/owner_side/editProfileInformation.dart';
-import 'package:saloon_app/View/owner_side/editProfileServices.dart';
+import 'package:KGlam/View/owner_side/editProfileInformation.dart';
+import 'package:KGlam/View/owner_side/editProfileServices.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:saloon_app/View/user_side/Selected_Service.dart';
+import 'package:KGlam/View/user_side/Selected_Service.dart';
 
 class UserPortfolio extends StatefulWidget {
   const UserPortfolio({super.key});
@@ -108,7 +108,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                           child: TextFormField(
                             controller: searchController,
                             decoration: InputDecoration(
-                              hintText: 'Search services',
+                              hintText: 'Search',
                               hintStyle: GoogleFonts.poppins(
                                 fontSize: 14.sp,
                                 color: const Color(0xFF717680),

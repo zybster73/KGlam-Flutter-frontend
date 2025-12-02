@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:saloon_app/View/CustomWidgets/CustomNavigationBar.dart';
-import 'package:saloon_app/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 
 class AppointmentScreen extends StatefulWidget {
   final VoidCallback? onBack;
