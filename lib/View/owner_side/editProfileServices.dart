@@ -153,7 +153,7 @@ class _EditprofileservicesState extends State<Editprofileservices> {
                             // SizedBox(height: 10),
                             CustomTextField(
                               controller: serviceHours,
-                              labelText: "Service Estimated Duration",
+                              labelText: "Estimated Business Hours",
                               hintText: "Enter Duration",
                             ),
                             SizedBox(height: 10),

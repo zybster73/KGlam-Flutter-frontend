@@ -21,7 +21,7 @@ class _Service_RowState extends State<Service_Row> {
           children: [
             _buildServiceCard('Haircut', 'assets/images/hairstyle.png'),
             SizedBox(width: 10.w),
-            _buildServiceCard('Facial', 'assets/images/nail.png'),
+            _buildServiceCard('Nail Styling', 'assets/images/nail.png'),
             SizedBox(width: 10.w),
             _buildServiceCard('Facial', 'assets/images/beard.png'),
             SizedBox(width: 10.w),

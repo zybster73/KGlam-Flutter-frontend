@@ -153,7 +153,7 @@ class _EditprofileinformationState extends State<Editprofileinformation> {
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonHours,
-                              labelText: "Hours of Operation",
+                              labelText: "Business Hours",
                               hintText: "Enter Hours",
                             ),
                             SizedBox(height: 10),
