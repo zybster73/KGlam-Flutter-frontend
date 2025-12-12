@@ -111,26 +111,26 @@ class _EditprofileinformationState extends State<Editprofileinformation> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             CustomTextField(

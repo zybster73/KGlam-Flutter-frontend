@@ -1,3 +1,4 @@
+import 'package:KGlam/View/owner_side/personalInformation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -86,34 +87,6 @@ class CustomDrawer extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => AppointmentScreen(),
-                            ),
-                          );
-                        },
-                        child: drawerItem(
-                          Icons.event_note_rounded,
-                          'Appointment',
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => ReviewsScreen(),
-                            ),
-                          );
-                        },
-                        child: drawerItem(
-                          Icons.rate_review_outlined,
-                          'Reviews',
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
                               builder: (context) => portfolio(),
                             ),
                           );
@@ -123,20 +96,7 @@ class CustomDrawer extends StatelessWidget {
                           'Portfolio',
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => NotificationScreen(),
-                            ),
-                          );
-                        },
-                        child: drawerItem(
-                          Icons.notifications_none_rounded,
-                          'Notification',
-                        ),
-                      ),
+                      
                       InkWell(
                         onTap: () {
                           Navigator.push(
@@ -158,6 +118,18 @@ class CustomDrawer extends StatelessWidget {
                         child: drawerItem(
                           Icons.person_outline_rounded,
                           'Profile',
+                        ),
+                      ),
+                      InkWell(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => Personalinformation()),
+                          );
+                        },
+                        child: drawerItem(
+                          Icons.info_rounded,
+                          'Personal Information',
                         ),
                       ),
 

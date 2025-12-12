@@ -42,11 +42,11 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
               child: Center(
                 child: IconButton(
                   onPressed: () {
-                     if (widget.onBack != null) {
-                        widget.onBack!();
-                      } else {
-                        Navigator.pop(context); 
-                      }
+                    if (widget.onBack != null) {
+                      widget.onBack!();
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
                   iconSize: 18,
                   padding: EdgeInsets.zero,
@@ -65,7 +65,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 SizedBox(height: 120.h),
 
                 Text(
-                  "Customer Insights",
+                  "Client Insights",
                   style: GoogleFonts.poppins(
                     fontSize: 24.sp,
                     fontWeight: FontWeight.w700,
@@ -76,7 +76,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 SizedBox(height: 6.h),
 
                 Text(
-                  "View your customer insights and what they\nhave talked about you.",
+                  "View your client insights and what they\nhave talked about you.",
                   style: GoogleFonts.poppins(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w400,
@@ -87,7 +87,10 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 SizedBox(height: 30.h),
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(
+                      bottom: 70.h, 
+                      top: 0,
+                    ),
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       return Container(
@@ -162,7 +165,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             SizedBox(height: 12.h),
 
                             Text(
-                              "Customer Response:",
+                              "Client Response:",
                               style: GoogleFonts.poppins(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
@@ -181,7 +184,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             SizedBox(height: 12.h),
 
                             Text(
-                              "Customer Rating:",
+                              "Client Rating:",
                               style: GoogleFonts.poppins(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w500,
@@ -198,18 +201,14 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                                 ),
                               ),
                             ),
-                          
                           ],
                         ),
                       );
                     },
                   ),
                 ),
-                SizedBox(height: 40.h,)
               ],
-              
             ),
-            
           ),
         ],
       ),

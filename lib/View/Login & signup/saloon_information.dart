@@ -1,8 +1,11 @@
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
+import 'package:provider/provider.dart';
 
 class SaloonInformation extends StatefulWidget {
   @override
@@ -10,6 +13,8 @@ class SaloonInformation extends StatefulWidget {
 }
 
 class _SaloonInformationState extends State<SaloonInformation> {
+  
+
   TextEditingController saloonName = TextEditingController();
   TextEditingController saloonAddress = TextEditingController();
   TextEditingController saloonContact = TextEditingController();
@@ -17,6 +22,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
   TextEditingController saloonDescription = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -24,7 +30,6 @@ class _SaloonInformationState extends State<SaloonInformation> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-         
           SizedBox(
             height: screenHeight * 0.3,
             child: Stack(
@@ -47,8 +52,8 @@ class _SaloonInformationState extends State<SaloonInformation> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -88,26 +93,24 @@ class _SaloonInformationState extends State<SaloonInformation> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             CustomTextField(
@@ -142,13 +145,25 @@ class _SaloonInformationState extends State<SaloonInformation> {
                             ),
                             SizedBox(height: 30),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => ServiceInforamtion(),
-                                  ),
+                              onPressed: () async {
+                                bool success = await salonApi.salonInformation(
+                                  saloonName.text,
+                                  saloonAddress.text,
+                                  saloonContact.text,
+                                  saloonHours.text,
+                                  saloonDescription.text,
                                 );
+                                if (success){
+                                    Future.microtask(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            ServiceInforamtion(),
+                                      ),
+                                    );
+                                  });
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -160,15 +175,17 @@ class _SaloonInformationState extends State<SaloonInformation> {
                                   48,
                                 ),
                               ),
-                              child: Text(
-                                'Next',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              child: salonApi.isLoading
+                                  ? CircularProgressIndicator()
+                                  : Text(
+                                      'Next',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
                             SizedBox(height: 20),
                           ],

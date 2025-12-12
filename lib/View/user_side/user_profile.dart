@@ -1,39 +1,48 @@
+import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/selectRole.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UserProfile extends StatefulWidget {
   final VoidCallback? onBack;
-  const UserProfile({super.key,this.onBack});
+  const UserProfile({super.key, this.onBack});
 
   @override
   State<UserProfile> createState() => _UserProfileState();
 }
 
 class _UserProfileState extends State<UserProfile> {
+  TextEditingController userName = TextEditingController();
+  TextEditingController emailCtrl = TextEditingController();
+  TextEditingController PhoneNum = TextEditingController();
+  TextEditingController oldPassword = TextEditingController();
+  TextEditingController newPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
             SizedBox(
-              height: 250.h,
+              height: 215,
               child: Stack(
                 children: [
                   Positioned(
-                    top: 0,
-                    left: 0,
+                    top: -0.05 * screenHeight,
+                    left: -10,
                     child: Image.asset(
                       'assets/images/Eclipse2.png',
-
-                      height: 250.h,
-
-                      fit: BoxFit.cover,
+                      height: screenHeight * 0.35,
+                      width: screenWidth * 0.9,
+                      fit: BoxFit.contain,
                     ),
                   ),
-                 Positioned(
+                  Positioned(
                     top: 50.h,
                     left: 20.w,
                     child: Container(
@@ -64,8 +73,8 @@ class _UserProfileState extends State<UserProfile> {
 
                   Padding(
                     padding: EdgeInsets.only(
-                      top: 100.h,
-                      left: 20.w,
+                      top: 115.h,
+                      left: 10.w,
                       right: 20.w,
                     ),
                     child: Row(
@@ -79,13 +88,14 @@ class _UserProfileState extends State<UserProfile> {
                               Text(
                                 'Profile',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 24.sp,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
                               ),
+                              const SizedBox(height: 4),
                               Text(
-                                'Discover your beautiful story inside profile.',
+                                'Discover your beautiful story inside\n profile.',
                                 style: GoogleFonts.poppins(
                                   fontSize: 16.sp,
                                   color: Colors.black54,
@@ -101,7 +111,7 @@ class _UserProfileState extends State<UserProfile> {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 20,),
+              padding: const EdgeInsets.only(left: 20),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.start,
 
@@ -113,7 +123,7 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   SizedBox(width: 10.w),
                   Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
@@ -136,161 +146,53 @@ class _UserProfileState extends State<UserProfile> {
 
             SizedBox(height: 10.h),
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+              padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    ' User Name',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  CustomTextField(
+                    controller: userName,
+                    labelText: 'User Name',
+                    hintText: "Abdullah Khan",
                   ),
-                  Container(
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade400),
+                  SizedBox(height: 10),
+                  CustomTextField(
+                    controller: emailCtrl,
+                    labelText: "Email",
+                    hintText: "abdullahkhanh2@gmail.com",
+                  ),
+                   SizedBox(height: 10),
+                  CustomTextField(
+                    controller: PhoneNum,
+                    labelText: 'Phone Number',
+                    hintText: 'Enter Phone Number',
+                  ),
+                  SizedBox(height: 10),
+                  CustomTextField(
+                    controller: oldPassword,
+                   labelText: "Old Password",
+                    hintText: "*********",
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "  Abdullah Khan",
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
+                    SizedBox(height: 10),
+                    CustomTextField(
+                      controller: newPassword,
+                       labelText: "New Password",
+                        hintText: "***********",
                         ),
+                        SizedBox(height: 10),
+                   CustomTextField(
+                    controller: confirmPassword,
+                     labelText: "Confirm New Password",
+                      hintText: "**********"
                       ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    ' Email',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "   abdullahkhanh2@gmail.com",
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    ' Old Password',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "    *********",
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    ' New Password',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "     *********",
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(height: 10.h),
-                  Text(
-                    ' Confirm New Password',
-                    style: GoogleFonts.poppins(
-                      color: Colors.black,
-                      fontSize: 16.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Container(
-                    height: 48.h,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(12.r),
-                      border: Border.all(color: Colors.grey.shade400),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        decoration: InputDecoration(
-                          hintText: "      *********",
-                          hintStyle: GoogleFonts.poppins(
-                            color: Colors.grey.shade500,
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                        ),
-                      ),
-                    ),
-                  ),
+                    SizedBox(height: 10),
                 ],
               ),
             ),
             SizedBox(height: 15.h),
             Padding(
-              padding: const EdgeInsets.only(left: 10.0,right: 10),
+              padding: const EdgeInsets.only(left: 10.0, right: 10),
               child: ElevatedButton(
                 onPressed: () {
                   // Navigator.push(
@@ -298,7 +200,7 @@ class _UserProfileState extends State<UserProfile> {
                   //   MaterialPageRoute(
                   //     builder: (context) => Appointments(),
                   //   ),
-              
+
                   // );
                 },
                 style: ElevatedButton.styleFrom(
@@ -319,7 +221,146 @@ class _UserProfileState extends State<UserProfile> {
                 ),
               ),
             ),
-            SizedBox(height: 80.h,)
+            SizedBox(height: 15.h),
+            Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10),
+              child: ElevatedButton(
+                onPressed: () {
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (bottomSheetContext) {
+                      return Container(
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                            top: Radius.circular(25),
+                          ),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              width: 90,
+                              height: 90,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                image: DecorationImage(
+                                  image: AssetImage(
+                                    "assets/images/confirmation.png",
+                                  ),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 15),
+
+                            Text(
+                              "Delete Account",
+                              style: GoogleFonts.poppins(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+
+                            Text(
+                              "Are you sure you want to delete the Account?",
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                fontSize: 15,
+                                color: Colors.black54,
+                              ),
+                            ),
+                            SizedBox(height: 25),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SelectRole(),
+                                        ),
+                                        ModalRoute.withName('/'),
+                                      );
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      backgroundColor: Colors.red,
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "Yes",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(width: 10),
+
+                                Expanded(
+                                  child: OutlinedButton(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    style: OutlinedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      side: BorderSide(color: Colors.black26),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(10),
+                                      ),
+                                    ),
+                                    child: Text(
+                                      "No",
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.black87,
+                                        fontSize: 16,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(height: 20),
+                          ],
+                        ),
+                      );
+                    },
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  minimumSize: Size(double.infinity, 40),
+                  shape: RoundedRectangleBorder(
+                    side: BorderSide(color: Colors.redAccent),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+                child: Text(
+                  "Delete Account",
+                  style: GoogleFonts.poppins(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            SizedBox(height: 80.h),
           ],
         ),
       ),

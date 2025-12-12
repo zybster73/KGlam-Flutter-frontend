@@ -1,9 +1,12 @@
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomImagePicker.dart';
 import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:provider/provider.dart';
 
 class ServiceInforamtion extends StatefulWidget {
   @override
@@ -11,6 +14,7 @@ class ServiceInforamtion extends StatefulWidget {
 }
 
 class _ServiceInforamtionState extends State<ServiceInforamtion> {
+  
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
   //TextEditingController saloonContact = TextEditingController();
@@ -18,6 +22,8 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
   TextEditingController serviceDescription = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
+    final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -48,8 +54,8 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -89,26 +95,24 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             CustomTextField(
@@ -123,12 +127,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                               hintText: 'Enter Service Price',
                             ),
                             SizedBox(height: 10),
-                            // CustomTextField(
-                            //   controller: saloonContact,
-                            //   labelText: "Saloon Contact",
-                            //   hintText: "Saloon Contact",
-                            // ),
-                            // SizedBox(height: 10),
+
                             CustomTextField(
                               controller: serviceHours,
                               labelText: "Service Estimated Duration",
@@ -143,36 +142,32 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                             ),
                             SizedBox(height: 10),
                             UploadImageCard(
-                              title: "Upload Service Image",
-                              onTap: () {},
+                              title: "Upload Service Image Or Video",
                             ),
                             SizedBox(height: 5),
-                            // Row(
-                            //   mainAxisAlignment: MainAxisAlignment.end,
-                            //   children: [
-                            //     Container(
-                            //       height: 50,
-                            //       width: 50,
-                            //       child: FloatingActionButton(
-                            //         onPressed: () {},
 
-                            //         backgroundColor: Colors.white,
-                            //         shape: CircleBorder(),
-                            //         child: Icon(Icons.add, color: Colors.black),
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
                             SizedBox(height: 20),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => CustomNavigationBar(),
-                                  ),
-                                  ModalRoute.withName('/'),
-                                );
+                              onPressed: () async {
+                                bool success = await salonApi
+                                    .serviceInformation(
+                                      serviceName.text,
+                                      saloonPrice.text,
+                                      serviceHours.text,
+                                      serviceDescription.text,
+                                    );
+                                if (success) {
+                                  Future.microtask(() {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            CustomNavigationBar(),
+                                      ),
+                                      ModalRoute.withName('/'),
+                                    );
+                                  });
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -184,15 +179,17 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                                   50,
                                 ),
                               ),
-                              child: Text(
-                                'Save',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
+                              child: salonApi.isLoading
+                                  ? CircularProgressIndicator()
+                                  : Text(
+                                      'Save',
+                                      textAlign: TextAlign.center,
+                                      style: GoogleFonts.poppins(
+                                        color: Colors.white,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
                             ),
 
                             SizedBox(height: 20),

@@ -111,26 +111,26 @@ class _EditprofileservicesState extends State<Editprofileservices> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             CustomTextField(
@@ -153,7 +153,7 @@ class _EditprofileservicesState extends State<Editprofileservices> {
                             // SizedBox(height: 10),
                             CustomTextField(
                               controller: serviceHours,
-                              labelText: "Estimated Business Hours",
+                              labelText: "Service Estimated Duration",
                               hintText: "Enter Duration",
                             ),
                             SizedBox(height: 10),
@@ -165,23 +165,7 @@ class _EditprofileservicesState extends State<Editprofileservices> {
                             ),
                             SizedBox(height: 10),
                             // UploadImageCard(title: "Upload Service Image", onTap: (){}),
-                            SizedBox(height: 5),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                Container(
-                                  height: 50,
-                                  width: 50,
-                                  child: FloatingActionButton(
-                                    onPressed: () {},
-
-                                    backgroundColor: Colors.white,
-                                    shape: CircleBorder(),
-                                    child: Icon(Icons.add, color: Colors.black),
-                                  ),
-                                ),
-                              ],
-                            ),
+                          
                             SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () {
@@ -207,7 +191,7 @@ class _EditprofileservicesState extends State<Editprofileservices> {
                                 ),
                               ),
                             ),
-
+                                        
                             SizedBox(height: 20),
                           ],
                         ),

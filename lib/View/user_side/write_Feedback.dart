@@ -1,3 +1,4 @@
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,11 +11,14 @@ class WriteFeedback extends StatefulWidget {
 }
 
 class _WriteFeedbackState extends State<WriteFeedback> {
+  
+
   List<bool> selectedStars = List.generate(5, (_) => false);
   final TextEditingController feed_back = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+     Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -79,7 +83,7 @@ class _WriteFeedbackState extends State<WriteFeedback> {
           ),
 
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: 15),
+            padding: EdgeInsets.symmetric(horizontal: 20.w),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -87,7 +91,7 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                   'Feed Back',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
-                    fontSize: screenWidth * 0.065,
+                    fontSize: 26,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
@@ -96,7 +100,7 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                   'Give your honest feedback about\n our service.',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
-                    fontSize: screenWidth * 0.04,
+                    fontSize: 16,
                     fontWeight: FontWeight.w400,
                     height: 1.4,
                   ),
@@ -180,13 +184,11 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                               SizedBox(height: 30),
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          Feedbackscreen(),
-                                    ),
+                                  Utils.instance.toastMessage(
+                                    "Your feedback is submitted",
                                   );
+
+                                  Navigator.pop(context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(screenWidth * 0.96, 50),

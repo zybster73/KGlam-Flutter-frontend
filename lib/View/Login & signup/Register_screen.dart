@@ -1,3 +1,6 @@
+import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/Login%20&%20signup/verifyEmail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -5,21 +8,27 @@ import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
 import 'package:KGlam/View/user_side/UserNavigationBar.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
-  final int? index;
+  final String? index;
   RegisterScreen({this.index});
   @override
   State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  
+
   TextEditingController UserName = TextEditingController();
-  TextEditingController emailController = TextEditingController();
+  TextEditingController emailphoneNumberController = TextEditingController();
+  TextEditingController phoneNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+     Utils.instance.initToast(context);
+    final authProvier = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -28,7 +37,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(
-            height: screenHeight * 0.3,
+            height: screenHeight * 0.28,
             child: Stack(
               alignment: Alignment.center,
               children: [
@@ -49,8 +58,8 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -86,30 +95,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ],
             ),
           ),
-          SizedBox(height: screenHeight * 0.04),
+          SizedBox(height: screenHeight * 0.03),
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 15.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             CustomTextField(
@@ -119,9 +126,15 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
-                              controller: emailController,
+                              controller: emailphoneNumberController,
                               labelText: 'Email',
-                              hintText: 'Enter Email',
+                              hintText: 'Enter Email ',
+                            ),
+                            SizedBox(height: 10),
+                            CustomTextField(
+                              controller: phoneNumberController,
+                              labelText: "Phone Number",
+                              hintText: "Enter Phone Number",
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
@@ -137,22 +150,27 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             ),
                             SizedBox(height: 30),
                             ElevatedButton(
-                              onPressed: () {
-                                if (widget.index == 1) {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => SaloonInformation(),
-                                    ),
-                                  );
-                                } else if (widget.index == 2) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Usernavigationbar(),
-                                    ),
-                                    ModalRoute.withName('/'),
-                                  );
+                              onPressed: () async {
+                                bool success = await authProvier.signUp(
+                                  UserName.text,
+                                  emailphoneNumberController.text,
+                                  phoneNumberController.text,
+                                  passwordController.text,
+                                  confirmPassword.text,
+                                  widget.index,
+                                );
+                                if (success) {
+                                  Future.microtask(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => Verifyemail(
+                                          email:
+                                              emailphoneNumberController.text,
+                                        ),
+                                      ),
+                                    );
+                                  });
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -165,17 +183,23 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   48,
                                 ),
                               ),
-                              child: Text(
-                                'Register',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: Center(
+                                child: authProvier.isLoading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        'Register',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                             Row(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,
@@ -184,7 +208,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   'Have an Account?',
                                   style: GoogleFonts.poppins(
                                     color: Colors.black,
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w400,
                                   ),
                                 ),
@@ -201,13 +225,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: Text(
                                     'Login',
                                     style: GoogleFonts.poppins(
+                                      fontSize: 16,
                                       color: Color(0xFF01ABAB),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
-                            SizedBox(height: 20),
+                            SizedBox(height: 10),
                           ],
                         ),
                       ),

@@ -4,8 +4,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/Otp_screen.dart';
-import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
-import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
+import 'package:provider/provider.dart';
+
+import '../../Services/auth_Provider.dart';
 
 class ForgotPassword extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   //TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -48,8 +50,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -71,8 +73,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                           Navigator.pop(context);
                         },
                         iconSize: 18,
-                        padding: EdgeInsets.zero, 
-                        
+                        padding: EdgeInsets.zero,
 
                         icon: Icon(Icons.arrow_back_ios_sharp),
                       ),
@@ -138,19 +139,28 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: emailController,
-                              labelText: 'Email',
-                              hintText: 'Enter Email',
+                              labelText: 'Email / Phone Number',
+                              hintText: 'Enter Email Or Phone Number',
                             ),
 
                             SizedBox(height: 30),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => OtpVerification(),
-                                  ),
-                                );
+                              onPressed: () async {
+                                bool success = await authProvider
+                                    .forgotPassword(emailController.text);
+
+                                if (success) {
+                                  Future.microtask(() {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => OtpVerification(
+                                          email: emailController.text.trim(),
+                                        ),
+                                      ),
+                                    );
+                                  });
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -162,14 +172,20 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                                   48,
                                 ),
                               ),
-                              child: Text(
-                                'Send OTP',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: Center(
+                                child: authProvider.isLoading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        'Send OTP',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
                             ),
 

@@ -10,7 +10,7 @@ class SelectRole extends StatefulWidget {
 }
 
 class _SelectRoleState extends State<SelectRole> {
-  int selectedRole = 0;
+  String  selectedRole = '';
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,8 @@ class _SelectRoleState extends State<SelectRole> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -68,7 +68,7 @@ class _SelectRoleState extends State<SelectRole> {
                 ),
                 SizedBox(height: screenHeight * 0.008),
                 Text(
-                  'Please select your role whether you are a\nBarber or Salon Owner.',
+                  'Please select your role whether you are a\nClient or Service Provider.',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,
@@ -82,34 +82,38 @@ class _SelectRoleState extends State<SelectRole> {
 
           SizedBox(height: screenHeight * 0.04),
           Expanded(
-            child: SingleChildScrollView(
+            child: Container(
+              width: MediaQuery.of(context).size.width,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(24),
+                  topRight: Radius.circular(24),
+                ),
+              ),
               child: Column(
+                
                 children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24),
-                        topRight: Radius.circular(24),
+                   SizedBox(height: 10),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          roleCard(
+                            context,
+                            title: "I am a Service Provider",
+                            image: "assets/images/saloon_owner.png",
+                            value: 'owner',
+                          ),
+                          
+                          roleCard(
+                            context,
+                            title: "I am a Client",
+                            image: "assets/images/customer.png",
+                            value: 'customer',
+                          ),
+                        ],
                       ),
-                    ),
-                    child: Column(
-                      children: [
-                        roleCard(
-                          context,
-                          title: "Are you a salon owner",
-                          image: "assets/images/saloon_owner.png",
-                          value: 1,
-                        ),
-                        
-                        roleCard(
-                          context,
-                          title: "Are you a Customer",
-                          image: "assets/images/customer.png",
-                          value: 2,
-                        ),
-                      ],
                     ),
                   ),
                 ],
@@ -125,7 +129,7 @@ class _SelectRoleState extends State<SelectRole> {
     BuildContext context, {
     required String title,
     required String image,
-    required int value,
+    required String value,
   }) {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -188,7 +192,7 @@ class _SelectRoleState extends State<SelectRole> {
                   ),
                 ],
               ),
-
+    
               SizedBox(height: screenHeight * 0.01),
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),

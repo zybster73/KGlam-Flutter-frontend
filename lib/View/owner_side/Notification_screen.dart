@@ -81,11 +81,14 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     color: Color(0xFF717680),
                   ),
                 ),
-                const SizedBox(height: 24),
+                const SizedBox(height: 34),
       
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(
+                      bottom: 70.h, 
+                      top: 0,
+                    ),
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       //bool isHighlighted = index % 2 == 0;
@@ -124,6 +127,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
+                                  
                                   Text(
                                     "John Doe has booked recently a facial massage at you saloon. Would you like to accept the request or not.",
                                     style: GoogleFonts.poppins(
@@ -149,7 +153,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 50,)
+                
               ],
             ),
           ),

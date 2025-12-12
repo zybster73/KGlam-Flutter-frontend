@@ -8,6 +8,7 @@ import 'package:KGlam/View/user_side/user_appointmnets.dart';
 import 'package:KGlam/View/user_side/user_profile.dart';
 
 class UserSidebar extends StatelessWidget {
+  int backup = 1;
   int loginScreen = 2;
   @override
   Widget build(BuildContext context) {
@@ -106,17 +107,19 @@ class UserSidebar extends StatelessWidget {
                           'Notification',
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => Feedbackscreen(),
-                            ),
-                          );
-                        },
-                        child: drawerItem(Icons.feedback_rounded, 'Feedback'),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => Feedbackscreen(
+                      //           backuplogic : backup,
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: drawerItem(Icons.feedback_rounded, 'Feedback'),
+                      // ),
                       InkWell(
                         onTap: () {
                           Navigator.push(
@@ -138,9 +141,8 @@ class UserSidebar extends StatelessWidget {
                           Navigator.pushAndRemoveUntil(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => LoginScreen(
-                                logicIndexUser : loginScreen,
-                              ),
+                              builder: (context) =>
+                                  LoginScreen(logicIndexUser: loginScreen),
                             ),
                             ModalRoute.withName('/'),
                           );

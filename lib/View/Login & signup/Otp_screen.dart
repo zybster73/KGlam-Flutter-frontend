@@ -1,20 +1,29 @@
+import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 import 'package:KGlam/View/Login%20&%20signup/Confirm_password.dart';
 import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
+import 'package:provider/provider.dart';
 
 class OtpVerification extends StatefulWidget {
+  final String email;
+
+  OtpVerification({required this.email});
   @override
   State<OtpVerification> createState() => _OtpVerificationState();
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
+  
   final TextEditingController _pinController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+     Utils.instance.initToast(context);
+    final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -44,8 +53,8 @@ class _OtpVerificationState extends State<OtpVerification> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -147,7 +156,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                               Padding(
                                 padding: const EdgeInsets.only(left: 8.0),
                                 child: Pinput(
-                                  length: 4,
+                                  length: 6,
                                   controller: _pinController,
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   crossAxisAlignment: CrossAxisAlignment.center,
@@ -173,13 +182,26 @@ class _OtpVerificationState extends State<OtpVerification> {
 
                               const SizedBox(height: 30),
                               ElevatedButton(
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ConfirmPassword(),
-                                    ),
-                                  );
+                                onPressed: () async {
+                                  String? resetToken = await authProvider
+                                      .forgotEmailOtp(_pinController.text);
+
+                                  if (resetToken != null) {
+                                    Future.microtask((){
+                                        
+                                      Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => ConfirmPassword(
+                                          resetToken: resetToken,
+                                        ),
+                                      ),
+                                    );
+                                    }
+
+                                    );
+                                    
+                                  }
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(screenWidth * 0.96, 50),
@@ -204,7 +226,7 @@ class _OtpVerificationState extends State<OtpVerification> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
-                                    'Did not recieve the email ?',
+                                    'Did not recieve the OTP ?',
                                     style: GoogleFonts.poppins(
                                       color: Colors.black,
                                       fontSize: 14,
@@ -213,6 +235,8 @@ class _OtpVerificationState extends State<OtpVerification> {
                                   ),
                                   TextButton(
                                     onPressed: () {
+                                      authProvider.resendOtp(widget.email);
+                                      Utils.instance.toastMessage('OTP Resend');
                                       // Navigator.push(
                                       //   context,
                                       //   MaterialPageRoute(

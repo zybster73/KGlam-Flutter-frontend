@@ -1,3 +1,5 @@
+import 'package:KGlam/View/user_side/Saloon_Details.dart';
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -104,16 +106,10 @@ class _Selected_ServiceState extends State<Selected_Service> {
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
           onPressed: () {
-            Navigator.push(
+            Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(
-                builder: (context) => Selected_Date(
-                  imagePath: widget.imagePath,
-                  Servicename: widget.Servicename,
-                  imageheight: widget.imageheight,
-                  description: widget.description,
-                ),
-              ),
+              MaterialPageRoute(builder: (context) => SalonDetailScreen()),
+              ModalRoute.withName('/'),
             );
           },
           style: ElevatedButton.styleFrom(
@@ -124,7 +120,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
             ),
           ),
           child: Text(
-            "Book Service",
+            "Browse Service",
             style: GoogleFonts.poppins(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -154,13 +150,13 @@ class _Selected_ServiceState extends State<Selected_Service> {
             top: 50,
             left: 16,
             child: CircleAvatar(
-              radius: 13,
+              radius: 16,
               backgroundColor: Colors.white.withOpacity(0.8),
               child: IconButton(
                 icon: const Icon(
                   Icons.arrow_back_ios_new,
                   color: Colors.black,
-                  size: 10,
+                  size: 14,
                 ),
                 onPressed: () {
                   Navigator.pop(context);
@@ -217,85 +213,13 @@ class _Selected_ServiceState extends State<Selected_Service> {
                     ),
                   ),
                   const SizedBox(height: 10),
-              
+
                   Text(
                     'Hairstyling service is designed to transform your look with precision and creativity. Our expert stylists craft styles that perfectly suit your face shape, personality, and lifestyle — whether it’s a sleek modern cut, soft curls, or a bold new trend.',
                     style: GoogleFonts.poppins(fontSize: 14),
                   ),
-              
+
                   const SizedBox(height: 10),
-              
-                  Text(
-                    "Customer rating:",
-                    style: GoogleFonts.poppins(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 5),
-              
-                  Row(
-                    children: List.generate(
-                      5,
-                      (i) => const Padding(
-                        padding: EdgeInsets.only(right: 5),
-                        child: CircleAvatar(
-                          radius: 10,
-                          backgroundColor: Color(0xFFDC6803),
-                          child: Icon(Icons.star, color: Colors.white, size: 15),
-                        ),
-                      ),
-                    ),
-                  ),
-              
-                  SizedBox(height: 15.h),
-              
-                  Text(
-                    "£15.30",
-                    style: GoogleFonts.poppins(
-                      color: Color(0xFF01ABAB),
-                      fontSize: 24.sp,
-                    ),
-                  ),
-              
-                  
-                  
-              
-                  // SizedBox(
-                  //   width: double.infinity,
-                  //   child: ElevatedButton(
-                  //     onPressed: () {
-                  //       Navigator.push(
-                  //         context,
-                  //         MaterialPageRoute(
-                  //           builder: (_) => Selected_Date(
-                  //             imagePath: widget.imagePath,
-                  //             Servicename: widget.Servicename,
-                  //             description: widget.description,
-                  //             imageheight: widget.imageheight,
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //     style: ElevatedButton.styleFrom(
-                  //       padding: const EdgeInsets.symmetric(vertical: 14),
-                  //       backgroundColor: const Color(0xFF01ABAB),
-                  //       shape: RoundedRectangleBorder(
-                  //         borderRadius: BorderRadius.circular(10),
-                  //       ),
-                  //     ),
-                  //     child: Text(
-                  //       "Book Services",
-                  //       style: GoogleFonts.poppins(
-                  //         color: Colors.white,
-                  //         fontWeight: FontWeight.bold,
-                  //         fontSize: 16.sp,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-              
-                  
                 ],
               ),
             ),

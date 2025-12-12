@@ -20,27 +20,25 @@ class CustomTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.only(left: 8.0, bottom: 12),
+      padding: const EdgeInsets.only(left: 8.0, bottom: 1),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label
           Text(
             labelText,
             style: GoogleFonts.poppins(
               color: Colors.black,
               fontWeight: FontWeight.w600,
-              fontSize: 14,
+              fontSize: 15,
             ),
           ),
           const SizedBox(height: 6),
 
-          // Text Field
           Container(
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: Colors.black12), // ✅ fixed here
+              border: Border.all(color: Colors.black12), 
               boxShadow: [
                 BoxShadow(
                   color: Colors.black12,
@@ -53,7 +51,7 @@ class CustomTextField extends StatelessWidget {
               maxLines: length,
               controller: controller,
               obscureText: obscureText,
-              style: GoogleFonts.poppins(fontSize: 14, color: Colors.black87),
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
               decoration: InputDecoration(
                 hintText: hintText,
                 hintStyle: GoogleFonts.poppins(

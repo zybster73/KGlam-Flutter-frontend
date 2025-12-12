@@ -9,6 +9,7 @@ class Time_Slots extends StatefulWidget {
   final String Servicename;
   final String description;
   final int imageheight;
+  final String saloonName;
 
   const Time_Slots({
     super.key,
@@ -16,6 +17,7 @@ class Time_Slots extends StatefulWidget {
     required this.Servicename,
     required this.imageheight,
     required this.description,
+    required this.saloonName,
   });
 
   @override
@@ -23,19 +25,13 @@ class Time_Slots extends StatefulWidget {
 }
 
 class _Time_SlotsState extends State<Time_Slots> {
+  
 
-
-Utils utils = Utils();
-
-@override
-void initState() {
-  super.initState();
-  utils.initToast(context);
-}
   String? selectedTime;
 
   @override
   Widget build(BuildContext context) {
+     Utils.instance.initToast(context);
     List<String> timeSlots = [
       "10:00 AM",
       "10:30 AM",
@@ -93,6 +89,16 @@ void initState() {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        widget.saloonName == null || widget.saloonName!.isEmpty
+                            ? SizedBox.shrink() // show nothing
+                            : Text(
+                                'By : ${widget.saloonName}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 20.sp,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+
                         Text(
                           'Available Time Slots',
                           style: GoogleFonts.poppins(
@@ -102,7 +108,6 @@ void initState() {
                         ),
 
                         //SizedBox(height: 15.h),
-
                         Padding(
                           padding: const EdgeInsets.only(
                             left: 15,
@@ -176,9 +181,7 @@ void initState() {
                         ElevatedButton(
                           onPressed: () {
                             if (selectedTime == null) {
-                              utils.toastMessage(
-                                "Please select a date first",
-                              );
+                              Utils.instance.toastMessage("Please select a date first");
                             } else {
                               Navigator.push(
                                 context,
@@ -188,6 +191,7 @@ void initState() {
                                     imageHeight: widget.imageheight,
                                     serviceName: widget.Servicename,
                                     description: widget.description,
+                                    saloonName: widget.saloonName,
                                   ),
                                 ),
                               );
@@ -195,7 +199,9 @@ void initState() {
                           },
 
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: selectedTime!=null ?  Color(0xFF01ABAB) : Colors.grey,
+                            backgroundColor: selectedTime != null
+                                ? Color(0xFF01ABAB)
+                                : Colors.grey,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -218,6 +224,7 @@ void initState() {
               );
             },
           ),
+
           Positioned(
             top: 50,
             left: 16,

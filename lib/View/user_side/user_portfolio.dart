@@ -25,7 +25,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
               height: 250.h,
               child: Stack(
                 children: [
-                    Positioned(
+                  Positioned(
                     top: -0.05 * screenHeight,
                     left: -10,
                     child: Image.asset(
@@ -35,7 +35,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                       fit: BoxFit.contain,
                     ),
                   ),
-                 Positioned(
+                  Positioned(
                     top: 50.h,
                     left: 20.w,
                     child: Container(
@@ -48,10 +48,8 @@ class _UserPortfolioState extends State<UserPortfolio> {
                       child: Center(
                         child: IconButton(
                           onPressed: () {
-                           
-                              Navigator.pop(context);
-                            },
-                          
+                            Navigator.pop(context);
+                          },
                           iconSize: 18,
                           padding: EdgeInsets.zero,
                           color: Colors.white,
@@ -79,7 +77,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                               Text(
                                 'Portfolio',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 16.sp,
+                                  fontSize: 24,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.black,
                                 ),
@@ -87,7 +85,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                               Text(
                                 'View our portfolio so you can get the better idea of their services.',
                                 style: GoogleFonts.poppins(
-                                  fontSize: 13.sp,
+                                  fontSize: 16,
                                   color: Colors.black54,
                                 ),
                               ),
@@ -164,7 +162,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                       'Shine & Smooth Hair Polish',
                       'assets/images/wash.jpg',
                       'Experience radiant shine and silky smooth hair with every touch.',
-                     246,
+                      246,
                       395,
                     ),
                     SizedBox(height: 3.h),
@@ -248,7 +246,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
               child: Stack(
                 children: [
                   Container(
-                    height: height.h,
+                   // height: height.h,
                     width: 176.w,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(15.r),

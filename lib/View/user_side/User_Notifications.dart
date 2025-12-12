@@ -1,3 +1,4 @@
+import 'package:KGlam/View/user_side/write_Feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -29,9 +30,9 @@ class _UserNotificationsState extends State<UserNotifications> {
               fit: BoxFit.contain,
             ),
           ),
-         
+
           Positioned(
-            top: 40.h,
+            top: 50.h,
             left: 20.w,
             child: Container(
               height: 30,
@@ -46,13 +47,13 @@ class _UserNotificationsState extends State<UserNotifications> {
                     if (widget.onBack != null) {
                       widget.onBack!();
                     } else {
-                      Navigator.pop(context); 
+                      Navigator.pop(context);
                     }
                   },
                   iconSize: 18,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
-      
+
                   icon: Icon(Icons.arrow_back_ios_sharp),
                 ),
               ),
@@ -82,10 +83,10 @@ class _UserNotificationsState extends State<UserNotifications> {
                   ),
                 ),
                 const SizedBox(height: 24),
-      
+
                 Expanded(
                   child: ListView.builder(
-                    padding: EdgeInsets.zero,
+                    padding: EdgeInsets.only(bottom: 70.h, top: 0),
                     itemCount: 5,
                     itemBuilder: (context, index) {
                       bool isHighlighted = index % 2 == 0;
@@ -93,9 +94,7 @@ class _UserNotificationsState extends State<UserNotifications> {
                         margin: const EdgeInsets.only(bottom: 16),
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: 
-                               const Color(0xFFE9FAFA)
-                              ,
+                          color: const Color(0xFFE9FAFA),
                           borderRadius: BorderRadius.circular(16),
                           boxShadow: [
                             BoxShadow(
@@ -126,7 +125,7 @@ class _UserNotificationsState extends State<UserNotifications> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    "John Doe has booked recently a facial massage at you saloon. Would you like to accept the request or not.",
+                                    "Your service is complete! We hope you enjoyed your Facial Massage. We hope to see you again! Share your feedback to help us improve!",
                                     style: GoogleFonts.poppins(
                                       fontSize: 14,
                                       color: Colors.black,
@@ -134,12 +133,52 @@ class _UserNotificationsState extends State<UserNotifications> {
                                     ),
                                   ),
                                   const SizedBox(height: 6),
-                                  Text(
-                                    "2 hours ago",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12,
-                                      color: Color(0xFF717680),
-                                    ),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        "2 hours ago",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12,
+                                          color: Color(0xFF717680),
+                                        ),
+                                      ),
+                                      Spacer(),
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) =>
+                                                  WriteFeedback(),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            // color: Colors.blueGrey,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: const Color.fromARGB(
+                                                  31,
+                                                  104,
+                                                  96,
+                                                  96,
+                                                ),
+                                                blurRadius: 4,
+                                                offset: const Offset(0, 2),
+                                              ),
+                                            ],
+                                          ),
+                                          child: Text(
+                                            'FeedBack',
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14,
+                                              color: Color(0xFF01ABAB),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ],
                               ),
@@ -150,7 +189,6 @@ class _UserNotificationsState extends State<UserNotifications> {
                     },
                   ),
                 ),
-                SizedBox(height: 50,)
               ],
             ),
           ),

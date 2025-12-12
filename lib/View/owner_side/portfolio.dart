@@ -189,7 +189,7 @@ class _portfolioState extends State<portfolio> {
                                   children: [
                                     _buildSaloonCard(
                                       'Elegant Beard Styling',
-                                      'assets/images/RRRR.jpg',
+                                      'assets/images/RRR.jpg',
                                       'Style your beard with our specialized that transform look.',
                                       150,
                                       //  257,

@@ -1,15 +1,35 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 
-class UploadImageCard extends StatelessWidget {
+class UploadImageCard extends StatefulWidget {
   final String title;
-  final VoidCallback onTap;
-
+  
   const UploadImageCard({
     super.key,
-    required this.title,
-    required this.onTap,
+    required this.title, 
   });
+
+  @override
+  State<UploadImageCard> createState() => _UploadImageCardState();
+}
+
+class _UploadImageCardState extends State<UploadImageCard> {
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
+
+    if (pickedFile != null) {
+      setState(() {
+        _selectedImage = File(pickedFile.path);
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +40,8 @@ class UploadImageCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Label
           Text(
-            title,
+            widget.title,
             style: GoogleFonts.poppins(
               color: Colors.black,
               fontWeight: FontWeight.w600,
@@ -30,13 +49,12 @@ class UploadImageCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 8),
-
-          // Upload Container
           GestureDetector(
-            onTap: onTap,
+            onTap: _pickImage,
             child: Container(
+              height: 160,
               width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
+             // padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 16),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(12),
@@ -49,28 +67,37 @@ class UploadImageCard extends StatelessWidget {
                   ),
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  // Upload Icon
-                  Icon(
-                    Icons.upload, // you can use Icons.upload instead
-                    color: const Color(0xFF01ABAB),
-                    size: screenWidth * 0.08,
+              child: _selectedImage == null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.upload,
+                          color: const Color(0xFF01ABAB),
+                          size: screenWidth * 0.08,
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'Upload your image in jpg, jpeg, or png format.',
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.poppins(
+                            color: Colors.grey.shade600,
+                            fontSize: screenWidth * 0.035,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ],
+                    )
+                  : ClipRRect(
+                    borderRadius: BorderRadius.circular(12), 
+                    child: Image.file(
+                        _selectedImage!,
+                        height: 100,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                        
+                      ),
                   ),
-                  const SizedBox(height: 10),
-                  // Description Text
-                  Text(
-                    'Upload your image in jpg, jpeg, or png format.',
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
-                      color: Colors.grey.shade600,
-                      fontSize: screenWidth * 0.035,
-                      fontWeight: FontWeight.w400,
-                    ),
-                  ),
-                ],
-              ),
             ),
           ),
         ],

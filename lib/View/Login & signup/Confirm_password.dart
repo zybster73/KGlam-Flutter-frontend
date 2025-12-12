@@ -1,11 +1,16 @@
+import 'package:KGlam/Services/auth_Provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
+import 'package:provider/provider.dart';
 
 class ConfirmPassword extends StatefulWidget {
+  final String resetToken;
+
+  ConfirmPassword({required this.resetToken});
   @override
   State<ConfirmPassword> createState() => _ConfirmPasswordState();
 }
@@ -17,6 +22,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
   TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -46,8 +52,8 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -146,14 +152,24 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                             ),
                             SizedBox(height: 30),
                             ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
-                                  ),
-                                  ModalRoute.withName('/'),
+                              onPressed: () async {
+                                bool success = await authProvider.resetPassowrd(
+                                  passwordController.text,
+                                  confirmPassword.text,
+                                  widget.resetToken,
                                 );
+                                if (success) {
+                                  Future.microtask(() {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => LoginScreen(),
+                                      ),
+                                      ModalRoute.withName('/'),
+                                    );
+                                  }
+                                  );
+                                }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -165,18 +181,22 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                                   50,
                                 ),
                               ),
-                              child: Text(
-                                'Reset Password',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: Center(
+                                child: authProvider.isLoading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        'Reset Password',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
                             ),
-
-                            SizedBox(height: 20),
                           ],
                         ),
                       ),

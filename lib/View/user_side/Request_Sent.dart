@@ -1,3 +1,4 @@
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,13 +9,14 @@ class RequestSent extends StatelessWidget {
   final String serviceName;
   final String description;
   final int imageHeight;
-
+  final String saloonName;
   const RequestSent({
     super.key,
     required this.imagePath,
     required this.serviceName,
     required this.imageHeight,
     required this.description,
+    required this.saloonName,
   });
 
   @override
@@ -24,34 +26,16 @@ class RequestSent extends StatelessWidget {
     });
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: Stack(
-          children: [
-            Image.asset(
-              imagePath,
-              width: double.infinity,
-              height: imageHeight.toDouble(),
-              fit: BoxFit.cover,
-            ),
-
-            Positioned(
-              top: 50,
-              left: 16,
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.white.withOpacity(0.8),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    color: Colors.black,
-                    size: 14,
-                  ),
-                  onPressed: () => Navigator.pop(context),
-                ),
-              ),
-            ),
-
-            Container(
+      body: Stack(
+        children: [
+          Image.asset(
+            imagePath,
+            width: double.infinity,
+            height: imageHeight.toDouble(),
+            fit: BoxFit.cover,
+          ),
+          SingleChildScrollView(
+            child: Container(
               margin: EdgeInsets.only(top: imageHeight - 30),
               width: double.infinity,
               decoration: BoxDecoration(
@@ -68,12 +52,23 @@ class RequestSent extends StatelessWidget {
                   ),
                 ],
               ),
-              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  saloonName == null || saloonName!.isEmpty
+                      ? SizedBox.shrink() 
+                      : Text(
+                          'By : ${saloonName}',
+                          style: GoogleFonts.poppins(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+
+                  SizedBox(height: 10),
                   Text(
-                    'Congratulations 🎉',
+                    '              Congratulations 🎉',
                     style: GoogleFonts.poppins(
                       fontSize: 22.sp,
                       fontWeight: FontWeight.bold,
@@ -199,11 +194,10 @@ class RequestSent extends StatelessWidget {
                   SizedBox(height: 25.h),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushAndRemoveUntil(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => UserAppointmnets(),
-                        ),
+                        MaterialPageRoute(builder: (_) => Usernavigationbar()),
+                        (route) => false,
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -226,8 +220,24 @@ class RequestSent extends StatelessWidget {
                 ],
               ),
             ),
-          ],
-        ),
+          ),
+          Positioned(
+            top: 50,
+            left: 16,
+            child: CircleAvatar(
+              radius: 16,
+              backgroundColor: Colors.white.withOpacity(0.8),
+              child: IconButton(
+                icon: const Icon(
+                  Icons.arrow_back_ios_new,
+                  color: Colors.black,
+                  size: 14,
+                ),
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

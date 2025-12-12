@@ -1,3 +1,5 @@
+import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -8,9 +10,10 @@ import 'package:KGlam/View/Login%20&%20signup/Forgot_password.dart';
 import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
 import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
 import 'package:KGlam/View/user_side/UserNavigationBar.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
-  final int? index;
+  final String? index;
   final int? logicIndex;
   final int? logicIndexUser;
   LoginScreen({this.index, this.logicIndex, this.logicIndexUser});
@@ -19,20 +22,16 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  Utils utils = Utils();
 
-  @override
-  void initState() {
-    super.initState();
-    utils.initToast(context);
-  }
-
-  //TextEditingController UserName = TextEditingController();
+  TextEditingController UserName = TextEditingController();
+  TextEditingController phoneNumber = TextEditingController();
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
-  //TextEditingController confirmPassword = TextEditingController();
+  TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
+    final authProvier = Provider.of<AuthProvider>(context);
     print(widget.index);
     print(widget.logicIndex);
     print(widget.logicIndexUser);
@@ -65,8 +64,8 @@ class _LoginScreenState extends State<LoginScreen> {
                     children: [
                       Image.asset(
                         'assets/images/Logo.png',
-                        width: 120,
-                        height: 120,
+                        width: 140,
+                        height: 140,
                         fit: BoxFit.contain,
                       ),
                     ],
@@ -131,8 +130,8 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: emailController,
-                              labelText: 'Email',
-                              hintText: 'Enter Email',
+                              labelText: 'Email / Phone Number',
+                              hintText: 'Enter Email Or Phone Number',
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
@@ -166,42 +165,64 @@ class _LoginScreenState extends State<LoginScreen> {
 
                             SizedBox(height: 30),
                             ElevatedButton(
-                              onPressed: () {
-                                if (widget.index == 1) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CustomNavigationBar(),
-                                    ),
-                                    ModalRoute.withName('/'),
-                                  );
-                                } else if (widget.index == 2) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Usernavigationbar(),
-                                    ),
-                                    ModalRoute.withName('/'),
-                                  );
-                                } else if (widget.logicIndex == 1) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          CustomNavigationBar(),
-                                    ),
-                                    ModalRoute.withName('/'),
-                                  );
-                                } else if (widget.logicIndexUser == 2) {
-                                  Navigator.pushAndRemoveUntil(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Usernavigationbar(),
-                                    ),
-                                    ModalRoute.withName('/'),
-                                  );
+                              onPressed: () async {
+                                final userInput =
+                                    emailController.text.isNotEmpty
+                                    ? emailController.text
+                                    : phoneNumber.text.isNotEmpty
+                                    ? phoneNumber.text
+                                    : UserName.text;
+                                bool success = await authProvier.loginApi(
+                                  userInput,
+                                  passwordController.text,
+                                );
+                                if (success) {
+                                  Future.microtask(() {
+                                    Navigator.pushAndRemoveUntil(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            SaloonInformation(),
+                                      ),
+                                      ModalRoute.withName('/'),
+                                    );
+                                  });
                                 }
+                                // if (widget.index == 1) {
+                                //   Navigator.pushAndRemoveUntil(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) =>
+                                //           CustomNavigationBar(),
+                                //     ),
+                                //     ModalRoute.withName('/'),
+                                //   );
+                                // } else if (widget.index == 2) {
+                                //   Navigator.pushAndRemoveUntil(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => Usernavigationbar(),
+                                //     ),
+                                //     ModalRoute.withName('/'),
+                                //   );
+                                // } else if (widget.logicIndex == 1) {
+                                //   Navigator.pushAndRemoveUntil(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) =>
+                                //           CustomNavigationBar(),
+                                //     ),
+                                //     ModalRoute.withName('/'),
+                                //   );
+                                // } else if (widget.logicIndexUser == 2) {
+                                //   Navigator.pushAndRemoveUntil(
+                                //     context,
+                                //     MaterialPageRoute(
+                                //       builder: (context) => Usernavigationbar(),
+                                //     ),
+                                //     ModalRoute.withName('/'),
+                                //   );
+                                // }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
@@ -213,14 +234,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                   48,
                                 ),
                               ),
-                              child: Text(
-                                'Login',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
+                              child: Center(
+                                child: authProvier.isLoading
+                                    ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                    : Text(
+                                        'Login',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
                             ),
                             SizedBox(height: 20),
@@ -240,7 +267,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   onPressed: () {
                                     if (widget.logicIndex == 1 ||
                                         widget.logicIndexUser == 2) {
-                                      Utils().toastMessage(
+                                      Utils.instance.toastMessage(
                                         'You are already Have an Account Please Log in',
                                       );
                                     } else {

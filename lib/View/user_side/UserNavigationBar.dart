@@ -44,19 +44,19 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
     final items = [
       Icon(
         Icons.home_rounded,
-        color: index == 0 ? Color(0xFF01ABAB) : Color(0xFF717680),
+        color: index == 0 ? Colors.black : Colors.black26
       ),
       Icon(
         Icons.event_note_rounded,
-        color: index == 1 ? Color(0xFF01ABAB) : Color(0xFF717680),
+        color: index == 1 ? Colors.black : Colors.black26
       ),
       Icon(
         Icons.person_outline_outlined,
-        color: index == 2 ? Color(0xFF01ABAB) : Color(0xFF717680),
+        color: index == 2 ? Colors.black : Colors.black26
       ),
       Icon(
         Icons.notifications_none_rounded,
-        color: index == 3 ? Color(0xFF01ABAB) : Color(0xFF717680),
+        color: index == 3 ? Colors.black : Colors.black26
       ),
     ];
 
@@ -76,7 +76,7 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
         extendBody: true,
         body: screens[index],
         bottomNavigationBar: CurvedNavigationBar(
-          color: Colors.white,
+          color: Color.fromARGB(255, 141, 202, 202),
           backgroundColor: Colors.transparent,
           items: items,
           height: 60,

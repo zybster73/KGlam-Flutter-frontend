@@ -6,7 +6,8 @@ import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:KGlam/View/user_side/customerHomescreen.dart';
 
 class Feedbackscreen extends StatefulWidget {
-  const Feedbackscreen({super.key});
+  final int? backuplogic;
+  const Feedbackscreen({super.key, this.backuplogic});
 
   @override
   State<Feedbackscreen> createState() => _FeedbackscreenState();
@@ -18,14 +19,19 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return PopScope(
-      canPop: false, 
+      canPop: false,
       onPopInvoked: (didPop) {
-        
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (_) => Usernavigationbar()),
-          (route) => false,
-        );
+        if (!didPop) {
+          if (widget.backuplogic == 1) {
+            Navigator.pop(context);
+          } else {
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (_) => Usernavigationbar()),
+              (route) => false,
+            );
+          }
+        }
       },
       child: Scaffold(
         backgroundColor: Colors.white,
@@ -47,26 +53,36 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                       ),
                     ),
                     Positioned(
-                      top: 40,
-                      left: 16,
-                      child: CircleAvatar(
-                        radius: 16.r,
-                        backgroundColor: Color(0xFF01ABAB),
-                        child: IconButton(
-                          icon: const Icon(
-                            Icons.arrow_back_ios_new,
+                      top: 50.h,
+                      left: 20.w,
+                      child: Container(
+                        height: 30,
+                        width: 30,
+                        decoration: BoxDecoration(
+                          color: Color(0xFF01ABAB),
+                          shape: BoxShape.circle,
+                        ),
+                        child: Center(
+                          child: IconButton(
+                            onPressed: () {
+                              if (widget.backuplogic == 1) {
+                                Navigator.pop(context);
+                              } else {
+                                Navigator.pushAndRemoveUntil(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => Usernavigationbar(),
+                                  ),
+                                  (route) => false,
+                                );
+                              }
+                            },
+                            iconSize: 18,
+                            padding: EdgeInsets.zero,
                             color: Colors.white,
-                            size: 14,
+
+                            icon: Icon(Icons.arrow_back_ios_sharp),
                           ),
-                          onPressed: () {
-                            Navigator.pushAndRemoveUntil(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => Usernavigationbar(),
-                              ),
-                              ModalRoute.withName('/'),
-                            );
-                          },
                         ),
                       ),
                     ),
@@ -87,16 +103,16 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                                 Text(
                                   'Feedback',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
+                                    fontSize: 24,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                SizedBox(height: 10),
+                                // SizedBox(height: 10),
                                 Text(
                                   'View your feedback and completed appointments.',
                                   style: GoogleFonts.poppins(
-                                    fontSize: 13.sp,
+                                    fontSize: 16,
                                     color: Colors.black54,
                                   ),
                                 ),
@@ -106,7 +122,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                         ],
                       ),
                     ),
-      
+
                     Positioned(
                       top: 170.h,
                       left: 20.w,
@@ -115,7 +131,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                         children: [
                           Expanded(
                             child: TextFormField(
-                             // controller: searchController,
+                              // controller: searchController,
                               decoration: InputDecoration(
                                 hintText: 'Search Saloon and Services',
                                 hintStyle: GoogleFonts.poppins(
@@ -150,7 +166,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                               ),
                             ),
                           ),
-      
+
                           //SizedBox(width: 12.w),
                         ],
                       ),
@@ -158,7 +174,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                   ],
                 ),
               ),
-      
+
               /// APPOINTMENTS LIST
               Column(
                 children: [
@@ -170,9 +186,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     'Crown and Canvas',
                     'I got my hairstyle done at Canvas Salon — the result was amazing! The staff is very professional and the atmosphere is relaxing. I’ll definitely come back again. ⭐⭐⭐⭐⭐',
                   ),
-      
+
                   SizedBox(height: 10.h),
-      
+
                   _buildappointmantCard(
                     'Fresh Hair Cut Make Over :',
                     'assets/images/Ahair.jpg',
@@ -217,7 +233,7 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                 ),
               ],
             ),
-    
+
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -232,9 +248,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     ),
                   ),
                 ),
-    
+
                 SizedBox(height: 10.h),
-    
+
                 Text(
                   title,
                   style: GoogleFonts.poppins(
@@ -242,9 +258,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-    
+
                 SizedBox(height: 8.h),
-    
+
                 Row(
                   children: [
                     Image(image: AssetImage('assets/images/book.png')),
@@ -269,9 +285,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     ),
                   ],
                 ),
-    
+
                 SizedBox(height: 8.h),
-    
+
                 /// TIME
                 Row(
                   children: [
@@ -297,13 +313,11 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     ),
                   ],
                 ),
-    
+
                 SizedBox(height: 8.h),
                 Row(
                   children: [
-                    Image(
-                      image: AssetImage('assets/images/greylocation.png'),
-                    ),
+                    Image(image: AssetImage('assets/images/greylocation.png')),
                     SizedBox(width: 5.w),
                     Text(
                       'Location:',
@@ -325,9 +339,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     ),
                   ],
                 ),
-    
+
                 SizedBox(height: 10.h),
-    
+
                 Row(
                   children: [
                     Text(
@@ -340,9 +354,9 @@ class _FeedbackscreenState extends State<Feedbackscreen> {
                     ),
                   ],
                 ),
-    
+
                 SizedBox(height: 5.h),
-    
+
                 Text(
                   feedback,
                   style: GoogleFonts.poppins(

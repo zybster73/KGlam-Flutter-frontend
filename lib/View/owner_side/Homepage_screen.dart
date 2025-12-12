@@ -15,126 +15,126 @@ class _HomePageState extends State<HomePage> {
     final screenHeight = MediaQuery.of(context).size.height;
     return Container(
       color: Colors.white,
-      child: Column(
-        children: [
-          SizedBox(
-            height: screenHeight * 0.32,
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                Positioned(
-                  top: -0.05 * screenHeight,
-                  left: -10,
-                  child: Image.asset(
-                    'assets/images/Eclipse2.png',
-                    height: screenHeight * 0.35,
-                    width: screenWidth * 0.9,
-                    fit: BoxFit.contain,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: screenHeight * 0.32,
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  Positioned(
+                    top: -0.05 * screenHeight,
+                    left: -10,
+                    child: Image.asset(
+                      'assets/images/Eclipse2.png',
+                      height: screenHeight * 0.35,
+                      width: screenWidth * 0.9,
+                      fit: BoxFit.contain,
+                    ),
                   ),
-                ),
-
-                Padding(
-                  padding: const EdgeInsets.only(left: 10.0, bottom: 20),
-                  child: Row(
-                    children: [
-                      CircleAvatar(
-                        backgroundImage: AssetImage('assets/images/xxx.jpg'),
-                        radius: 30.r,
-                      ),
-                      Expanded(
-                        child: ListTile(
-                          title: Text(
-                            'Imtisal Hassan',
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
+              
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0, bottom: 20),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
+                          backgroundImage: AssetImage('assets/images/xxx.jpg'),
+                          radius: 30.r,
+                        ),
+                        Expanded(
+                          child: ListTile(
+                            title: Text(
+                              'Imtisal Hassan',
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          subtitle: Text(
-                            'Welcome, Salon Owner',
-                            style: GoogleFonts.poppins(
-                              color: Color(0xFF717680),
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
+                            subtitle: Text(
+                              'Welcome, Service Provider',
+                              style: GoogleFonts.poppins(
+                                color: Color(0xFF717680),
+                                fontWeight: FontWeight.w400,
+                                fontSize: 14,
+                              ),
                             ),
-                          ),
-                          trailing: IconButton(
-                            onPressed: () {
-                              Scaffold.of(context).openDrawer();
-                            },
-                            icon: Icon(
-                              Icons.menu,
-                              color: Colors.black,
-                              size: 26,
+                            trailing: IconButton(
+                              onPressed: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              icon: Icon(
+                                Icons.menu,
+                                color: Colors.black,
+                                size: 26,
+                              ),
                             ),
                           ),
                         ),
+                      ],
+                    ),
+                  ),
+              
+                  Positioned(
+                    top: screenHeight * 0.196,
+                    left: screenWidth * 0.05,
+                    child: Text(
+                      'DashBoard',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24,
                       ),
-                    ],
-                  ),
-                ),
-
-                Positioned(
-                  top: screenHeight * 0.196,
-                  left: screenWidth * 0.05,
-                  child: Text(
-                    'DashBoard',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 24,
                     ),
                   ),
-                ),
-
-                Positioned(
-                  top: screenHeight * 0.25,
-                  left: screenWidth * 0.05,
-                  child: Text(
-                    'In this KPI you can view the analytics\n of your bookings.',
-                    style: GoogleFonts.poppins(
-                      fontWeight: FontWeight.w400,
-                      fontSize: 16.sp,
-                      color: Color(0xFF717680),
+              
+                  Positioned(
+                    top: screenHeight * 0.25,
+                    left: screenWidth * 0.05,
+                    child: Text(
+                      'In this KPI you can view the analytics\n of your bookings.',
+                      style: GoogleFonts.poppins(
+                        fontWeight: FontWeight.w400,
+                        fontSize: 16.sp,
+                        color: Color(0xFF717680),
+                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: 10),
-
-          Expanded(
-            child: SingleChildScrollView(
-              child: Column(
-                children: [
-                  CustomContainer(
-                    'assets/images/Bookings.png',
-                    "Upcoming Bookings",
-                    '12 booking are coming in this week.',
-                    '12/11/2025',
-                  ),
-                  
-                  CustomContainer(
-                    'assets/images/Appointments.png',
-                    'Ongoing Appointments',
-                    '4 Appointments are ongoing today',
-                    '12/11/2025',
-                  ),
-                  
-                  CustomContainer(
-                    'assets/images/elli.png',
-                    'Past Appointments',
-                    '400 Appointments are done till now',
-                    '12/11/2025',
                   ),
                 ],
               ),
             ),
-          ),
-          SizedBox(height: 60.h,)
-        ],
+        
+            SizedBox(height: 10),
+        
+            Column(
+              children: [
+                CustomContainer(
+                  'assets/images/Bookings.png',
+                  "Upcoming Bookings",
+                  '12 booking are coming in this week.',
+                  '12/11/2025',
+                ),
+                
+                CustomContainer(
+                  'assets/images/Appointments.png',
+                  'Ongoing Appointments',
+                  '4 Appointments are ongoing today',
+                  '12/11/2025',
+                ),
+                
+                CustomContainer(
+                  'assets/images/elli.png',
+                  'Past Appointments',
+                  '400 Appointments are done till now',
+                  '12/11/2025',
+                ),
+                SizedBox(height: 70.h,)
+              ],
+              
+            ),
+            
+          ],
+        ),
       ),
     );
   }

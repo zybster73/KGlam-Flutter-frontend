@@ -13,13 +13,7 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  Utils utils = Utils();
-
-  @override
-  void initState() {
-    super.initState();
-    utils.initToast(context);
-  }
+  
 
   List<int> values = List.generate(5, (index) => 0);
 
@@ -27,6 +21,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   int value = 0;
   @override
   Widget build(BuildContext context) {
+     Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     //ScreenUtil.init(context);
@@ -67,7 +62,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   iconSize: 18,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
-
+      
                   icon: Icon(Icons.arrow_back_ios_sharp),
                 ),
               ),
@@ -79,7 +74,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(height: 115.h),
-
+      
                 Text(
                   "Appointment's",
                   style: GoogleFonts.poppins(
@@ -89,7 +84,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
                 SizedBox(height: 6.h),
-
+      
                 Text(
                   "View your upcoming, in progress and\ncompleted bookings.",
                   style: GoogleFonts.poppins(
@@ -140,12 +135,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     ),
                   ],
                 ),
-
+      
                 SizedBox(height: 25.h),
                 Expanded(
                   child: ListView.builder(
                     itemCount: 5,
-                    padding: EdgeInsets.only(bottom: 20.h),
+                    padding: EdgeInsets.only(bottom: 70.h, top: 0),
                     itemBuilder: (_, index) {
                       return Container(
                         margin: EdgeInsets.only(bottom: 20.h),
@@ -165,7 +160,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             ),
                           ],
                         ),
-
+                
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -192,7 +187,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ),
                             ),
                             SizedBox(height: 8.h),
-
+                
                             Row(
                               children: [
                                 const Icon(
@@ -213,7 +208,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                               ],
                             ),
                             SizedBox(height: 8.h),
-
+                
                             Row(
                               children: [
                                 if (values[index] == 0)
@@ -250,7 +245,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   Expanded(
                                     child: GestureDetector(
                                       onTap: () {
-                                        utils.toastMessage('Click Accept');
+                                        Utils.instance.toastMessage('Click Accept');
                                       },
                                       child: Container(
                                         height: 48.h,
@@ -281,12 +276,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   Expanded(
                                     child: ElevatedButton(
                                       onPressed: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (context) =>
-                                                CustomNavigationBar(),
-                                          ),
+                                        Utils.instance.toastMessage(
+                                          'Congrats! Appointment Completed',
                                         );
                                       },
                                       style: ElevatedButton.styleFrom(
@@ -320,7 +311,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     },
                   ),
                 ),
-                SizedBox(height: 30.h),
               ],
             ),
           ),
