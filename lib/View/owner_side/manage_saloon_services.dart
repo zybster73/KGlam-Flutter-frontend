@@ -1,23 +1,60 @@
+import 'dart:io';
+
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomImagePicker.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
+import 'package:provider/provider.dart';
 
 class ManageSaloonServices extends StatefulWidget {
+  
+  final Map<String, dynamic> service;
+  ManageSaloonServices({required this.service});
   @override
   State<ManageSaloonServices> createState() => _ManageSaloonServicesState();
 }
 
 class _ManageSaloonServicesState extends State<ManageSaloonServices> {
+  File? selectedImage;
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
   //TextEditingController saloonContact = TextEditingController();
   TextEditingController serviceHours = TextEditingController();
   TextEditingController serviceDescription = TextEditingController();
+  String? profileImageUrl;
+
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    final services = widget.service;
+    serviceName.text = services['service_name'] ?? '';
+    saloonPrice.text = services['service_price'] ?? '';
+    serviceHours.text = services['service_duration'] ?? '';
+    serviceDescription.text = services['service_desc'] ?? '';
+    profileImageUrl = services['service_image'];
+    isLoading = false;
+  }
+
+  @override
+  void dispose() {
+    // Dispose controllers
+    serviceName.dispose();
+    saloonPrice.dispose();
+    serviceHours.dispose();
+    serviceDescription.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
+    final salonApi = Provider.of<SalonApiProvider>(context);
+    Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -88,9 +125,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 return ConstrainedBox(
-                  constraints: BoxConstraints(
-                    minHeight: constraints.maxHeight,
-                  ),
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
                   child: Container(
                     width: MediaQuery.of(context).size.width,
                     decoration: BoxDecoration(
@@ -107,74 +142,101 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                         right: 8,
                       ),
                       child: SingleChildScrollView(
-                        child: Column(
-                          children: [
-                            CustomTextField(
-                              controller: serviceName,
-                              hintText: "Enter Service Name",
-                              labelText: 'Service Name',
-                            ),
-                            SizedBox(height: 10),
-                            CustomTextField(
-                              controller: saloonPrice,
-                              labelText: 'Service Price',
-                              hintText: 'Enter Service Price',
-                            ),
-                            SizedBox(height: 10),
-                            // CustomTextField(
-                            //   controller: saloonContact,
-                            //   labelText: "Saloon Contact",
-                            //   hintText: "Saloon Contact",
-                            // ),
-                            // SizedBox(height: 10),
-                            CustomTextField(
-                              controller: serviceHours,
-                              labelText: "Service Estimated Duration",
-                              hintText: "Enter Duration",
-                            ),
-                            SizedBox(height: 10),
-                            CustomTextField(
-                              controller: serviceDescription,
-                              labelText: 'Service Description',
-                              hintText: 'Enter Description...',
-                              length: 4,
-                            ),
-                            SizedBox(height: 10),
-                            UploadImageCard(
-                              title: "Upload Service Image Or Video",
-                            
-                            ),
-                            SizedBox(height: 5),
-                            
-                            SizedBox(height: 20),
-                            ElevatedButton(
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
+                        child: isLoading
+                            ? Center(
+                                child: CircularProgressIndicator(
+                                  color: Color(0xFF01ABAB),
                                 ),
-                                backgroundColor: Color(0xFF01ABAB),
-                                minimumSize: Size(
-                                  MediaQuery.sizeOf(context).width * 0.96,
-                                  50,
-                                ),
+                              )
+                            : Column(
+                                children: [
+                                  CustomTextField(
+                                    controller: serviceName,
+                                    hintText: "Enter Service Name",
+                                    labelText: 'Service Name',
+                                  ),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: saloonPrice,
+                                    labelText: 'Service Price',
+                                    hintText: 'Enter Service Price',
+                                  ),
+                                  SizedBox(height: 10),
+                                  // CustomTextField(
+                                  //   controller: saloonContact,
+                                  //   labelText: "Saloon Contact",
+                                  //   hintText: "Saloon Contact",
+                                  // ),
+                                  // SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: serviceHours,
+                                    labelText: "Service Estimated Duration",
+                                    hintText: "Enter Duration",
+                                  ),
+                                  SizedBox(height: 10),
+                                  CustomTextField(
+                                    controller: serviceDescription,
+                                    labelText: 'Service Description',
+                                    hintText: 'Enter Description...',
+                                    length: 4,
+                                  ),
+                                  SizedBox(height: 10),
+                                  UploadImageCard(
+                                    initialImageUrl:profileImageUrl ,
+                                    title: "Upload Service Image Or Video",
+                                    onImageSelected: (image) {
+                                    
+                                      selectedImage = image;
+                                    },
+                                  ),
+                                  SizedBox(height: 5),
+
+                                  SizedBox(height: 20),
+                                  ElevatedButton(
+                                    onPressed: () async {
+                                      final result = await salonApi
+                                          .updateService(
+                                            widget.service['id'],
+                                            serviceName.text,
+                                            saloonPrice.text,
+                                            serviceHours.text,
+                                            serviceDescription.text,
+                                            selectedImage,
+                                          );
+                                      if (result['success'] == true) {
+                                        Navigator.pop(context, true);
+                                      }
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      backgroundColor: Color(0xFF01ABAB),
+                                      minimumSize: Size(
+                                        MediaQuery.sizeOf(context).width * 0.96,
+                                        50,
+                                      ),
+                                    ),
+                                    child: salonApi.isLoading
+                                        ? Center(
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                            ),
+                                          )
+                                        : Text(
+                                            'Save',
+                                            textAlign: TextAlign.center,
+                                            style: GoogleFonts.poppins(
+                                              color: Colors.white,
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                  ),
+
+                                  SizedBox(height: 20),
+                                ],
                               ),
-                              child: Text(
-                                'Save',
-                                textAlign: TextAlign.center,
-                                style: GoogleFonts.poppins(
-                                  color: Colors.white,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ),
-                                        
-                            SizedBox(height: 20),
-                          ],
-                        ),
                       ),
                     ),
                   ),

@@ -1,4 +1,5 @@
 import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/Services/validations.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/Login%20&%20signup/verifyEmail.dart';
 import 'package:flutter/material.dart';
@@ -18,17 +19,18 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  
-
   TextEditingController UserName = TextEditingController();
   TextEditingController emailphoneNumberController = TextEditingController();
   TextEditingController phoneNumberController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-     Utils.instance.initToast(context);
+    Utils.instance.initToast(context);
+    print(widget.index);
     final authProvier = Provider.of<AuthProvider>(context);
+    final validations = Provider.of<Validations>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -129,6 +131,12 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: emailphoneNumberController,
                               labelText: 'Email',
                               hintText: 'Enter Email ',
+                              errorText: validations.emailError,
+                              onChanged: (value) {
+                                validations.validateEmail(
+                                  value,
+                                );
+                              },
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
@@ -141,25 +149,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: passwordController,
                               labelText: "Password",
                               hintText: "Enter Password",
+                              obscureText: true,
+                              errorText: validations.passwordError,
+                              onChanged: (value) {
+                                validations.validatePassword(value);
+                              },
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: confirmPassword,
                               labelText: "Confirm Password",
                               hintText: "Enter Password",
+                              obscureText: true,
+                              errorText: validations.confirmPasswordError,
+                              onChanged: (value) {
+                                validations.validateConfirmPassword(
+                                  password: passwordController.text,
+                                  confirmPassword: value,
+                                );
+                              },
                             ),
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () async {
-                                bool success = await authProvier.signUp(
-                                  UserName.text,
+                                final result = await authProvier.signUp(
+                                  UserName.text.toLowerCase(),
                                   emailphoneNumberController.text,
                                   phoneNumberController.text,
                                   passwordController.text,
                                   confirmPassword.text,
                                   widget.index,
                                 );
-                                if (success) {
+                                if (result['success'] == true) {
                                   Future.microtask(() {
                                     Navigator.push(
                                       context,
@@ -167,6 +188,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         builder: (context) => Verifyemail(
                                           email:
                                               emailphoneNumberController.text,
+                                          index: widget.index,
                                         ),
                                       ),
                                     );

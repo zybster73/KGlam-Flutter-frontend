@@ -146,10 +146,10 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () async {
-                                bool success = await authProvider
+                                final result = await authProvider
                                     .forgotPassword(emailController.text);
 
-                                if (success) {
+                                if (result['success'] == true) {
                                   Future.microtask(() {
                                     Navigator.push(
                                       context,

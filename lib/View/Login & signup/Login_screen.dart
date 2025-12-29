@@ -1,4 +1,6 @@
 import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/Services/storeToken.dart';
+import 'package:KGlam/Services/validations.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -11,6 +13,7 @@ import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
 import 'package:KGlam/View/Login%20&%20signup/saloon_information.dart';
 import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
   final String? index;
@@ -22,7 +25,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-
   TextEditingController UserName = TextEditingController();
   TextEditingController phoneNumber = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -30,6 +32,7 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final validations = Provider.of<Validations>(context);
     Utils.instance.initToast(context);
     final authProvier = Provider.of<AuthProvider>(context);
     print(widget.index);
@@ -105,26 +108,24 @@ class _LoginScreenState extends State<LoginScreen> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
-                    ),
-                    child: Container(
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                return ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                  child: Container(
+                    width: MediaQuery.of(context).size.width,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
                       ),
-                      child: Padding(
-                        padding: const EdgeInsets.only(
-                          top: 8.0,
-                          left: 8,
-                          right: 8,
-                        ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.only(
+                        top: 8.0,
+                        left: 8,
+                        right: 8,
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
                             SizedBox(height: 10),
@@ -132,12 +133,17 @@ class _LoginScreenState extends State<LoginScreen> {
                               controller: emailController,
                               labelText: 'Email / Phone Number',
                               hintText: 'Enter Email Or Phone Number',
+                              errorText: validations.emailError,
+                              onChanged: (value) {
+                                validations.validateEmail(value);
+                              },
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: passwordController,
                               labelText: "Password",
                               hintText: "Enter Password",
+                              obscureText: true,
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -172,21 +178,44 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : phoneNumber.text.isNotEmpty
                                     ? phoneNumber.text
                                     : UserName.text;
-                                bool success = await authProvier.loginApi(
+                                final result = await authProvier.loginApi(
                                   userInput,
                                   passwordController.text,
                                 );
-                                if (success) {
-                                  Future.microtask(() {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            SaloonInformation(),
-                                      ),
-                                      ModalRoute.withName('/'),
-                                    );
-                                  });
+                                if (result['success'] == true) {
+                                  if (widget.index == 'owner') {
+                                    final salon = result['data']['data']['salon']; 
+                                    if (salon == null) {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => SaloonInformation(),
+
+                                        ),
+                                      );
+                                    }else{
+                                      await Storetoken.saveSalonId(salon['id']);
+                                       Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              CustomNavigationBar(),
+                                        ),
+                                        ModalRoute.withName('/'),
+                                      );
+                                    }
+                                  } else if (widget.index == 'customer') {
+                                    Future.microtask(() {
+                                      Navigator.pushAndRemoveUntil(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Usernavigationbar(),
+                                        ),
+                                        ModalRoute.withName('/'),
+                                      );
+                                    });
+                                  }
                                 }
                                 // if (widget.index == 1) {
                                 //   Navigator.pushAndRemoveUntil(
@@ -274,8 +303,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) =>
-                                              RegisterScreen(),
+                                          builder: (context) => RegisterScreen(
+                                            index: widget.index,
+                                          ),
                                         ),
                                       );
                                     }

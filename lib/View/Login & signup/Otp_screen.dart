@@ -211,12 +211,15 @@ class _OtpVerificationState extends State<OtpVerification> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(
-                                  "Continue",
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.w600,
-                                    fontSize: 16,
+                                child: Center(
+                                  child: authProvider.isLoading ? CircularProgressIndicator() :
+                                  Text(
+                                    "Continue",
+                                    style: GoogleFonts.poppins(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                    ),
                                   ),
                                 ),
                               ),

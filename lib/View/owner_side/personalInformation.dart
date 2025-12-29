@@ -215,18 +215,21 @@ class _PersonalinformationState extends State<Personalinformation> {
                           controller: oldPassword,
                           labelText: "Old Password",
                           hintText: "*********",
+                          obscureText: true,
                         ),
                         SizedBox(height: 10),
                         CustomTextField(
                           controller: newPassword,
                           labelText: "New Password",
                           hintText: "***********",
+                          obscureText: true,
                         ),
                         SizedBox(height: 10),
                         CustomTextField(
                           controller: confirmPassword,
                           labelText: "Confirm New Password",
                           hintText: "**********",
+                          obscureText: true,
                         ),
                         SizedBox(height: 10),
                       ],
@@ -255,16 +258,18 @@ class _PersonalinformationState extends State<Personalinformation> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: salonApi.isLoading
-                    ? CircularProgressIndicator()
-                    : Text(
-                        "Save Changes",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
+                child: Center(
+                  child: salonApi.isLoading
+                      ? CircularProgressIndicator()
+                      : Text(
+                          "Save Changes",
+                          style: GoogleFonts.poppins(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
+                ),
               ),
             ),
             SizedBox(height: 15.h),

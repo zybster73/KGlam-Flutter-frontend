@@ -1,8 +1,12 @@
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/Services/validations.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/selectRole.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class UserProfile extends StatefulWidget {
   final VoidCallback? onBack;
@@ -19,8 +23,50 @@ class _UserProfileState extends State<UserProfile> {
   TextEditingController oldPassword = TextEditingController();
   TextEditingController newPassword = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+    nameEmail();
+  }
+
+  bool isloading = true;
+
+  String email = '';
+  String name = '';
+
+  Future<void> fetchUserData() async {
+    final data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        userName.text = data['username'];
+        emailCtrl.text = data['email'];
+        PhoneNum.text = data['contact_number'];
+        isloading = false;
+      });
+    }
+  }
+
+  Future<void> nameEmail() async {
+    final data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        name = data['username'];
+        email = data['email'];
+
+        isloading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
+    final validations = Provider.of<Validations>(context);
+    final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -127,17 +173,14 @@ class _UserProfileState extends State<UserProfile> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text(
-                        'Abdullah Khan',
+                        name,
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
 
-                      Text(
-                        'abdullahkhan@gmail.com',
-                        style: GoogleFonts.poppins(fontSize: 14),
-                      ),
+                      Text(email, style: GoogleFonts.poppins(fontSize: 14)),
                     ],
                   ),
                 ],
@@ -147,61 +190,83 @@ class _UserProfileState extends State<UserProfile> {
             SizedBox(height: 10.h),
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  CustomTextField(
-                    controller: userName,
-                    labelText: 'User Name',
-                    hintText: "Abdullah Khan",
-                  ),
-                  SizedBox(height: 10),
-                  CustomTextField(
-                    controller: emailCtrl,
-                    labelText: "Email",
-                    hintText: "abdullahkhanh2@gmail.com",
-                  ),
-                   SizedBox(height: 10),
-                  CustomTextField(
-                    controller: PhoneNum,
-                    labelText: 'Phone Number',
-                    hintText: 'Enter Phone Number',
-                  ),
-                  SizedBox(height: 10),
-                  CustomTextField(
-                    controller: oldPassword,
-                   labelText: "Old Password",
-                    hintText: "*********",
-                    ),
-                    SizedBox(height: 10),
-                    CustomTextField(
-                      controller: newPassword,
-                       labelText: "New Password",
-                        hintText: "***********",
+              child: isloading
+                  ? Center(
+                      child: CircularProgressIndicator(
+                        color: Color(0xFF01ABAB),
+                      ),
+                    )
+                  : Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomTextField(
+                          controller: userName,
+                          labelText: 'User Name',
+                          hintText: "Abdullah Khan",
                         ),
                         SizedBox(height: 10),
-                   CustomTextField(
-                    controller: confirmPassword,
-                     labelText: "Confirm New Password",
-                      hintText: "**********"
-                      ),
-                    SizedBox(height: 10),
-                ],
-              ),
+                        CustomTextField(
+                          controller: emailCtrl,
+                          labelText: "Email",
+                          hintText: "abdullahkhanh2@gmail.com",
+                        ),
+                        SizedBox(height: 10),
+                        CustomTextField(
+                          controller: PhoneNum,
+                          labelText: 'Phone Number',
+                          hintText: 'Enter Phone Number',
+                        ),
+                        SizedBox(height: 10),
+                        CustomTextField(
+                          controller: oldPassword,
+                          labelText: "Old Password",
+                          hintText: "*********",
+                          obscureText: true,
+                        ),
+                        SizedBox(height: 10),
+                        CustomTextField(
+                          controller: newPassword,
+                          labelText: "New Password",
+                          hintText: "***********",
+                          obscureText: true,
+                          errorText: validations.passwordError,
+                          onChanged: (value) {
+                            validations.validatePassword(value);
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        CustomTextField(
+                          controller: confirmPassword,
+                          labelText: "Confirm New Password",
+                          hintText: "**********",
+                          obscureText: true,
+                          errorText: validations.confirmPasswordError,
+                          onChanged: (value) {
+                            validations.validateConfirmPassword(
+                              password: confirmPassword.text,
+                              confirmPassword: value,
+                            );
+                          },
+                        ),
+                        SizedBox(height: 10),
+                      ],
+                    ),
             ),
             SizedBox(height: 15.h),
             Padding(
               padding: const EdgeInsets.only(left: 10.0, right: 10),
               child: ElevatedButton(
-                onPressed: () {
-                  // Navigator.push(
-                  //   context,
-                  //   MaterialPageRoute(
-                  //     builder: (context) => Appointments(),
-                  //   ),
+                onPressed: () async {
+                  bool success = await salonApi.updateUserDetails(
+                    oldPassword.text,
+                    newPassword.text,
+                    confirmPassword.text,
+                  );
 
-                  // );
+                  if (success) {
+                    print('updated successfully');
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFF01ABAB),
@@ -211,14 +276,16 @@ class _UserProfileState extends State<UserProfile> {
                   ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
-                child: Text(
-                  "Save Changes",
-                  style: GoogleFonts.poppins(
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
+                child: salonApi.isLoading
+                    ? CircularProgressIndicator(color: Colors.white)
+                    : Text(
+                        "Save Changes",
+                        style: GoogleFonts.poppins(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
               ),
             ),
             SizedBox(height: 15.h),

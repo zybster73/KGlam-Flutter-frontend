@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:KGlam/Services/Base_Urls.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
@@ -7,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
-class AuthProvider extends ChangeNotifier {
-  
 
+class AuthProvider extends ChangeNotifier {
   final url = BaseUrls.baseUrl;
 
   bool isLoading = false;
@@ -19,7 +17,7 @@ class AuthProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> signUp(
+  Future<Map<String, dynamic>> signUp(
     String username,
     String email,
     String phoneNumber,
@@ -44,35 +42,35 @@ class AuthProvider extends ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        print(response.body);
         Utils.instance.toastMessage(responseData['msg']);
-        return true;
+        print(response.body);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstField = responseData['errors'].keys.first;
-
-          String errorMessage = responseData['errors'][firstField][0];
-
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstField][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
-
+        Utils.instance.toastMessage(message);
         print(response.body);
-
-        return false;
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage(e.toString());
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
-    return false;
   }
 
-  Future<bool> verifyEmail(String otpController) async {
+  Future<Map<String, dynamic>> verifyEmail(String otpController) async {
     setLoading(true);
     try {
       Response response = await http.post(
@@ -80,83 +78,98 @@ class AuthProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({'otp': otpController}),
       );
-      print("VERIFY STATUS: ${response.statusCode}");
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
         Utils.instance.toastMessage(responseData['msg']);
-        print("VERIFY STATUS: ${response.statusCode}");
-        return true;
+        print(response.body);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstField = responseData['errors'].keys.first;
-          String errorMessage = responseData['errors'][firstField][0];
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstField][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
+        Utils.instance.toastMessage(message);
         print(response.body);
-        return false;
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
-    return false;
   }
 
-  Future<bool> loginApi(String email_username_password, String password) async {
+  Future<Map<String, dynamic>> loginApi(
+    String email_username_password,
+    String password,
+  ) async {
     setLoading(true);
     try {
       Response response = await http.post(
         Uri.parse(url + 'login/'),
         headers: {"Content-Type": "application/json"},
-
         body: jsonEncode({
           'username_email_contact': email_username_password,
           'password': password,
         }),
       );
       var responseData = jsonDecode(response.body);
+      var salonId = responseData['data']?['salon']?['salon_id'];
+
+      if (salonId != null) {
+        await Storetoken.saveSalonId(salonId);
+        print(salonId);
+      } else {
+        print('token is not saved');
+      }
 
       if (response.statusCode == 200) {
         Utils.instance.toastMessage('Login Successfully');
         print(response.body);
-
         var accessToken = responseData['tokens']?['access'];
-
-        await Storetoken.saveToken(accessToken);
-
         if (accessToken != null) {
           await Storetoken.saveToken(accessToken);
-          print("Saved token: $accessToken");
+          print(accessToken);
+        } else {
+          print('token is not saved');
         }
-
-        return true;
+        return {
+          'success': true,
+          'message': 'Login Successfully',
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstField = responseData['errors'].keys.first;
-          String errorMessage = responseData['errors'][firstField][0];
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstField][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
+        Utils.instance.toastMessage(message);
+        print(response.body);
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
-      return false;
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
-    return false;
   }
 
-  Future<bool> forgotPassword(String emailOrphonenumber) async {
+  Future<Map<String, dynamic>> forgotPassword(String emailOrphonenumber) async {
     setLoading(true);
     try {
       Response response = await http.post(
@@ -168,31 +181,32 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         Utils.instance.toastMessage(responseData['msg']);
+
         print(response.body);
-        return true;
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstfield = responseData['errors'].keys.first;
-
-          String errorMessage = responseData['errors'][firstfield][0];
-
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstfield][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
-
         print(response.body);
-
-        return false;
+        Utils.instance.toastMessage(message);
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
-    return false;
   }
 
   Future<String?> forgotEmailOtp(String otp) async {
@@ -203,24 +217,21 @@ class AuthProvider extends ChangeNotifier {
         headers: {"Content-Type": "application/json"},
         body: jsonEncode({'otp': otp}),
       );
-
       var responseData = jsonDecode(response.body);
-
       if (response.statusCode == 200) {
         Utils.instance.toastMessage(responseData['msg']);
-
+        print(response.body);
         return responseData["reset_token"];
       } else {
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstfield = responseData['errors'].keys.first;
-
           String errorMessage = responseData['errors'][firstfield][0];
-
           Utils.instance.toastMessage(errorMessage);
         } else if (responseData['msg'] != null) {
           Utils.instance.toastMessage(responseData['msg']);
         }
+        print(response.body);
         return null;
       }
     } catch (e) {
@@ -228,11 +239,10 @@ class AuthProvider extends ChangeNotifier {
       return null;
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
   }
 
-  Future<bool> resetPassowrd(
+  Future<Map<String, dynamic>> resetPassowrd(
     String password,
     String confirmPass,
     String resetToken,
@@ -252,29 +262,34 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         Utils.instance.toastMessage(responseData['msg']);
-        return true;
+        print(response.body);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstField = responseData['errors'].keys.first;
-          String errorMessage = responseData['errors'][firstField][0];
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstField][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
+        Utils.instance.toastMessage(message);
         print(response.body);
-        return false;
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-    // notifyListeners();
     }
-    return false;
   }
 
-  Future<bool> resendOtp(String email_username) async {
+  Future<Map<String, dynamic>> resendOtp(String email_username) async {
     setLoading(true);
     try {
       Response response = await http.post(
@@ -286,25 +301,30 @@ class AuthProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         Utils.instance.toastMessage(responseData['msg']);
-        return true;
+        print(response.body);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
       } else {
+        String message = '';
         if (responseData['errors'] != null &&
             responseData['errors'].isNotEmpty) {
           var firstField = responseData['errors'].keys.first;
-          String errorMessage = responseData['errors'][firstField][0];
-          Utils.instance.toastMessage(errorMessage);
+          message = responseData['errors'][firstField][0];
         } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
+          message = responseData['msg'];
         }
+        Utils.instance.toastMessage(message);
         print(response.body);
-        return false;
+        return {'success': false, 'message': message};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);
-      // notifyListeners();
     }
-    return false;
   }
 }

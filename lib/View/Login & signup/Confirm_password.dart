@@ -143,22 +143,24 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                               controller: passwordController,
                               labelText: 'Password',
                               hintText: 'Enter Password',
+                              obscureText: true,
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: confirmPassword,
                               labelText: "Confirm Password",
                               hintText: 'Re-Enter Password',
+                              obscureText: true,
                             ),
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () async {
-                                bool success = await authProvider.resetPassowrd(
+                                final result = await authProvider.resetPassowrd(
                                   passwordController.text,
                                   confirmPassword.text,
                                   widget.resetToken,
                                 );
-                                if (success) {
+                                if (result['success'] == true) {
                                   Future.microtask(() {
                                     Navigator.pushAndRemoveUntil(
                                       context,

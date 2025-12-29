@@ -6,17 +6,17 @@ import 'package:KGlam/View/user_side/user_appointmnets.dart';
 
 class RequestSent extends StatelessWidget {
   final String imagePath;
-  final String serviceName;
-  final String description;
+  // final String serviceName;
+  // final String description;
   final int imageHeight;
-  final String saloonName;
+  // final String saloonName;
   const RequestSent({
     super.key,
     required this.imagePath,
-    required this.serviceName,
+    // required this.serviceName,
     required this.imageHeight,
-    required this.description,
-    required this.saloonName,
+    // required this.description,
+    // required this.saloonName,
   });
 
   @override
@@ -56,15 +56,15 @@ class RequestSent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  saloonName == null || saloonName!.isEmpty
-                      ? SizedBox.shrink() 
-                      : Text(
-                          'By : ${saloonName}',
-                          style: GoogleFonts.poppins(
-                            fontSize: 20.sp,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
+                  // saloonName == null || saloonName!.isEmpty
+                  //     ? SizedBox.shrink() 
+                  //     : Text(
+                  //         'By : ${saloonName}',
+                  //         style: GoogleFonts.poppins(
+                  //           fontSize: 20.sp,
+                  //           fontWeight: FontWeight.w500,
+                  //         ),
+                  //       ),
 
                   SizedBox(height: 10),
                   Text(

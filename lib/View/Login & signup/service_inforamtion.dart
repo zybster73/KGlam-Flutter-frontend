@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:KGlam/View/CustomWidgets/CustomImagePicker.dart';
 import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ServiceInforamtion extends StatefulWidget {
   @override
@@ -14,12 +16,23 @@ class ServiceInforamtion extends StatefulWidget {
 }
 
 class _ServiceInforamtionState extends State<ServiceInforamtion> {
-  
+  File? selectedImage;
+
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
   //TextEditingController saloonContact = TextEditingController();
   TextEditingController serviceHours = TextEditingController();
   TextEditingController serviceDescription = TextEditingController();
+
+  @override
+  void dispose() {
+    serviceName.dispose();
+    saloonPrice.dispose();
+    serviceHours.dispose();
+    serviceDescription.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     Utils.instance.initToast(context);
@@ -143,30 +156,35 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                             SizedBox(height: 10),
                             UploadImageCard(
                               title: "Upload Service Image Or Video",
+                              onImageSelected: (image){
+                                selectedImage = image;
+                              },
                             ),
                             SizedBox(height: 5),
 
                             SizedBox(height: 20),
                             ElevatedButton(
                               onPressed: () async {
-                                bool success = await salonApi
+                                final result = await salonApi
                                     .serviceInformation(
                                       serviceName.text,
                                       saloonPrice.text,
                                       serviceHours.text,
                                       serviceDescription.text,
+                                      selectedImage,
                                     );
-                                if (success) {
-                                  Future.microtask(() {
-                                    Navigator.pushAndRemoveUntil(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomNavigationBar(),
-                                      ),
-                                      ModalRoute.withName('/'),
-                                    );
-                                  });
+
+                                print(result);
+                                if (result['success']) {
+                                  
+                                  Navigator.pushAndRemoveUntil(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomNavigationBar(),
+                                    ),
+                                    ModalRoute.withName('/'),
+                                  );
                                 }
                               },
                               style: ElevatedButton.styleFrom(
@@ -179,17 +197,19 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                                   50,
                                 ),
                               ),
-                              child: salonApi.isLoading
-                                  ? CircularProgressIndicator()
-                                  : Text(
-                                      'Save',
-                                      textAlign: TextAlign.center,
-                                      style: GoogleFonts.poppins(
-                                        color: Colors.white,
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w600,
+                              child: Center(
+                                child: salonApi.isLoading
+                                    ? CircularProgressIndicator()
+                                    : Text(
+                                        'Save',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
                                       ),
-                                    ),
+                              ),
                             ),
 
                             SizedBox(height: 20),

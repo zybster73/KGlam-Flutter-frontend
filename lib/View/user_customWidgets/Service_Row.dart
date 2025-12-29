@@ -1,3 +1,4 @@
+import 'package:KGlam/Services/clientApi.dart';
 import 'package:KGlam/View/user_side/bookTopservice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -11,6 +12,8 @@ class Service_Row extends StatefulWidget {
 }
 
 class _Service_RowState extends State<Service_Row> {
+  
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -20,10 +23,11 @@ class _Service_RowState extends State<Service_Row> {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            _buildServiceCard('Haircut',
-             'assets/images/haircutFreepik.jpg',
-             'Hicks Salon', 
-             ),
+            _buildServiceCard(
+              'Haircut',
+              'assets/images/haircutFreepik.jpg',
+              'Hicks Salon',
+            ),
             SizedBox(width: 10.w),
             _buildServiceCard(
               'Nail Styling',
@@ -31,14 +35,16 @@ class _Service_RowState extends State<Service_Row> {
               'Royal Salon',
             ),
             SizedBox(width: 10.w),
-            _buildServiceCard('Facial',
-             'assets/images/facialFreepik.jpg',
-            'Stylish Cut Salon',
+            _buildServiceCard(
+              'Facial',
+              'assets/images/facialFreepik.jpg',
+              'Stylish Cut Salon',
             ),
             SizedBox(width: 10.w),
-            _buildServiceCard('Beard', 
-            'assets/images/beard.jpg',
-            'Crown Salon',
+            _buildServiceCard(
+              'Beard',
+              'assets/images/beard.jpg',
+              'Crown Salon',
             ),
           ],
         ),
@@ -52,8 +58,9 @@ class _Service_RowState extends State<Service_Row> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) =>
-                Booktopservice(Btitle: title, Bimage: imagePath, saloonName : title2 ),
+            builder: (context) => Booktopservice(
+              serviceId: 1,
+            ),
           ),
         );
       },
@@ -93,14 +100,14 @@ class _Service_RowState extends State<Service_Row> {
                 ),
                 textAlign: TextAlign.center,
               ),
-              Text('By : $title2',
-              
-              style: GoogleFonts.poppins(
+              Text(
+                'By : $title2',
+
+                style: GoogleFonts.poppins(
                   fontSize: 12.sp,
                   fontWeight: FontWeight.w300,
                 ),
                 textAlign: TextAlign.center,
-            
               ),
             ],
           ),

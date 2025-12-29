@@ -6,18 +6,17 @@ import 'package:KGlam/View/user_side/Time_Slots.dart';
 
 class Selected_Date extends StatefulWidget {
   final String imagePath;
-  final String Servicename;
-  final String description;
+  
+  
   final int imageheight;
-  final String saloonName;
+  
 
   const Selected_Date({
     super.key,
     required this.imagePath,
-    required this.Servicename,
+    
     required this.imageheight,
-    required this.description,
-    required this.saloonName,
+    
   });
 
   @override
@@ -27,13 +26,13 @@ class Selected_Date extends StatefulWidget {
 class _Selected_DateState extends State<Selected_Date> {
   double sheetPosition = -300;
 
-
   int? selectedDay;
+  String? formattedBookingDate;
   bool showToast = true;
 
   @override
   Widget build(BuildContext context) {
-     Utils.instance.initToast(context);
+    Utils.instance.initToast(context);
     return Scaffold(
       body: Stack(
         children: [
@@ -80,13 +79,13 @@ class _Selected_DateState extends State<Selected_Date> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            "By: ${widget.saloonName}",
-                            style: GoogleFonts.poppins(
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
+                          // Text(
+                          //   "By: ${widget.saloonName}",
+                          //   style: GoogleFonts.poppins(
+                          //     fontSize: 20.sp,
+                          //     fontWeight: FontWeight.w500,
+                          //   ),
+                          // ),
 
                           Text(
                             'Select Date',
@@ -114,6 +113,18 @@ class _Selected_DateState extends State<Selected_Date> {
                                     setState(() {
                                       selectedDay = day;
                                       showToast = false;
+                                      final now = DateTime.now();
+                                      final selectedDate = DateTime(
+                                        now.year,
+                                        now.month,
+                                        selectedDay!,
+                                      );
+                                      formattedBookingDate =
+                                          "${selectedDate.year}-${selectedDate.month.toString().padLeft(2, '0')}-${selectedDate.day.toString().padLeft(2, '0')}";
+
+                                      print(
+                                        "Booking Date: $formattedBookingDate",
+                                      );
                                     });
                                   },
                                   child: Container(
@@ -171,10 +182,10 @@ class _Selected_DateState extends State<Selected_Date> {
                                   MaterialPageRoute(
                                     builder: (context) => Time_Slots(
                                       imagePath: widget.imagePath,
-                                      Servicename: widget.Servicename,
+                                     // Servicename: widget.Servicename,
                                       imageheight: widget.imageheight,
-                                      description: widget.description,
-                                      saloonName : widget.saloonName,
+                                      //description: widget.description,
+                                      //saloonName: widget.saloonName,
                                     ),
                                   ),
                                 );
@@ -224,7 +235,6 @@ class _Selected_DateState extends State<Selected_Date> {
               ),
             ),
           ),
-           
         ],
       ),
     );

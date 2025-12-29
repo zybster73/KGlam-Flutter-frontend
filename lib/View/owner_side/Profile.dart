@@ -1,8 +1,12 @@
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:KGlam/View/owner_side/editProfileInformation.dart';
 import 'package:KGlam/View/owner_side/editProfileServices.dart';
+import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key});
@@ -12,15 +16,49 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  Map<String, dynamic>? profiles;
+  List services = [];
+  bool isServicesLoading = true;
+
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchProfiles();
+    fetchServices();
+  }
+
+  Future<void> fetchProfiles() async {
+    final response = await SalonApiProvider().getspecificSalon();
+
+    if (response != null) {
+      setState(() {
+        profiles = response;
+        isServicesLoading = false;
+      });
+    }
+  }
+
+  Future<List<dynamic>?> fetchServices() async {
+    final response = await SalonApiProvider().viewservicesofspecificSalon();
+
+    if (response != null) {
+      setState(() {
+        services = response;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
-        // 👈 MAIN FIX
         child: Stack(
           children: [
             Positioned(
@@ -85,24 +123,30 @@ class _ProfileState extends State<Profile> {
                   ),
 
                   SizedBox(height: 20.h),
-
-                  _Salooninformation(
-                    'assets/images/interior.jpg',
-                    'Crown and Canvas Saloon :',
-                    'Every visit is more than just a beauty appointment — it’s a creative experience designed to bring out your true style. Our expert stylists treat every strand like a stroke on a canvas, blending precision, color, and care to craft your perfect look.',
-                    'Downtown Lahore, at 25-G Main Boulevard, Gulberg II',
-                    '+92-311-87651231',
-                    '09:00 AM to 12:00 PM',
-                  ),
+                  profiles == null
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF717680),
+                          ),
+                        )
+                      : _Salooninformation(
+                          'assets/images/interior.jpg',
+                          '${profiles!['salon_name'] ?? ''} :',
+                          profiles!['salon_desc'] ?? '',
+                          profiles!['salon_address'] ?? '',
+                          profiles!['salon_contact'] ?? '',
+                          profiles!['hours_of_operation'] ?? '',
+                        ),
 
                   SizedBox(height: 20),
 
-                  _serviceCard(
-                    'Fresh Hair Cut Make Over :',
-                    "Whether you’re redefining your vibe or simply refreshing your appearance, we blend creativity with precision to give you a haircut that enhances your personality and turns heads effortlessly",
-                    "&18.00",
-                    "2 Hours",
-                  ),
+                  isServicesLoading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            color: Color(0xFF717680),
+                          ),
+                        )
+                      : _serviceCard(),
 
                   SizedBox(height: 50),
                 ],
@@ -209,13 +253,16 @@ class _ProfileState extends State<Profile> {
             SizedBox(height: 10),
 
             ElevatedButton(
-              onPressed: () {
-                Navigator.push(
+              onPressed: () async {
+                final updated = await Navigator.push(
                   context,
                   MaterialPageRoute(
                     builder: (context) => Editprofileinformation(),
                   ),
                 );
+                if (updated == true) {
+                  fetchProfiles();
+                }
               },
               style: ElevatedButton.styleFrom(
                 minimumSize: Size(double.infinity, 48),
@@ -235,7 +282,8 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget _serviceCard(servicename, servicedescription, price, time) {
+  Widget _serviceCard() {
+    final salonApi = Provider.of<SalonApiProvider>(context);
     return Container(
       width: 350.w,
       decoration: BoxDecoration(
@@ -255,26 +303,58 @@ class _ProfileState extends State<Profile> {
               ),
             ),
 
-            SizedBox(height: 10.h),
-
             ListView.builder(
-              itemCount: 2,
+              itemCount: services.length,
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
               itemBuilder: (context, index) {
+                final service = services[index];
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      servicename,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          service['service_name'],
+                          style: GoogleFonts.poppins(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Container(
+                          height: 30.h,
+                          width: 30.h,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.7),
+                            shape: BoxShape.circle,
+                          ),
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: Icon(
+                              Icons.edit,
+                              size: 16.sp,
+                              color: Color(0xFF01ABAB),
+                            ),
+                            onPressed: () async{
+                             bool updated = await Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      Editprofileservices(service : service),
+                                ),
+                              );
+                              if (updated == true) {
+                                fetchServices();
+                              }
+                            },
+                          ),
+                        ),
+                      ],
                     ),
 
                     Text(
-                      servicedescription,
+                      service['service_desc'],
                       style: GoogleFonts.poppins(
                         fontSize: 14,
                         color: Color(0xFF717680),
@@ -292,7 +372,7 @@ class _ProfileState extends State<Profile> {
                         ),
                         SizedBox(width: 10.w),
                         Text(
-                          price,
+                          service['service_price'],
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -304,7 +384,7 @@ class _ProfileState extends State<Profile> {
                         Icon(Icons.alarm, size: 21, color: Color(0xFF717680)),
                         SizedBox(width: 10.w),
                         Text(
-                          time,
+                          service['service_duration'],
                           style: GoogleFonts.poppins(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -319,27 +399,6 @@ class _ProfileState extends State<Profile> {
                   ],
                 );
               },
-            ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => Editprofileservices(),
-                  ),
-                );
-              },
-              style: ElevatedButton.styleFrom(
-                minimumSize: Size(double.infinity, 48),
-                backgroundColor: Color(0xFF01ABAB),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-              child: Text(
-                'Edit Changes',
-                style: GoogleFonts.poppins(fontSize: 16, color: Colors.white),
-              ),
             ),
           ],
         ),

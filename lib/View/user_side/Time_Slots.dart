@@ -6,18 +6,18 @@ import 'package:KGlam/View/user_side/Request_Sent.dart';
 
 class Time_Slots extends StatefulWidget {
   final String imagePath;
-  final String Servicename;
-  final String description;
+  //final String Servicename;
+  //final String description;
   final int imageheight;
-  final String saloonName;
+  // final String saloonName;
 
   const Time_Slots({
     super.key,
     required this.imagePath,
-    required this.Servicename,
+   // required this.Servicename,
     required this.imageheight,
-    required this.description,
-    required this.saloonName,
+   // required this.description,
+    //required this.saloonName,
   });
 
   @override
@@ -89,15 +89,15 @@ class _Time_SlotsState extends State<Time_Slots> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        widget.saloonName == null || widget.saloonName!.isEmpty
-                            ? SizedBox.shrink() // show nothing
-                            : Text(
-                                'By : ${widget.saloonName}',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
+                        // widget.saloonName == null || widget.saloonName!.isEmpty
+                        //     ? SizedBox.shrink() // show nothing
+                        //     : Text(
+                        //         'By : ${widget.saloonName}',
+                        //         style: GoogleFonts.poppins(
+                        //           fontSize: 20.sp,
+                        //           fontWeight: FontWeight.w500,
+                        //         ),
+                        //       ),
 
                         Text(
                           'Available Time Slots',
@@ -189,9 +189,9 @@ class _Time_SlotsState extends State<Time_Slots> {
                                   builder: (context) => RequestSent(
                                     imagePath: widget.imagePath,
                                     imageHeight: widget.imageheight,
-                                    serviceName: widget.Servicename,
-                                    description: widget.description,
-                                    saloonName: widget.saloonName,
+                                    // serviceName: widget.Servicename,
+                                    // description: widget.description,
+                                    // saloonName: widget.saloonName,
                                   ),
                                 ),
                               );

@@ -12,15 +12,15 @@ import 'package:provider/provider.dart';
 
 class Verifyemail extends StatefulWidget {
   final String email;
+  final String? index;
 
-  Verifyemail({required this.email});
+  Verifyemail({required this.email, required this.index});
   @override
   State<Verifyemail> createState() => _VerifyemailState();
 }
 
 class _VerifyemailState extends State<Verifyemail> {
   int timeLeft = 30;
-  
 
   // void startCountdown() {
   //   Timer.periodic(Duration(seconds: 1), (timer) {
@@ -38,8 +38,8 @@ class _VerifyemailState extends State<Verifyemail> {
 
   @override
   Widget build(BuildContext context) {
-     Utils.instance.initToast(context);
-    final authProvier = Provider.of<AuthProvider>(context, listen: false);
+    Utils.instance.initToast(context);
+    final authProvier = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     print("BUILD RUNNING");
@@ -118,7 +118,7 @@ class _VerifyemailState extends State<Verifyemail> {
                 ),
                 SizedBox(height: screenHeight * 0.008),
                 Text(
-                  'Kindly check your email and/n verify the OTP',
+                  'Kindly check your email and\n verify the OTP',
                   style: GoogleFonts.poppins(
                     color: Colors.white,
                     fontSize: screenWidth * 0.04,
@@ -212,19 +212,23 @@ class _VerifyemailState extends State<Verifyemail> {
                                     return;
                                   }
 
-                                  bool success = await authProvier.verifyEmail(
+                                  final result = await authProvier.verifyEmail(
                                     _pinemailController.text,
                                   );
 
-                                  if (success) {
-                                    Future.microtask(() {
+                                  if (!mounted) return;
+
+                                  if (result['success'] == true) {
+                                    
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => LoginScreen(),
+                                          builder: (context) => LoginScreen(
+                                            index: widget.index,
+                                          ),
                                         ),
                                       );
-                                    });
+                                    
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -234,18 +238,20 @@ class _VerifyemailState extends State<Verifyemail> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: authProvier.isLoading
-                                    ? CircularProgressIndicator(
-                                        color: Colors.white,
-                                      )
-                                    : Text(
-                                        "Continue",
-                                        style: GoogleFonts.poppins(
+                                child: Center(
+                                  child: authProvier.isLoading
+                                      ? CircularProgressIndicator(
                                           color: Colors.white,
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 16,
+                                        )
+                                      : Text(
+                                          "Continue",
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
                                         ),
-                                      ),
+                                ),
                               ),
 
                               SizedBox(height: 10),
@@ -267,7 +273,9 @@ class _VerifyemailState extends State<Verifyemail> {
                                             await authProvier.resendOtp(
                                               widget.email,
                                             );
-                                            Utils.instance.toastMessage('OTP Resend');
+                                            Utils.instance.toastMessage(
+                                              'OTP Resend',
+                                            );
                                             // startCountdown();
                                           }
                                         : null,

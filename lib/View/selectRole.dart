@@ -1,3 +1,4 @@
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/Login%20&%20signup/Register_screen.dart';
@@ -144,7 +145,7 @@ class _SelectRoleState extends State<SelectRole> {
         print(value);
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => RegisterScreen(index: value)),
+          MaterialPageRoute(builder: (context) => LoginScreen(index: value)),
         );
       },
       child: Padding(

@@ -7,24 +7,20 @@ import 'package:video_player/video_player.dart';
 import 'Selected_Date.dart';
 
 class Selected_Service extends StatefulWidget {
-  final String imagePath;
-  final String Servicename;
-  final String description;
-  final int imageheight;
+  final Map<String, dynamic> service;
+  final int id;
 
-  const Selected_Service({
-    super.key,
-    required this.imagePath,
-    required this.Servicename,
-    required this.imageheight,
-    required this.description,
-  });
+  const Selected_Service({super.key, required this.service, required this.id});
 
   @override
   State<Selected_Service> createState() => _Selected_ServiceState();
 }
 
 class _Selected_ServiceState extends State<Selected_Service> {
+  String serviceName = '';
+  String saloonPrice = '';
+  String serviceDescription = '';
+  String profileImageUrl = '';
   final PageController _pageController = PageController();
   int _currentIndex = 0;
 
@@ -35,9 +31,23 @@ class _Selected_ServiceState extends State<Selected_Service> {
   @override
   void initState() {
     super.initState();
+    bool isLoading = true;
+
+    final services = widget.service;
+    serviceName = services['service_name'] ?? '';
+    saloonPrice = services['service_price'] ?? '';
+
+    serviceDescription = services['service_desc'] ?? '';
+    profileImageUrl = services['service_image'];
+    isLoading = false;
 
     mediaList = [
-      {"type": "image", "path": widget.imagePath},
+      {
+        "type": "image",
+        "path": (profileImageUrl.isNotEmpty)
+            ? profileImageUrl
+            : "assets/images/wet.jpg", // fallback if backend image is empty
+      },
       {"type": "image", "path": "assets/images/wet.jpg"},
       {"type": "image", "path": "assets/images/STRAIGHT.jpg"},
       {"type": "video", "path": "assets/video/BlackVideo.mp4"},
@@ -61,12 +71,37 @@ class _Selected_ServiceState extends State<Selected_Service> {
 
   Widget buildMediaItem(Map item) {
     if (item["type"] == "image") {
-      return Image.asset(
-        item["path"],
-        width: double.infinity,
-        height: widget.imageheight.toDouble(),
-        fit: BoxFit.cover,
-      );
+      // Check if path is a network URL
+      if (item["path"].toString().startsWith("http")) {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12), // round edges
+          child: Image.network(
+            item["path"],
+            width: double.infinity,
+            height: 500,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              // fallback in case network image fails
+              return Image.asset(
+                'assets/images/unsplash.jpg',
+                width: double.infinity,
+                height: 500,
+                fit: BoxFit.cover,
+              );
+            },
+          ),
+        );
+      } else {
+        return ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Image.asset(
+            item["path"],
+            width: double.infinity,
+            height: 500,
+            fit: BoxFit.cover,
+          ),
+        );
+      }
     } else {
       return _videoController.value.isInitialized
           ? AspectRatio(
@@ -108,7 +143,9 @@ class _Selected_ServiceState extends State<Selected_Service> {
           onPressed: () {
             Navigator.pushAndRemoveUntil(
               context,
-              MaterialPageRoute(builder: (context) => SalonDetailScreen()),
+              MaterialPageRoute(
+                builder: (context) => SalonDetailScreen(salonId: widget.id),
+              ),
               ModalRoute.withName('/'),
             );
           },
@@ -132,7 +169,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
       body: Stack(
         children: [
           SizedBox(
-            height: widget.imageheight.toDouble(),
+            height: 500,
             width: double.infinity,
             child: PageView.builder(
               controller: _pageController,
@@ -190,7 +227,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
           ),
 
           Container(
-            margin: EdgeInsets.only(top: widget.imageheight - 30),
+            margin: EdgeInsets.only(top: 500 - 30),
             padding: const EdgeInsets.all(20),
             width: double.infinity,
             decoration: const BoxDecoration(
@@ -206,7 +243,7 @@ class _Selected_ServiceState extends State<Selected_Service> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    widget.Servicename,
+                    serviceName,
                     style: GoogleFonts.poppins(
                       fontSize: 20.sp,
                       fontWeight: FontWeight.bold,
@@ -215,11 +252,20 @@ class _Selected_ServiceState extends State<Selected_Service> {
                   const SizedBox(height: 10),
 
                   Text(
-                    'Hairstyling service is designed to transform your look with precision and creativity. Our expert stylists craft styles that perfectly suit your face shape, personality, and lifestyle — whether it’s a sleek modern cut, soft curls, or a bold new trend.',
+                    serviceDescription,
                     style: GoogleFonts.poppins(fontSize: 14),
                   ),
 
                   const SizedBox(height: 10),
+
+                  Text(
+                    saloonPrice,
+                    style: GoogleFonts.poppins(
+                      color: Color(0xFF01ABAB),
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ],
               ),
             ),

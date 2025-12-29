@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/CustomImagePicker.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -6,6 +9,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SaloonInformation extends StatefulWidget {
   @override
@@ -13,15 +17,18 @@ class SaloonInformation extends StatefulWidget {
 }
 
 class _SaloonInformationState extends State<SaloonInformation> {
-  
+  File? selectedImage;
+  File? SecondImage;
 
   TextEditingController saloonName = TextEditingController();
   TextEditingController saloonAddress = TextEditingController();
   TextEditingController saloonContact = TextEditingController();
   TextEditingController saloonHours = TextEditingController();
   TextEditingController saloonDescription = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
     final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -143,27 +150,53 @@ class _SaloonInformationState extends State<SaloonInformation> {
                               hintText: 'Enter Description...',
                               length: 4,
                             ),
+                            SizedBox(height: 10),
+                            UploadImageCard(
+                              
+                              title: 'Upload Profile Image',
+                              onImageSelected: (image) {
+                                selectedImage = image;
+                              },
+                            ),
+                            SizedBox(height: 10),
+                            UploadImageCard(
+                              title: 'Upload Profile Image',
+                              onImageSelected: (image) {
+                                SecondImage = image;
+                              },
+                            ),
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () async {
-                                bool success = await salonApi.salonInformation(
+                                final result = await salonApi.salonInformation(
                                   saloonName.text,
                                   saloonAddress.text,
                                   saloonContact.text,
                                   saloonHours.text,
                                   saloonDescription.text,
+                                  selectedImage,
+                                  SecondImage,
                                 );
-                                if (success){
-                                    Future.microtask(() {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            ServiceInforamtion(),
-                                      ),
-                                    );
-                                  });
-                                }
+                                Future.microtask(() {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          ServiceInforamtion(),
+                                    ),
+                                  );
+                                });
+                                // if (result['success']){
+                                //     Future.microtask(() {
+                                //     Navigator.push(
+                                //       context,
+                                //       MaterialPageRoute(
+                                //         builder: (context) =>
+                                //             ServiceInforamtion(),
+                                //       ),
+                                //     );
+                                //   });
+                                // }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(
