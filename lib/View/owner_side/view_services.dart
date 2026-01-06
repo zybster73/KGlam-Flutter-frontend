@@ -1,20 +1,22 @@
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/owner_side/uploadService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:KGlam/View/owner_side/manage_saloon_services.dart';
 import 'package:http/http.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
-class UploadServices extends StatefulWidget {
-  const UploadServices({super.key});
+class viewServices extends StatefulWidget {
+  const viewServices({super.key});
 
   @override
-  State<UploadServices> createState() => _UploadServicesState();
+  State<viewServices> createState() => _viewServicesState();
 }
 
-class _UploadServicesState extends State<UploadServices> {
+class _viewServicesState extends State<viewServices> {
   List<dynamic> services = [];
 
   TextEditingController searchController = TextEditingController();
@@ -39,6 +41,7 @@ class _UploadServicesState extends State<UploadServices> {
 
   @override
   Widget build(BuildContext context) {
+    final salonApi = Provider.of<SalonApiProvider>(context);
     Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -145,6 +148,30 @@ class _UploadServicesState extends State<UploadServices> {
                         ),
                       ),
                     ),
+                    InkWell(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => uploadService(),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        height: 49,
+                        width: 54,
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: Color(0xFF01ABAB) ,
+                          border: Border.all(
+                            color: const Color(0xFF717680),
+                            width: 0.7,
+                          ),
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        child: Image.asset('assets/images/Add.png'),
+                      ),
+                    ),
                   ],
                 ),
 
@@ -152,7 +179,8 @@ class _UploadServicesState extends State<UploadServices> {
                 Expanded(
                   child: services.isEmpty
                       ? Center(
-                          child: CircularProgressIndicator(
+                          child: LoadingAnimationWidget.threeArchedCircle(
+                            size: 50,
                             color: Color(0xFF01ABAB),
                           ),
                         )
@@ -185,10 +213,10 @@ class _UploadServicesState extends State<UploadServices> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.r),
-                                    child: Image.asset(
-                                      index % 2 == 0
-                                          ? 'assets/images/Haircut.jpg'
-                                          : 'assets/images/beard.jpg',
+                                    child: Image.network(
+                                      service['service_image'] ??
+                                          'assets/images/Haircut.jpg',
+
                                       height: 214.h,
                                       width: double.infinity,
                                       fit: BoxFit.cover,
@@ -291,7 +319,7 @@ class _UploadServicesState extends State<UploadServices> {
                                                       SizedBox(height: 15),
 
                                                       Text(
-                                                        "Delete Portfolio",
+                                                        "Delete Service",
                                                         style:
                                                             GoogleFonts.poppins(
                                                               fontSize: 20,
@@ -305,7 +333,7 @@ class _UploadServicesState extends State<UploadServices> {
                                                       SizedBox(height: 8),
 
                                                       Text(
-                                                        "Are you sure you want to delete the portfolio.",
+                                                        "Are you sure you want to delete the Service.",
                                                         textAlign:
                                                             TextAlign.center,
                                                         style:
@@ -320,10 +348,20 @@ class _UploadServicesState extends State<UploadServices> {
                                                         children: [
                                                           Expanded(
                                                             child: ElevatedButton(
-                                                              onPressed: () {
-                                                                Navigator.pop(
-                                                                  bottomSheetContext,
-                                                                );
+                                                              onPressed: () async {
+                                                                final result =
+                                                                    await salonApi
+                                                                        .deleteService(
+                                                                          service['id'],
+                                                                        );
+                                                                if (result['success']) {
+                                                                  setState(() {
+                                                                    services
+                                                                        .removeAt(
+                                                                          index,
+                                                                        );
+                                                                  });
+                                                                }
                                                               },
                                                               style: ElevatedButton.styleFrom(
                                                                 padding:
@@ -431,7 +469,6 @@ class _UploadServicesState extends State<UploadServices> {
                                             );
 
                                             if (updated == true) {
-                                              
                                               fetchServices();
                                             }
                                           },

@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:http/http.dart' as http;
 
-
 class AuthProvider extends ChangeNotifier {
   final url = BaseUrls.baseUrl;
 
@@ -162,7 +161,7 @@ class AuthProvider extends ChangeNotifier {
         return {'success': false, 'message': message};
       }
     } catch (e) {
-      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e.toString());
       return {'success': false, 'message': e.toString()};
     } finally {
       setLoading(false);

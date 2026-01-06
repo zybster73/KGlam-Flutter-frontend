@@ -3,7 +3,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 import 'package:KGlam/View/user_side/User_Notifications.dart';
-import 'package:KGlam/View/user_side/feedback.dart';
 import 'package:KGlam/View/user_side/user_appointmnets.dart';
 import 'package:KGlam/View/user_side/user_profile.dart';
 

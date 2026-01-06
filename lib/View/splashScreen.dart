@@ -1,3 +1,4 @@
+import 'package:KGlam/Services/notificationServices.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -12,6 +13,7 @@ class splash_screen extends StatefulWidget {
 
 class _SplashscreenState extends State<splash_screen>
     with SingleTickerProviderStateMixin {
+  Notificationservices notificationservices = Notificationservices();
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -19,6 +21,8 @@ class _SplashscreenState extends State<splash_screen>
   @override
   void initState() {
     super.initState();
+    notificationservices.requestNotificationPermissions();
+    
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),

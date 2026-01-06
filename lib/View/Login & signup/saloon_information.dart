@@ -152,7 +152,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
                             ),
                             SizedBox(height: 10),
                             UploadImageCard(
-                              
+                              text: "Upload Profile image",
                               title: 'Upload Profile Image',
                               onImageSelected: (image) {
                                 selectedImage = image;
@@ -160,6 +160,7 @@ class _SaloonInformationState extends State<SaloonInformation> {
                             ),
                             SizedBox(height: 10),
                             UploadImageCard(
+                              text: "Upload Cover image",
                               title: 'Upload Profile Image',
                               onImageSelected: (image) {
                                 SecondImage = image;

@@ -3,6 +3,7 @@ import 'package:KGlam/View/user_side/bookTopservice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class salonRow extends StatefulWidget {
   final int salonId;
@@ -36,8 +37,9 @@ class _salonRowState extends State<salonRow> {
   @override
   Widget build(BuildContext context) {
     return isloading? Center(
-      child: CircularProgressIndicator(
+      child: LoadingAnimationWidget.hexagonDots(
            color: Color(0xFF01ABAB),
+           size: 50
       ),
     ) : Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),

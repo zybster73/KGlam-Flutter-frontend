@@ -7,7 +7,7 @@ import 'package:KGlam/View/owner_side/Appoinments_screen.dart';
 import 'package:KGlam/View/owner_side/Notification_screen.dart';
 import 'package:KGlam/View/owner_side/Profile.dart';
 import 'package:KGlam/View/owner_side/Reviews_screen.dart';
-import 'package:KGlam/View/owner_side/Upload_services.dart';
+import 'package:KGlam/View/owner_side/view_services.dart';
 import 'package:KGlam/View/owner_side/portfolio.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -102,7 +102,7 @@ class CustomDrawer extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => UploadServices(),
+                              builder: (context) => viewServices(),
                             ),
                           );
                         },

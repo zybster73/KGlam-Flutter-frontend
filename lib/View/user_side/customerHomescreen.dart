@@ -1,5 +1,9 @@
 import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
+import 'package:KGlam/View/user_side/seeAllSalons.dart';
 import 'package:KGlam/models/viewSalons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -17,19 +21,43 @@ class Customerhomescreen extends StatefulWidget {
 
 class _CustomerhomescreenState extends State<Customerhomescreen> {
   TextEditingController searchController = TextEditingController();
-  List<viewSalon> salons = [];
+  List<dynamic> salons = [];
   bool isLoading = true;
+  ScrollController scrollController = ScrollController();
+
+  String image = '';
+  String username = '';
 
   @override
   void initState() {
     super.initState();
     fetchSalons();
+    scrollController.addListener(scrollListner);
+    fetchUserData();
+  }
+
+  Future<void> fetchUserData() async {
+    var data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        image = data['profile_image'];
+        username = data['username'];
+      });
+    }
+  }
+
+  void scrollListner() {
+    if (scrollController.position.pixels >=
+        scrollController.position.maxScrollExtent - 200) {
+      //   loadmore//
+    }
   }
 
   Future<void> fetchSalons() async {
-    final data = await client_Api().viewSalons();
+    final data = await client_Api().getTopSalons();
     if (data != null) {
-      salons = data.map((e) => viewSalon.fromJson(e)).toList();
+      salons = data;
     }
     setState(() {
       isLoading = false;
@@ -73,13 +101,8 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           CircleAvatar(
-                            backgroundColor: Colors.white,
+                            backgroundImage: NetworkImage(image),
                             radius: 30.r,
-                            child: Icon(
-                              Icons.person,
-                              size: 35.sp,
-                              color: Colors.grey,
-                            ),
                           ),
                           SizedBox(width: 10.w),
                           Expanded(
@@ -87,7 +110,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Hi, Abdullah Khan',
+                                  'Hi, ${username}',
                                   style: GoogleFonts.poppins(
                                     fontSize: 16.sp,
                                     fontWeight: FontWeight.bold,
@@ -209,13 +232,29 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => seeAllSalons(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'See All',
+                        style: GoogleFonts.poppins(color: Colors.black),
+                      ),
+                    ),
                   ],
                 ),
               ),
               isLoading
-                  ? const CircularProgressIndicator()
+                  ? ShimmerEffectlist(itemCount: 3, height: 200)
                   : ListView.builder(
                       shrinkWrap: true,
+                      controller: scrollController,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: salons.length,
                       itemBuilder: (context, index) {
@@ -224,20 +263,17 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 10.h),
                           child: _buildSaloonCard(
-                            salon.id,
-                            salon.name,
-                            salon.coverImage != null
-                                ? salon.coverImage!
-                                : 'assets/images/unsplash.jpg',
-                            salon.address,
-                            salon.description,
+                            salon['id'],
+                            salon['salon_name'],
+                            salon['salon_cover_image'],
+
+                            salon['salon_address'],
+                            salon['salon_desc'],
                             // salon.hours,
                           ),
                         );
                       },
                     ),
-              //  SafeArea(child:Text('')),
-              
             ],
           ),
         ),
@@ -258,13 +294,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => SalonDetailScreen(
-              salonId: salonId,
-              // imagePath: image,
-              // saloonNametitle: title,
-              // location: locationsaloon,
-              // description: descriptionsaloon,
-            ),
+            builder: (context) => SalonDetailScreen(salonId: salonId),
           ),
         );
       },
@@ -299,39 +329,17 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(15.r),
                         image: DecorationImage(
-                          image: image.startsWith('http')
+                          image: (image.isNotEmpty && image.startsWith('http'))
                               ? NetworkImage(image)
-                              : AssetImage(image) as ImageProvider,
+                              : const AssetImage('assets/images/unsplash.jpg'),
                           fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                    // Positioned(
-                    //   bottom: 8.h,
-                    //   left: 8.w,
-                    //   child: Container(
-                    //     padding: EdgeInsets.symmetric(
-                    //       horizontal: 8.w,
-                    //       vertical: 4.h,
-                    //     ),
-                    //     decoration: BoxDecoration(
-                    //       color: Colors.black.withOpacity(0.6),
-                    //       borderRadius: BorderRadius.circular(8.r),
-                    //     ),
-                    //     child: Text(
-                    //       distance,
-                    //       style: GoogleFonts.poppins(
-                    //         fontSize: 14.sp,
-                    //         fontWeight: FontWeight.w500,
-                    //         color: Colors.white,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                   ],
                 ),
               ),
-              // SizedBox(height: 12.h),
+
               Text(
                 "$title :",
                 style: GoogleFonts.poppins(

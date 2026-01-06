@@ -4,6 +4,10 @@ import 'package:KGlam/Services/Base_Urls.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/models/Booking.dart';
+import 'package:KGlam/models/BookingResponse.dart';
+import 'package:KGlam/models/bookingStatus.dart';
+import 'package:KGlam/models/getBookings.dart';
+import 'package:KGlam/models/response.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
@@ -54,16 +58,17 @@ class client_Api with ChangeNotifier {
     }
   }
 
-  Future<Booking?> createBooking({
+  Future<Response> createBooking({
     required String bookingDate,
-    required String bookingTime,
+    String? bookingTime,
+    required int id,
   }) async {
     setLoading(true);
     String? token = await Storetoken.getToken();
 
     try {
       final response = await http.post(
-        Uri.parse(url2 + 'create-booking/1/'),
+        Uri.parse(url2 + 'create-booking/$id/'),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -78,15 +83,21 @@ class client_Api with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Utils.instance.toastMessage(responseData['msg']);
+        print(response.body);
 
-        return Booking.fromJson(responseData['data']);
+        return Response(
+          success: true,
+          message: responseData['msg'],
+          booking: Booking.fromJson(responseData['data']),
+        );
       } else {
-        Utils.instance.toastMessage(responseData['msg'] ?? "Booking failed");
-        return null;
+        return Response(
+          success: false,
+          message: responseData['msg'] ?? "Booking failed",
+        );
       }
     } catch (e) {
-      Utils.instance.toastMessage("Error: $e");
-      return null;
+      return Response(success: false, message: e.toString());
     } finally {
       setLoading(false);
     }
@@ -162,13 +173,47 @@ class client_Api with ChangeNotifier {
     }
   }
 
+  Future<Response> ownerAcceptOrReject(String status, int id) async {
+    String? token = await Storetoken.getToken();
+    setLoading(true);
+
+    try {
+      final response = await http.patch(
+        Uri.parse(url2 + 'booking-status/$id/'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+        body: jsonEncode({'status': status}),
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage(responseData['msg']);
+        print(response.body);
+
+        return Response(success: true, message: responseData['msg']);
+      } else {
+        return Response(
+          success: false,
+          message: responseData['msg'] ?? "Accept failed",
+        );
+      }
+    } catch (e) {
+      return Response(success: false, message: e.toString());
+    } finally {
+      setLoading(false);
+    }
+  }
+
   Future<Map<String, dynamic>?> getspecificSalonClient(int id) async {
     String? token = await Storetoken.getToken();
     setLoading(true);
     try {
       final response = await http.get(
-        Uri.parse(url1 + 'viewservice/${id}/'),
-        headers: {  
+        Uri.parse(url1 + 'salon/${id}/'),
+        headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
         },
@@ -255,6 +300,283 @@ class client_Api with ChangeNotifier {
       Utils.instance.toastMessage("Error: ${e.toString()}");
       print(e);
       return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<Bookingresponse> ownerCompleteBooking(
+    int bookingId,
+    String status,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.patch(
+        Uri.parse(url2 + 'owner-booking/$bookingId/complete/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'status': status}),
+      );
+
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        print(response.body);
+        Utils.instance.toastMessage(data["msg"]);
+        return Bookingresponse(success: true, message: data['msg'], data: data);
+      } else {
+        return Bookingresponse(
+          success: false,
+          message: data['msg'] ?? 'Something went wrong',
+        );
+      }
+    } catch (e) {
+      return Bookingresponse(success: false, message: e.toString());
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<List<dynamic>?> ownerNotifications() async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'owner-booking-notif/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<List<dynamic>?> customerNotifications() async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'customer-booking-notif/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<List<dynamic>?> ownerSeefeedback() async {
+    setLoading(true);
+
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'owner-see-feedback/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<Map<String, dynamic>> customerGivefeedback(
+    int rating,
+    String fback,
+    int bookingId,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.post(
+        Uri.parse(url2 + "customer-booking/$bookingId/feedback/"),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({'rating': bookingId, 'feedback_text': fback}),
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return {'success': true, 'data': responseData['data']};
+      } else {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {'success': false};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage(e.toString());
+      return {'success': false};
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<List<dynamic>?> getTopSalons() async {
+    setLoading(true);
+
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url1 + "top-salons/"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+      // notifyListeners();
+    }
+  }
+
+  Future<List<dynamic>?> getTopServices() async {
+    setLoading(true);
+
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url1 + "top-services/"),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      var responseData = jsonDecode(response.body);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+      // notifyListeners();
+    }
+  }
+
+
+  Future<Map<String, dynamic>> customerSeefeedback(
+    int id,
+  ) async {
+    setLoading(true);
+
+    String? token = await Storetoken.getToken();
+
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'customer-see-feedback/$id'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+         return {'success': true, 'data': responseData['data']};
+      } else {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {'success': false};
+       
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return {'success': false};
     } finally {
       setLoading(false);
     }

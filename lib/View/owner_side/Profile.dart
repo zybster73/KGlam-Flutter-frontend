@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:KGlam/View/owner_side/editProfileInformation.dart';
 import 'package:KGlam/View/owner_side/editProfileServices.dart';
 import 'package:http/http.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatefulWidget {
@@ -18,15 +19,14 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   Map<String, dynamic>? profiles;
   List services = [];
-  bool isServicesLoading = true;
+  bool isPageLoading = true;
+
 
 
   @override
   void initState() {
     super.initState();
-
-    fetchProfiles();
-    fetchServices();
+    loadPageData();
   }
 
   Future<void> fetchProfiles() async {
@@ -35,7 +35,7 @@ class _ProfileState extends State<Profile> {
     if (response != null) {
       setState(() {
         profiles = response;
-        isServicesLoading = false;
+        
       });
     }
   }
@@ -50,6 +50,18 @@ class _ProfileState extends State<Profile> {
     }
   }
 
+  
+Future<void> loadPageData() async {
+  await Future.wait([
+    fetchProfiles(),
+    fetchServices(),
+  ]);
+
+  setState(() {
+    isPageLoading = false;
+  });
+}
+
   @override
   Widget build(BuildContext context) {
     Utils.instance.initToast(context);
@@ -58,7 +70,10 @@ class _ProfileState extends State<Profile> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      body: SingleChildScrollView(
+      body: isPageLoading ? Center(
+        child: LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50),
+      ) :
+      SingleChildScrollView(
         child: Stack(
           children: [
             Positioned(
@@ -123,14 +138,8 @@ class _ProfileState extends State<Profile> {
                   ),
 
                   SizedBox(height: 20.h),
-                  profiles == null
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF717680),
-                          ),
-                        )
-                      : _Salooninformation(
-                          'assets/images/interior.jpg',
+                   _Salooninformation(
+                          profiles!['salon_profile_image'] ?? '',
                           '${profiles!['salon_name'] ?? ''} :',
                           profiles!['salon_desc'] ?? '',
                           profiles!['salon_address'] ?? '',
@@ -140,13 +149,7 @@ class _ProfileState extends State<Profile> {
 
                   SizedBox(height: 20),
 
-                  isServicesLoading
-                      ? Center(
-                          child: CircularProgressIndicator(
-                            color: Color(0xFF717680),
-                          ),
-                        )
-                      : _serviceCard(),
+                   _serviceCard(),
 
                   SizedBox(height: 50),
                 ],
@@ -177,7 +180,7 @@ class _ProfileState extends State<Profile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(path, height: 215, width: 322, fit: BoxFit.cover),
+            Image.network(path, height: 215, width: 350.w, fit: BoxFit.cover),
             SizedBox(height: 5.h),
             Text(
               saloonName,

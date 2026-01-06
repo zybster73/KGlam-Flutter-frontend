@@ -158,6 +158,7 @@ class _UploaddportfolioState extends State<Upload_portfolio> {
                               ),
                               SizedBox(height: 10),
                               UploadImageCard(
+                                text: "Upload Portfolio image",
                                 title: "Upload Service Image Or Video",
                                 onImageSelected: (image) {
                                   selectedImage = image;

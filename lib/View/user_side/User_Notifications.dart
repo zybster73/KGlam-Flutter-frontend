@@ -1,3 +1,5 @@
+import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:KGlam/View/user_side/write_Feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -12,6 +14,33 @@ class UserNotifications extends StatefulWidget {
 }
 
 class _UserNotificationsState extends State<UserNotifications> {
+  bool isLoading = true;
+  List<dynamic> Notifications = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchNotifications();
+  }
+
+  Future<void> fetchNotifications() async {
+    final data = await client_Api().customerNotifications();
+
+    if (data != null) {
+      setState(() {
+        Notifications = data;
+        isLoading = false;
+      });
+    }
+  }
+
+  String formatTime(String dateTimeString) {
+    final DateTime dateTime = DateTime.parse(dateTimeString).toLocal();
+
+    return TimeOfDay.fromDateTime(dateTime).format(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -85,109 +114,120 @@ class _UserNotificationsState extends State<UserNotifications> {
                 const SizedBox(height: 24),
 
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(bottom: 70.h, top: 0),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      bool isHighlighted = index % 2 == 0;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFE9FAFA),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF00AFA0),
-                                shape: BoxShape.circle,
-                              ),
-                              child: const Icon(
-                                Icons.notifications_none_rounded,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    "Your service is complete! We hope you enjoyed your Facial Massage. We hope to see you again! Share your feedback to help us improve!",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14,
-                                      color: Colors.black,
-                                      height: 1.4,
-                                    ),
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        "2 hours ago",
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 12,
-                                          color: Color(0xFF717680),
-                                        ),
-                                      ),
-                                      Spacer(),
-                                      InkWell(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                              builder: (context) =>
-                                                  WriteFeedback(),
-                                            ),
-                                          );
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            // color: Colors.blueGrey,
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: const Color.fromARGB(
-                                                  31,
-                                                  104,
-                                                  96,
-                                                  96,
-                                                ),
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Text(
-                                            'FeedBack',
-                                            style: GoogleFonts.poppins(
-                                              fontSize: 14,
-                                              color: Color(0xFF01ABAB),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                  child: isLoading
+                      ? shimmerEffect(itemCount: 5, height: 130)
+                      : ListView.builder(
+                          padding: EdgeInsets.only(bottom: 70.h, top: 0),
+                          itemCount: Notifications.length,
+                          itemBuilder: (context, index) {
+                            final notify = Notifications[index];
+                            bool isHighlighted = index % 2 == 0;
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE9FAFA),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF00AFA0),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.notifications_none_rounded,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          notify['message'],
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14,
+                                            color: Colors.black,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              formatTime(notify['created_at']),
+                                              style: GoogleFonts.poppins(
+                                                fontSize: 12,
+                                                color: Color(0xFF717680),
+                                              ),
+                                            ),
+                                            Spacer(),
+                                            if (notify['notification_type'] ==
+                                                'BOOKING_COMPLETED')
+                                              InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                      builder: (context) =>
+                                                          WriteFeedback(
+                                                            feedback : notify['booking_id'],
+                                                          ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    boxShadow: [
+                                                      BoxShadow(
+                                                        color:
+                                                            const Color.fromARGB(
+                                                              31,
+                                                              104,
+                                                              96,
+                                                              96,
+                                                            ),
+                                                        blurRadius: 4,
+                                                        offset: const Offset(
+                                                          0,
+                                                          2,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  child: Text(
+                                                    'FeedBack',
+                                                    style: GoogleFonts.poppins(
+                                                      fontSize: 14,
+                                                      color: Color(0xFF01ABAB),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
               ],
             ),

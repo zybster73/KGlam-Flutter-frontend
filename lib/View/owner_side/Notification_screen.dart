@@ -1,3 +1,5 @@
+import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -11,6 +13,33 @@ class NotificationScreen extends StatefulWidget {
 }
 
 class _NotificationScreenState extends State<NotificationScreen> {
+  bool isLoading = true;
+  List<dynamic> Notifications = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchNotifications();
+  }
+
+  Future<void> fetchNotifications() async {
+    final data = await client_Api().ownerNotifications();
+
+    if (data != null) {
+      setState(() {
+        Notifications = data;
+        isLoading = false;
+      });
+    }
+  }
+
+  String formatTime(String dateTimeString) {
+    final DateTime dateTime = DateTime.parse(dateTimeString).toLocal();
+
+    return TimeOfDay.fromDateTime(dateTime).format(context);
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -45,13 +74,13 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     if (widget.onBack != null) {
                       widget.onBack!();
                     } else {
-                      Navigator.pop(context); 
+                      Navigator.pop(context);
                     }
                   },
                   iconSize: 18,
                   padding: EdgeInsets.zero,
                   color: Colors.white,
-      
+
                   icon: Icon(Icons.arrow_back_ios_sharp),
                 ),
               ),
@@ -59,7 +88,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           ),
           // SizedBox(height: 20),
           Padding(
-            padding:  EdgeInsets.symmetric(horizontal: 20),
+            padding: EdgeInsets.symmetric(horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -82,78 +111,77 @@ class _NotificationScreenState extends State<NotificationScreen> {
                   ),
                 ),
                 const SizedBox(height: 34),
-      
+
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(
-                      bottom: 70.h, 
-                      top: 0,
-                    ),
-                    itemCount: 5,
-                    itemBuilder: (context, index) {
-                      //bool isHighlighted = index % 2 == 0;
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 16),
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color:  const Color(0xFFE9FAFA),
-                          borderRadius: BorderRadius.circular(16),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
-                              blurRadius: 4,
-                              offset: const Offset(0, 2),
-                            ),
-                          ],
-                        ),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              height: 40,
-                              width: 40,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF00AFA0),
-                                shape: BoxShape.circle,
+                  child: isLoading
+                      ? shimmerEffect(itemCount: 4, height: 150)
+                      : ListView.builder(
+                          padding: EdgeInsets.only(bottom: 70.h, top: 0),
+                          itemCount: Notifications.length,
+                          itemBuilder: (context, index) {
+                            final notify = Notifications[index];
+                            //bool isHighlighted = index % 2 == 0;
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 16),
+                              padding: const EdgeInsets.all(16),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE9FAFA),
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 4,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
                               ),
-                              child: const Icon(
-                                Icons.notifications_none_rounded,
-                                color: Colors.white,
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            
-                            Expanded(
-                              child: Column(
+                              child: Row(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  
-                                  Text(
-                                    "John Doe has booked recently a facial massage at you saloon. Would you like to accept the request or not.",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 14.sp,
-                                      color: Colors.black,
-                                      height: 1.4,
+                                  Container(
+                                    height: 40,
+                                    width: 40,
+                                    decoration: const BoxDecoration(
+                                      color: Color(0xFF00AFA0),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: const Icon(
+                                      Icons.notifications_none_rounded,
+                                      color: Colors.white,
                                     ),
                                   ),
-                                  const SizedBox(height: 6),
-                                  Text(
-                                    "2 hours ago",
-                                    style: GoogleFonts.poppins(
-                                      fontSize: 12.sp,
-                                      color: Color(0xFF717680),
+                                  const SizedBox(width: 12),
+
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          notify['message'],
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 14.sp,
+                                            color: Colors.black,
+                                            height: 1.4,
+                                          ),
+                                        ),
+                                        const SizedBox(height: 6),
+                                        Text(
+                                          formatTime(notify['created_at']),
+                                          style: GoogleFonts.poppins(
+                                            fontSize: 12.sp,
+                                            color: Color(0xFF717680),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
-                      );
-                    },
-                  ),
                 ),
-                
               ],
             ),
           ),

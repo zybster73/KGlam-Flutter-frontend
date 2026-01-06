@@ -4,8 +4,8 @@ class getBookings {
   final String serviceName;
   final String bookingDate;
   final String bookingTime;
-  final String Status;
-
+  String Status;
+  final String? image;
   getBookings({
     required this.id,
     required this.customerName,
@@ -13,6 +13,7 @@ class getBookings {
     required this.bookingDate,
     required this.bookingTime,
     required this.Status,
+    this.image,
   });
   factory getBookings.fromJson(Map<String, dynamic> json) {
     return getBookings(
@@ -22,6 +23,7 @@ class getBookings {
       bookingDate: json['booking_date'],
       bookingTime: json['booking_time'],
       Status: json['status'],
+      image: json['service_image']
     );
   }
 }

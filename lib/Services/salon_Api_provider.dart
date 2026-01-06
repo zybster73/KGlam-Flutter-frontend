@@ -54,56 +54,66 @@ class SalonApiProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> updateUserDetails(
-    String oldpassword,
-    String newpassowrd,
-    String confirmpassrd,
-  ) async {
-    String? token = await Storetoken.getToken();
-    setLoading(true);
-    try {
-      final response = await http.patch(
-        Uri.parse(url + "updateinfo/"),
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
-        },
-        body: jsonEncode({
-          'old_password': oldpassword,
-          'new_password': newpassowrd,
-          'confirm_password': confirmpassrd,
-        }),
+  Future<bool> updateUserDetails({
+  required String oldPassword,
+  required String newPassword,
+  required String confirmPassword,
+  File? profileImage, // OPTIONAL IMAGE
+}) async {
+  String? token = await Storetoken.getToken();
+  setLoading(true);
+
+  try {
+    var request = http.MultipartRequest(
+      'PATCH',
+      Uri.parse(url + "updateinfo/"),
+    );
+
+    // Headers
+    request.headers['Authorization'] = 'Bearer $token';
+
+    // Text fields
+    request.fields['old_password'] = oldPassword;
+    request.fields['new_password'] = newPassword;
+    request.fields['confirm_password'] = confirmPassword;
+
+    // Image field (ONLY if user selected one)
+    if (profileImage != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          'profile_image', // MUST match backend field name
+          profileImage.path,
+        ),
       );
-      var responseData = jsonDecode(response.body);
-
-      if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData['msg']);
-        print(response.body);
-        return true;
-      } else {
-        if (responseData['errors'] != null &&
-            responseData['errors'].isNotEmpty) {
-          var firstfield = responseData['errors'].keys.first;
-
-          String errorMessage = responseData['errors'][firstfield][0];
-
-          Utils.instance.toastMessage(errorMessage);
-        } else if (responseData['msg'] != null) {
-          Utils.instance.toastMessage(responseData['msg']);
-        }
-
-        print(response.body);
-
-        return false;
-      }
-    } catch (e) {
-      Utils.instance.toastMessage("Error: ${e.toString()}");
-    } finally {
-      setLoading(false);
-      //notifyListeners();
     }
+
+    final streamedResponse = await request.send();
+    final response = await http.Response.fromStream(streamedResponse);
+    final responseData = jsonDecode(response.body);
+
+    if (response.statusCode == 200) {
+      Utils.instance.toastMessage(responseData['msg']);
+      return true;
+    } else {
+      if (responseData['errors'] != null &&
+          responseData['errors'].isNotEmpty) {
+        var firstField = responseData['errors'].keys.first;
+        Utils.instance.toastMessage(
+          responseData['errors'][firstField][0],
+        );
+      } else if (responseData['msg'] != null) {
+        Utils.instance.toastMessage(responseData['msg']);
+      }
+      return false;
+    }
+  } catch (e) {
+    Utils.instance.toastMessage("Error: ${e.toString()}");
     return false;
+  } finally {
+    setLoading(false);
   }
+}
+
 
  Future<Map<String, dynamic>> salonInformation(
   String salon_name,
@@ -140,7 +150,7 @@ class SalonApiProvider with ChangeNotifier {
     if (profileImage != null) {
       request.files.add(
         await http.MultipartFile.fromPath(
-          'profile_image', // MUST match backend
+          'salon_profile_image', 
           profileImage.path,
         ),
       );
@@ -150,7 +160,7 @@ class SalonApiProvider with ChangeNotifier {
     if (coverImage != null) {
       request.files.add(
         await http.MultipartFile.fromPath(
-          'cover_image', // MUST match backend
+          'salon_cover_image', 
           coverImage.path,
         ),
       );
@@ -521,6 +531,7 @@ Future<Map<String, dynamic>> updateService(
   }
 
   Future<List<dynamic>?> viewPortfolio() async {
+
     String? token = await Storetoken.getToken();
 
     setLoading(true);
@@ -627,4 +638,35 @@ Future<Map<String, dynamic>> updateService(
       setLoading(false);
     }
   }
+
+   Future<Map<String, dynamic>> deleteService(int serviceId) async {
+    String? token = await Storetoken.getToken();
+
+    setLoading(true);
+    try {
+      final response = await http.delete(
+        Uri.parse('${url1}deleteservice/$serviceId/'),
+        headers: {
+          "Authorization": "Bearer $token",
+          "Content-Type": "application/json",
+        },
+      );
+
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 204) {
+        Utils.instance.toastMessage("Portfolio deleted successfully");
+        return {'success': true, 'message': 'Deleted successfully'};
+      } else {
+        Utils.instance.toastMessage(responseData['msg'] ?? 'Delete failed');
+        return {'success': false, 'message': responseData['msg'] ?? 'Error'};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: $e");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
+    }
+  }
+  
 }

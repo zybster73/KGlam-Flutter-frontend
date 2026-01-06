@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -143,11 +144,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                       ),
                       child: SingleChildScrollView(
                         child: isLoading
-                            ? Center(
-                                child: CircularProgressIndicator(
-                                  color: Color(0xFF01ABAB),
-                                ),
-                              )
+                            ? ShimmerEffectlist(itemCount: 5, height: 50)
                             : Column(
                                 children: [
                                   CustomTextField(
@@ -182,6 +179,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                                   ),
                                   SizedBox(height: 10),
                                   UploadImageCard(
+                                    text: "Upload Profile image",
                                     initialImageUrl:profileImageUrl ,
                                     title: "Upload Service Image Or Video",
                                     onImageSelected: (image) {

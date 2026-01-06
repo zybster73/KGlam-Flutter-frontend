@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
+import 'package:KGlam/View/CustomWidgets/ShimmerText.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
 import 'package:KGlam/View/selectRole.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart' show GoogleFonts;
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 
 class Personalinformation extends StatefulWidget {
@@ -16,11 +22,42 @@ class Personalinformation extends StatefulWidget {
 
 class _PersonalinformationState extends State<Personalinformation> {
   bool isLoading = true;
+  File? _selectedImage;
+  final ImagePicker _picker = ImagePicker();
+  String _profileImageUrl = '';
+  String email = '';
+  String name = '';
 
   @override
   void initState() {
     super.initState();
     fetchUserData();
+    nameEmail();
+  }
+
+  Future<void> nameEmail() async {
+    final data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        name = data['username'];
+        email = data['email'];
+        isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _pickImage() async {
+    final XFile? pickedImage = await _picker.pickImage(
+      source: ImageSource.gallery,
+      imageQuality: 70,
+    );
+
+    if (pickedImage != null) {
+      setState(() {
+        _selectedImage = File(pickedImage.path);
+      });
+    }
   }
 
   Future<void> fetchUserData() async {
@@ -39,6 +76,7 @@ class _PersonalinformationState extends State<Personalinformation> {
         userName.text = data['username'] ?? "";
         emailCtrl.text = data['email'] ?? "";
         PhoneNum.text = data['contact_number'] ?? "";
+        _profileImageUrl = data['profile_image'] ?? '';
         isLoading = false;
       });
     } else {
@@ -152,29 +190,43 @@ class _PersonalinformationState extends State<Personalinformation> {
                 mainAxisAlignment: MainAxisAlignment.start,
 
                 children: [
-                  CircleAvatar(
-                    backgroundColor: Colors.black12,
-                    radius: 50.r,
-                    child: Icon(Icons.person, size: 55.sp, color: Colors.grey),
+                  GestureDetector(
+                    onTap: _pickImage,
+                    child: CircleAvatar(
+                      radius: 50.r,
+                      backgroundColor: Colors.black12,
+
+                      backgroundImage: _profileImageUrl.isNotEmpty
+                          ? NetworkImage(_profileImageUrl)
+                          : null,
+
+                      child: _profileImageUrl.isEmpty
+                          ? Icon(
+                              Icons.camera_alt,
+                              size: 30.sp,
+                              color: Colors.grey,
+                            )
+                          : null,
+                    ),
                   ),
+
                   SizedBox(width: 10.w),
 
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
+                     children: [
+                      isLoading ?  ShimmerText(width: 120, height: 16) :
                       Text(
-                        'Imtisal Hassan',
+                        name,
                         style: GoogleFonts.poppins(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-
-                      Text(
-                        'Imtisalhassan968@gmail.com',
-                        style: GoogleFonts.poppins(fontSize: 14),
-                      ),
+                       SizedBox(height: 6),
+                      isLoading ?  ShimmerText(width: 180, height: 16) :
+                      Text(email, style: GoogleFonts.poppins(fontSize: 14)),
                     ],
                   ),
                 ],
@@ -183,7 +235,7 @@ class _PersonalinformationState extends State<Personalinformation> {
 
             SizedBox(height: 10.h),
             isLoading
-                ? CircularProgressIndicator()
+                ? ShimmerEffectlist(itemCount: 6, height: 50)
                 : Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 6.w,
@@ -241,9 +293,10 @@ class _PersonalinformationState extends State<Personalinformation> {
               child: ElevatedButton(
                 onPressed: () async {
                   bool success = await salonApi.updateUserDetails(
-                    oldPassword.text,
-                    newPassword.text,
-                    confirmPassword.text,
+                    oldPassword: oldPassword.text,
+                    newPassword: newPassword.text,
+                    confirmPassword: confirmPassword.text,
+                    profileImage: _selectedImage,
                   );
 
                   if (success) {

@@ -1,8 +1,11 @@
 import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/ShimmerEffectRow.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:KGlam/View/user_side/bookTopservice.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class Service_Row extends StatefulWidget {
   const Service_Row({super.key});
@@ -12,55 +15,69 @@ class Service_Row extends StatefulWidget {
 }
 
 class _Service_RowState extends State<Service_Row> {
-  
+  List<dynamic> topServices = [];
+  bool isloading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchTopservices();
+  }
+
+  Future<void> fetchTopservices() async {
+    final result = await client_Api().getTopServices();
+    if (result != null) {
+      setState(() {
+        topServices = result;
+        isloading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 15.w),
-      child: SingleChildScrollView(
-        scrollDirection: Axis.horizontal,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            _buildServiceCard(
-              'Haircut',
-              'assets/images/haircutFreepik.jpg',
-              'Hicks Salon',
-            ),
-            SizedBox(width: 10.w),
-            _buildServiceCard(
-              'Nail Styling',
-              'assets/images/nailstylingFreepik.jpg',
-              'Royal Salon',
-            ),
-            SizedBox(width: 10.w),
-            _buildServiceCard(
-              'Facial',
-              'assets/images/facialFreepik.jpg',
-              'Stylish Cut Salon',
-            ),
-            SizedBox(width: 10.w),
-            _buildServiceCard(
-              'Beard',
-              'assets/images/beard.jpg',
-              'Crown Salon',
-            ),
-          ],
+      child: SizedBox(
+        height: 170,
+        child: isloading ? Center(
+          child: LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50),
+        ) :
+         ListView.builder(
+          scrollDirection: Axis.horizontal,
+          itemCount: topServices.length,
+          itemBuilder: (context, index) {
+            final item = topServices[index];
+            return Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                _buildServiceCard(
+                  item['id'],
+                  item['service_name'],
+                  item['service_image'] ?? '',
+                  item['salon_name'],
+                ),
+                SizedBox(width: 10.w),
+              ],
+            );
+          },
         ),
       ),
     );
   }
 
-  Widget _buildServiceCard(String title, String imagePath, String title2) {
+  Widget _buildServiceCard(
+    int id,
+    String title,
+    String imagePath,
+    String title2,
+  ) {
     return InkWell(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => Booktopservice(
-              serviceId: 1,
-            ),
+            builder: (context) => Booktopservice(serviceId: id),
           ),
         );
       },
@@ -83,7 +100,10 @@ class _Service_RowState extends State<Service_Row> {
                 ),
               ],
               image: DecorationImage(
-                image: AssetImage(imagePath),
+                image: imagePath.startsWith('http')
+                    ? NetworkImage(imagePath)
+                    : const AssetImage('assets/images/unsplash.jpg')
+                          as ImageProvider,
                 fit: BoxFit.cover,
               ),
             ),

@@ -1,0 +1,67 @@
+{
+  "project_info": {
+    "project_number": "1014210091536",
+    "project_id": "ksmart-hub",
+    "storage_bucket": "ksmart-hub.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014210091536:android:b50ea0d11bf3e22035c895",
+        "android_client_info": {
+          "package_name": "app.jernash.kglam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAMPUmLE9OpOSQJBxNqC5PPg6YtCQYVKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014210091536:android:db2f75664d4de00535c895",
+        "android_client_info": {
+          "package_name": "com.customer.KSmartHub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAMPUmLE9OpOSQJBxNqC5PPg6YtCQYVKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1014210091536:android:2511a7f116c6f1a835c895",
+        "android_client_info": {
+          "package_name": "com.merchant.KSmartHub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDAMPUmLE9OpOSQJBxNqC5PPg6YtCQYVKg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

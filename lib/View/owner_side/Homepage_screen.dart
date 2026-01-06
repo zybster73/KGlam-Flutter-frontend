@@ -1,3 +1,5 @@
+import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/Services/storeToken.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,6 +11,36 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  String image = '';
+  String username = '';
+
+
+  @override
+  void initState() {
+    super.initState();
+    fetchUserData();
+  }
+
+
+  Future<void> fetchUserData() async {
+    String? token = await Storetoken.getToken();
+    print("Fetched token: $token");
+
+    if (token == null) {
+      print("No token found, user not logged in");
+      return;
+    }
+
+    var data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        image = data['profile_image'];
+        username = data['username'];
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -33,19 +65,19 @@ class _HomePageState extends State<HomePage> {
                       fit: BoxFit.contain,
                     ),
                   ),
-              
+
                   Padding(
                     padding: const EdgeInsets.only(left: 10.0, bottom: 20),
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: AssetImage('assets/images/xxx.jpg'),
+                          backgroundImage: NetworkImage(image),
                           radius: 30.r,
                         ),
                         Expanded(
                           child: ListTile(
                             title: Text(
-                              'Imtisal Hassan',
+                              username,
                               style: GoogleFonts.poppins(
                                 color: Colors.black,
                                 fontWeight: FontWeight.w600,
@@ -75,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                       ],
                     ),
                   ),
-              
+
                   Positioned(
                     top: screenHeight * 0.196,
                     left: screenWidth * 0.05,
@@ -87,7 +119,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                   ),
-              
+
                   Positioned(
                     top: screenHeight * 0.25,
                     left: screenWidth * 0.05,
@@ -103,9 +135,9 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-        
+
             SizedBox(height: 10),
-        
+
             Column(
               children: [
                 CustomContainer(
@@ -114,25 +146,23 @@ class _HomePageState extends State<HomePage> {
                   '12 booking are coming in this week.',
                   '12/11/2025',
                 ),
-                
+
                 CustomContainer(
                   'assets/images/Appointments.png',
                   'Ongoing Appointments',
                   '4 Appointments are ongoing today',
                   '12/11/2025',
                 ),
-                
+
                 CustomContainer(
                   'assets/images/elli.png',
                   'Past Appointments',
                   '400 Appointments are done till now',
                   '12/11/2025',
                 ),
-                SizedBox(height: 70.h,)
+                SizedBox(height: 70.h),
               ],
-              
             ),
-            
           ],
         ),
       ),

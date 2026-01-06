@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -171,11 +172,7 @@ class _UpdateportfolioState extends State<Updateportfolio> {
                         ),
                         child: SingleChildScrollView(
                           child: isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: Color(0xFF01ABAB),
-                                  ),
-                                )
+                              ? ShimmerEffectlist(itemCount: 3, height: 50)
                               : Column(
                                   children: [
                                     CustomTextField(
@@ -204,6 +201,7 @@ class _UpdateportfolioState extends State<Updateportfolio> {
                                             fit: BoxFit.cover,
                                           )
                                         : UploadImageCard(
+                                          text: "Upload Portfolio image",
                                             title:
                                                 "Upload Service Image Or Video",
                                             onImageSelected: (image) {

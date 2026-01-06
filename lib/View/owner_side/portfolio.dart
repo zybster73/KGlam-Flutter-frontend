@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/owner_side/UpdatePortfolio.dart';
 import 'package:KGlam/View/owner_side/Upload_portfolio.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class portfolio extends StatefulWidget {
@@ -175,22 +176,32 @@ class _portfolioState extends State<portfolio> {
                 Expanded(
                   child: portfolios.isEmpty
                       ? Center(
-                          child: Text('No Portfolio created yet!',
-                          style: GoogleFonts.poppins(
-                            color: Colors.black,
-                            fontSize: 16,
+                          child: AnimatedOpacity(
+                            opacity: 1.0,
+                            duration: const Duration(seconds: 5),
+                            curve: Curves.easeInOut,
+                            child: Text(
+                              'No Portfolio created yet!',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.poppins(
+                                color: Colors.black,
+                                fontSize: 16,
+                              ),
+                            ),
                           ),
-                          )
-                          ) 
-                        
-                      : GridView.builder(
+                        )
+                      : portfolios.isNotEmpty ? Center(
+                        child: LoadingAnimationWidget.hexagonDots(color:Color(0xFF01ABAB),  size: 50),
+                      ) :
+                      GridView.builder(
                           padding: EdgeInsets.only(top: 10),
                           gridDelegate:
-                              SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
+                              SliverGridDelegateWithMaxCrossAxisExtent(
+                                maxCrossAxisExtent: 200,
+                                //crossAxisCount: 2,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                childAspectRatio: 0.7,
+                                // childAspectRatio: 0.65,
                               ),
                           itemCount: portfolios.length,
                           itemBuilder: (context, index) {
@@ -201,137 +212,136 @@ class _portfolioState extends State<portfolio> {
 
                             return GestureDetector(
                               onTap: () {},
-                              child: IntrinsicHeight(
-                                child: Container(
-                                  width: 176.w,
-                                  margin: EdgeInsets.only(bottom: 12.h),
-                                  padding: EdgeInsets.all(5.r),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(15.r),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black12,
-                                        blurRadius: 5,
-                                        offset: Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Stack(
-                                        children: [
-                                          ClipRRect(
-                                            borderRadius: BorderRadius.circular(
-                                              15.r,
+                              child: Container(
+                                width: 176.w,
+                                margin: EdgeInsets.only(bottom: 12.h),
+                                padding: EdgeInsets.all(5.r),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(15.r),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 5,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Stack(
+                                      children: [
+                                        ClipRRect(
+                                          borderRadius: BorderRadius.circular(
+                                            15.r,
+                                          ),
+                                          child: Container(
+                                            height: 160.h,
+                                            width: double.infinity,
+                                            child: Image.network(
+                                              "$imagePath",
+                                              fit: BoxFit.cover,
                                             ),
-                                            child: Container(
-                                              height: 160.h,
-                                              width: double.infinity,
-                                              child: Image.network(
-                                                "$BASE_URL$imagePath",
-                                                fit: BoxFit.cover,
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 8.h,
+                                          left: 8.w,
+                                          child: Row(
+                                            children: [
+                                              // Edit Button
+                                              Container(
+                                                height: 30.h,
+                                                width: 30.h,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.7),
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  icon: Icon(
+                                                    Icons.edit,
+                                                    size: 16.sp,
+                                                    color: Color(0xFF01ABAB),
+                                                  ),
+                                                  onPressed: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            Updateportfolio(
+                                                              portfolioId:
+                                                                  index,
+                                                            ),
+                                                      ),
+                                                    );
+                                                  },
+                                                ),
                                               ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 8.h,
-                                            left: 8.w,
-                                            child: Row(
-                                              children: [
-                                                // Edit Button
-                                                Container(
-                                                  height: 30.h,
-                                                  width: 30.h,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white
-                                                        .withOpacity(0.7),
-                                                    shape: BoxShape.circle,
-                                                  ),
-                                                  child: IconButton(
-                                                    padding: EdgeInsets.zero,
-                                                    icon: Icon(
-                                                      Icons.edit,
-                                                      size: 16.sp,
-                                                      color: Color(0xFF01ABAB),
-                                                    ),
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              Updateportfolio(
-                                                                portfolioId:
-                                                                    index,
-                                                              ),
-                                                        ),
-                                                      );
-                                                    },
-                                                  ),
+                                              SizedBox(width: 8.w),
+
+                                              Container(
+                                                height: 30.h,
+                                                width: 30.h,
+                                                decoration: BoxDecoration(
+                                                  color: Colors.white
+                                                      .withOpacity(0.7),
+                                                  shape: BoxShape.circle,
                                                 ),
-                                                SizedBox(width: 8.w),
-
-                                                Container(
-                                                  height: 30.h,
-                                                  width: 30.h,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.white
-                                                        .withOpacity(0.7),
-                                                    shape: BoxShape.circle,
+                                                child: IconButton(
+                                                  padding: EdgeInsets.zero,
+                                                  icon: Icon(
+                                                    Icons.delete,
+                                                    size: 16.sp,
+                                                    color: Colors.red,
                                                   ),
-                                                  child: IconButton(
-                                                    padding: EdgeInsets.zero,
-                                                    icon: Icon(
-                                                      Icons.delete,
-                                                      size: 16.sp,
-                                                      color: Colors.red,
-                                                    ),
-                                                    onPressed: () async {
-                                                      final result = await salonApi
-                                                          .deletePortfolio(
-                                                            item['id'],
-                                                          );
-                                                      if (result['success']) {
-                                                        setState(() {
-                                                          portfolios.removeAt(
-                                                            index,
-                                                          );
-                                                        });
-                                                      }
-                                                    },
-                                                  ),
+                                                  onPressed: () async {
+                                                    final result =
+                                                        await salonApi
+                                                            .deletePortfolio(
+                                                              item['id'],
+                                                            );
+                                                    if (result['success']) {
+                                                      setState(() {
+                                                        portfolios.removeAt(
+                                                          index,
+                                                        );
+                                                      });
+                                                    }
+                                                  },
                                                 ),
-                                              ],
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-
-                                      SizedBox(height: 8.h),
-
-                                      Text(
-                                        serviceName,
-                                        style: GoogleFonts.poppins(
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-
-                                      SizedBox(height: 4.h),
-
-                                      Flexible(
-                                        child: Text(
-                                          description,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w300,
+                                              ),
+                                            ],
                                           ),
                                         ),
+                                      ],
+                                    ),
+
+                                    SizedBox(height: 8.h),
+
+                                    Text(
+                                      serviceName,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 16.sp,
+                                        fontWeight: FontWeight.bold,
                                       ),
-                                    ],
-                                  ),
+                                    ),
+
+                                    SizedBox(height: 4.h),
+
+                                    Text(
+                                      maxLines: 3,
+                                      description,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: GoogleFonts.poppins(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w300,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
                             );

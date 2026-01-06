@@ -1,3 +1,5 @@
+import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -10,6 +12,27 @@ class ReviewsScreen extends StatefulWidget {
 }
 
 class _ReviewsScreenState extends State<ReviewsScreen> {
+  bool isloading = true;
+  List<dynamic> allFeedbacks = [];
+
+  @override
+  void initState() {
+    super.initState();
+
+    fetchFeedback();
+  }
+
+  Future<void> fetchFeedback() async {
+    final data = await client_Api().ownerSeefeedback();
+
+    if (data != null) {
+      setState(() {
+        allFeedbacks = data;
+        isloading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
@@ -86,13 +109,12 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
                 SizedBox(height: 30.h),
                 Expanded(
-                  child: ListView.builder(
-                    padding: EdgeInsets.only(
-                      bottom: 70.h, 
-                      top: 0,
-                    ),
-                    itemCount: 5,
+                  child: isloading ? shimmerEffect(itemCount: 6, height: 200) :
+                   ListView.builder(
+                    padding: EdgeInsets.only(bottom: 70.h, top: 0),
+                    itemCount: allFeedbacks.length,
                     itemBuilder: (context, index) {
+                      final feedback = allFeedbacks[index];
                       return Container(
                         margin: EdgeInsets.only(bottom: 16.h),
                         padding: EdgeInsets.all(12.w),
@@ -125,7 +147,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      "Muhammad Samaan",
+                                      feedback['customer_name'],
                                       style: GoogleFonts.poppins(
                                         fontSize: 18.sp,
                                         fontWeight: FontWeight.bold,
@@ -155,7 +177,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             SizedBox(height: 6.h),
 
                             Text(
-                              "Hair Styling Make Over",
+                              feedback['service_name'],
                               style: GoogleFonts.poppins(
                                 fontSize: 12.sp,
                                 color: Color(0xFF717680),
@@ -174,7 +196,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                             SizedBox(height: 6.h),
 
                             Text(
-                              "My hair feels healthier, shinier, and perfectly styled with a natural finish. The service was professional, and the overall experience was relaxing and worth every visit.;[p]",
+                              feedback['feedback_text'],
                               style: GoogleFonts.poppins(
                                 fontSize: 12.sp,
                                 color: Color(0xFF717680),
@@ -194,7 +216,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
 
                             Row(
                               children: List.generate(
-                                5,
+                                feedback['rating'],
                                 (i) => Icon(
                                   Icons.stars_rounded,
                                   color: Color(0xFFDC6803),

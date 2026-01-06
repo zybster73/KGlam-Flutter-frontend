@@ -10,12 +10,12 @@ import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ServiceInforamtion extends StatefulWidget {
+class uploadService extends StatefulWidget {
   @override
-  State<ServiceInforamtion> createState() => _ServiceInforamtionState();
+  State<uploadService> createState() => _ServiceInforamtionState();
 }
 
-class _ServiceInforamtionState extends State<ServiceInforamtion> {
+class _ServiceInforamtionState extends State<uploadService> {
   File? selectedImage;
 
   TextEditingController serviceName = TextEditingController();
@@ -60,7 +60,6 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                   ),
                 ),
 
-                // Logo in center
                 Positioned(
                   top: screenHeight * 0.05 + 20,
                   child: Column(

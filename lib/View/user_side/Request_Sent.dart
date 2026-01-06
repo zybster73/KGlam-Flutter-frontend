@@ -1,23 +1,50 @@
+import 'package:KGlam/Services/clientApi.dart' show client_Api;
 import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/user_side/user_appointmnets.dart';
 
-class RequestSent extends StatelessWidget {
-  final String imagePath;
+class RequestSent extends StatefulWidget {
+  // final String imagePath;
   // final String serviceName;
   // final String description;
-  final int imageHeight;
+  final int serviceID;
   // final String saloonName;
   const RequestSent({
     super.key,
-    required this.imagePath,
+    // required this.imagePath,
     // required this.serviceName,
-    required this.imageHeight,
+    required this.serviceID,
     // required this.description,
     // required this.saloonName,
   });
+
+  @override
+  State<RequestSent> createState() => _RequestSentState();
+}
+
+class _RequestSentState extends State<RequestSent> {
+  bool isloading = true;
+  @override
+  void initState() {
+    super.initState();
+
+    fetchService();
+  }
+
+  Map<String, dynamic>? specificService;
+
+  Future<void> fetchService() async {
+    final response = await client_Api().viewpecificerviceCleint(
+      widget.serviceID,
+    );
+
+    setState(() {
+      specificService = response;
+      isloading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,15 +55,20 @@ class RequestSent extends StatelessWidget {
     return Scaffold(
       body: Stack(
         children: [
-          Image.asset(
-            imagePath,
+          Image(
+            image:
+                (specificService?['service_image'] != null &&
+                    specificService!['service_image'].toString().isNotEmpty)
+                ? NetworkImage(specificService!['service_image'])
+                : const AssetImage('assets/images/unsplash.jpg')
+                      as ImageProvider,
             width: double.infinity,
-            height: imageHeight.toDouble(),
+            height: 400.h,
             fit: BoxFit.cover,
           ),
           SingleChildScrollView(
             child: Container(
-              margin: EdgeInsets.only(top: imageHeight - 30),
+              margin: EdgeInsets.only(top: 400 - 30),
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -56,15 +88,13 @@ class RequestSent extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // saloonName == null || saloonName!.isEmpty
-                  //     ? SizedBox.shrink() 
-                  //     : Text(
-                  //         'By : ${saloonName}',
-                  //         style: GoogleFonts.poppins(
-                  //           fontSize: 20.sp,
-                  //           fontWeight: FontWeight.w500,
-                  //         ),
-                  //       ),
+                  Text(
+                    "By: ${specificService!['service_name']}",
+                    style: GoogleFonts.poppins(
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
 
                   SizedBox(height: 10),
                   Text(

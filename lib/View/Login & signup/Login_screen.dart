@@ -1,4 +1,5 @@
 import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/Services/notificationServices.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/Services/validations.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
@@ -30,8 +31,17 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
+ 
+   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    final notifyService = Provider.of<Notificationservices>(context,listen: false);
+    notifyService.listenToTokenRefresh();
+  }
   @override
   Widget build(BuildContext context) {
+    final notifyService = Provider.of<Notificationservices>(context);
     final validations = Provider.of<Validations>(context);
     Utils.instance.initToast(context);
     final authProvier = Provider.of<AuthProvider>(context);
@@ -182,20 +192,24 @@ class _LoginScreenState extends State<LoginScreen> {
                                   userInput,
                                   passwordController.text,
                                 );
+
+                                
                                 if (result['success'] == true) {
+                                  await notifyService.tokensentAfterLogin();
                                   if (widget.index == 'owner') {
-                                    final salon = result['data']['data']['salon']; 
+                                    final salon =
+                                        result['data']['data']['salon'];
                                     if (salon == null) {
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (context) => SaloonInformation(),
-
+                                          builder: (context) =>
+                                              SaloonInformation(),
                                         ),
                                       );
-                                    }else{
+                                    } else {
                                       await Storetoken.saveSalonId(salon['id']);
-                                       Navigator.pushAndRemoveUntil(
+                                      Navigator.pushAndRemoveUntil(
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) =>
@@ -217,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   }
                                 }
+                              
                                 // if (widget.index == 1) {
                                 //   Navigator.pushAndRemoveUntil(
                                 //     context,

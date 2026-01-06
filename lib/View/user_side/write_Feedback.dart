@@ -1,24 +1,29 @@
+import 'package:KGlam/Services/clientApi.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
-import 'package:KGlam/View/user_side/feedBack.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 
 class WriteFeedback extends StatefulWidget {
+  final int feedback;
+
+  WriteFeedback({required this.feedback});
   @override
   State<WriteFeedback> createState() => _WriteFeedbackState();
 }
 
 class _WriteFeedbackState extends State<WriteFeedback> {
-  
-
+  int selectedStarCount = 0;
   List<bool> selectedStars = List.generate(5, (_) => false);
   final TextEditingController feed_back = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-     Utils.instance.initToast(context);
+    final cleintApi = Provider.of<client_Api>(context);
+    Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -112,27 +117,27 @@ class _WriteFeedbackState extends State<WriteFeedback> {
           Expanded(
             child: LayoutBuilder(
               builder: (context, constraints) {
-                return SingleChildScrollView(
-                  child: ConstrainedBox(
-                    constraints: BoxConstraints(
-                      minHeight: constraints.maxHeight,
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    minHeight: constraints.maxHeight,
+                  ),
+                  child: Container(
+                    width: screenWidth,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(24),
+                        topRight: Radius.circular(24),
+                      ),
                     ),
-                    child: Container(
-                      width: screenWidth,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(24),
-                          topRight: Radius.circular(24),
-                        ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 8,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 8,
-                          vertical: 8,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.all(8.0),
+                        child: SingleChildScrollView(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.start,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -150,8 +155,8 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                               const SizedBox(height: 15),
                               Row(
                                 children: List.generate(5, (index) {
-                                  bool isSelected = selectedStars[index];
-
+                                  bool isSelected = index < selectedStarCount;
+                                          
                                   return IconButton(
                                     icon: Icon(
                                       isSelected
@@ -164,15 +169,14 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                                     ),
                                     onPressed: () {
                                       setState(() {
-                                        selectedStars[index] =
-                                            !selectedStars[index];
+                                        selectedStarCount = index + 1;
                                       });
                                     },
                                   );
                                 }),
                               ),
                               const SizedBox(height: 15),
-
+                                          
                               CustomTextField(
                                 length: 6,
                                 controller: feed_back,
@@ -180,15 +184,24 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                                 hintText:
                                     'Give your honest feedback about us....',
                               ),
-
+                                          
                               SizedBox(height: 30),
                               ElevatedButton(
-                                onPressed: () {
-                                  Utils.instance.toastMessage(
+                                onPressed: () async {
+                                  final result = await cleintApi
+                                      .customerGivefeedback(
+                                        selectedStarCount,
+                                        feed_back.text,
+                                        widget.feedback,
+                                      );
+                                    if(result['success']){
+                                     Utils.instance.toastMessage(
                                     "Your feedback is submitted",
                                   );
-
+                                          
                                   Navigator.pop(context);
+                                  }
+                                  
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: Size(screenWidth * 0.96, 50),
@@ -198,7 +211,9 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                 ),
-                                child: Text(
+                                child: cleintApi.isLoading ? Center(
+                                  child: LoadingAnimationWidget.progressiveDots(color: Colors.white, size: 30),
+                                ) : Text(
                                   "Submit",
                                   style: GoogleFonts.poppins(
                                     color: Colors.white,

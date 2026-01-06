@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:KGlam/View/user_side/Selected_Service.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class UserPortfolio extends StatefulWidget {
   final int id;
@@ -43,11 +44,15 @@ class _UserPortfolioState extends State<UserPortfolio> {
     Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
-    return isServicesLoading
-        ? Center(child: CircularProgressIndicator())
-        : Scaffold(
+    return  Scaffold(
             backgroundColor: Colors.white,
-            body: SingleChildScrollView(
+            body: isServicesLoading
+        ? Center(child: LoadingAnimationWidget.hexagonDots(
+          color: Color(0xFF01ABAB),
+          size: 50,
+        ))
+        :
+            SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
@@ -187,7 +192,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                             ),
                           )
                         : GridView.builder(
-                            padding: EdgeInsets.only(top: 10),
+                            padding: EdgeInsets.only(top: 10,left: 10),
                             gridDelegate:
                                 SliverGridDelegateWithFixedCrossAxisCount(
                                   crossAxisCount: 2,

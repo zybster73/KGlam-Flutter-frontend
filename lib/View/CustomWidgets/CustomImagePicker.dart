@@ -4,12 +4,14 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 
 class UploadImageCard extends StatefulWidget {
+  final String text;
   final String title;
   final Function(File image) onImageSelected;
-  final String? initialImageUrl; 
+  final String? initialImageUrl;
 
   const UploadImageCard({
     super.key,
+    required this.text,
     required this.title,
     required this.onImageSelected,
     this.initialImageUrl,
@@ -29,8 +31,9 @@ class _UploadImageCardState extends State<UploadImageCard> {
   }
 
   Future<void> _pickImage() async {
-    final XFile? pickedFile =
-        await _picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile = await _picker.pickImage(
+      source: ImageSource.gallery,
+    );
 
     if (pickedFile != null) {
       final file = File(pickedFile.path);
@@ -45,21 +48,36 @@ class _UploadImageCardState extends State<UploadImageCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: _pickImage,
-      child: Container(
-        height: 160,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: Colors.black12),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 8.0, right: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(widget.text, 
+            style: GoogleFonts.poppins(
+              color: Colors.black,
+                fontWeight: FontWeight.w600,
+                fontSize: 15,
+            ),
+            ),
+            SizedBox(height: 10,),
+            Container(
+              height: 160,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: Colors.black12),
+              ),
+              child: _buildImageContent(),
+            ),
+          ],
         ),
-        child: _buildImageContent(),
       ),
     );
   }
 
   Widget _buildImageContent() {
-    
     if (_selectedImage != null) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
@@ -71,8 +89,7 @@ class _UploadImageCardState extends State<UploadImageCard> {
       );
     }
 
-    if (widget.initialImageUrl != null &&
-        widget.initialImageUrl!.isNotEmpty) {
+    if (widget.initialImageUrl != null && widget.initialImageUrl!.isNotEmpty) {
       return ClipRRect(
         borderRadius: BorderRadius.circular(12),
         child: Image.network(
@@ -97,7 +114,7 @@ class _UploadImageCardState extends State<UploadImageCard> {
         Icon(Icons.upload, color: Color(0xFF01ABAB), size: 40),
         SizedBox(height: 10),
         Text(
-          'Upload your image',
+          'Upload your image in jpg , jpeg and in png format.',
           style: TextStyle(color: Colors.grey),
         ),
       ],

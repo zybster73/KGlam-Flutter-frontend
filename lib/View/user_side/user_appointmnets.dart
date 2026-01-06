@@ -1,10 +1,16 @@
-import 'package:KGlam/View/CustomWidgets/Appointment.dart';
-import 'package:KGlam/View/user_side/feedback.dart';
-import 'package:KGlam/View/user_side/specificFeedback.dart';
+import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/Services/salon_Api_provider.dart';
+
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+
+import 'package:KGlam/View/user_side/specific_feedback.dart';
+import 'package:KGlam/models/customerBooking.dart';
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:KGlam/View/user_side/write_Feedback.dart';
+
+import 'package:loading_animation_widget/loading_animation_widget.dart';
 
 class UserAppointmnets extends StatefulWidget {
   final VoidCallback? onBack;
@@ -17,9 +23,42 @@ class UserAppointmnets extends StatefulWidget {
 class _UserAppointmnetsState extends State<UserAppointmnets> {
   TextEditingController searchController = TextEditingController();
   int value = 0;
+  bool isloading = true;
+  List<CustomerBooking> getallBookings = [];
+
+  String? name;
+
+  @override
+  void initState() {
+    super.initState();
+    getBookingsCustomer();
+    nameEmail();
+  }
+
+  Future<void> nameEmail() async {
+    final data = await SalonApiProvider().getUserDetails();
+
+    if (data != null) {
+      setState(() {
+        name = data['username'];
+      });
+    }
+  }
+
+  Future<void> getBookingsCustomer() async {
+    final data = await client_Api().customerGetAllBookings();
+
+    if (data != null) {
+      getallBookings = data.map((e) => CustomerBooking.fromJson(e)).toList();
+      setState(() {
+        isloading = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
 
@@ -131,166 +170,269 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                 ),
                 SizedBox(height: 25.h),
                 Expanded(
-                  child: SingleChildScrollView(
-                    child: Column(
-                      
-                      children: [
-                        appointmentCard(
-                          imagePath: 'assets/images/Ahair.jpg',
-                           title: 'Fresh Hair Cut Make Over :',
-                            bookedBy: 'Ubada Zubair',
-                             timing: '02 : 10 : 09 AM', 
-                             location: "Crown and Canvas"
-                             ),
-                        appointmentCard(
-                          imagePath: 'assets/images/Haircut.jpg',
-                          title: "Fresh Hair Cut Make Over :",
-                          bookedBy: "Ubada Zubair",
-                          timing: "10 : 10 : 09 AM",
-                          location: "Crown and Canvas",
-                        ),
-                        appointmentCard(
-                          imagePath: 'assets/images/beard.jpg',
-                          title: "Elegant Beard Styling:",
-                          bookedBy: "Ubada Zubair",
-                          timing: "9 : 30 : 09 PM",
-                          location: "Crown and Canvas",
-                        ),
-                        
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 40,)
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+                  child: isloading
+                      ? Center(
+                          child: LoadingAnimationWidget.hexagonDots(
+                            color: Color(0xFF01ABAB),
+                            size: 50,
+                          ),
+                        )
+                      : ListView.builder(
+                          itemCount: getallBookings.length,
+                          padding: EdgeInsets.only(bottom: 70.h, top: 0),
+                          itemBuilder: (_, index) {
+                            final bookings = getallBookings[index];
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 20.h),
+                              padding: EdgeInsets.all(12.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(16.r),
+                                color: Colors.white,
+                                border: Border.all(
+                                  color: Colors.black.withOpacity(0.1),
+                                  width: 0.4,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.06),
+                                    blurRadius: 6,
+                                    offset: const Offset(0, 3),
+                                  ),
+                                ],
+                              ),
 
-  Widget appointmentCard({
-    required String imagePath,
-    required String title,
-    required String bookedBy,
-    required String timing,
-    required String location,
-  }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 20.h),
-      padding: EdgeInsets.all(12.w),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(16.r),
-        color: Colors.white,
-        border: Border.all(color: Colors.black.withOpacity(0.1), width: 0.4),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.06),
-            blurRadius: 6,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12.r),
-            child: Image.asset(
-              imagePath,
-              height: 214.h,
-              width: double.infinity,
-              fit: BoxFit.cover,
-            ),
-          ),
-          SizedBox(height: 12.h),
-          Text(
-            title,
-            style: GoogleFonts.poppins(
-              fontSize: 18.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.black,
-            ),
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              const Icon(Icons.badge, size: 18, color: Color(0xFF717680)),
-              SizedBox(width: 8.w),
-              Text(
-                "Booked By : $bookedBy",
-                style: GoogleFonts.poppins(
-                  fontSize: 14.sp,
-                  color: const Color(0xFF717680),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ClipRRect(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                    child:
+                                        bookings.image != null &&
+                                            bookings.image!.isNotEmpty
+                                        ? Image.network(
+                                            bookings.image!,
+                                            height: 214.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Image.asset(
+                                            'assets/images/unsplash.jpg',
+                                            height: 214.h,
+                                            width: double.infinity,
+                                            fit: BoxFit.cover,
+                                          ),
+                                  ),
+                                  SizedBox(height: 12.h),
+                                  Text(
+                                    "${bookings.serviceName} :",
+                                    style: GoogleFonts.poppins(
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  SizedBox(height: 8.h),
+
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.badge,
+                                        size: 18,
+                                        color: Color(0xFF717680),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        "Booked By : ${name}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14.sp,
+                                          color: const Color(0xFF717680),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.access_time_filled_sharp,
+                                        size: 18,
+                                        color: Color(0xFF717680),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        "Timing : ${bookings.bookingTime}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14.sp,
+                                          color: const Color(0xFF717680),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.location_on_rounded,
+                                        size: 18,
+                                        color: Color(0xFF717680),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        "Location : ${bookings.salonAddress}",
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 14.sp,
+                                          color: const Color(0xFF717680),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  Row(
+                                    children: [
+                                      if (bookings.status == 'pending')
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () async {},
+                                            child: Container(
+                                              width: screenWidth * 0.96,
+                                              height: 48.h,
+                                              decoration: BoxDecoration(
+                                                color: Color(0xFF01ABAB),
+                                                border: Border.all(
+                                                  color: const Color(
+                                                    0xFF01ABAB,
+                                                  ),
+                                                  width: 1.2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Pending.....",
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      SizedBox(width: 12.w),
+                                      if (bookings.status == 'reject')
+                                        Expanded(
+                                          child: GestureDetector(
+                                            onTap: () async {},
+                                            child: Container(
+                                              width: screenWidth * 0.96,
+                                              height: 48.h,
+                                              decoration: BoxDecoration(
+                                                color: Colors.red,
+                                                border: Border.all(
+                                                  color: Colors.red,
+                                                  width: 1.2,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12.r),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                  "Rejected",
+                                                  style: GoogleFonts.poppins(
+                                                    color: Colors.white,
+
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16.sp,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      if (bookings.status == 'accept')
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () async {},
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize: Size(
+                                                screenWidth * 0.96,
+                                                45,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              backgroundColor: Color(
+                                                0xFF01ABAB,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              "Booking Accepted",
+                                              style: GoogleFonts.poppins(
+                                                color: Colors.white,
+
+                                                fontWeight: FontWeight.w600,
+                                                fontSize: 16.sp,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                      if (bookings.status == 'completed')
+                                        Expanded(
+                                          child: ElevatedButton(
+                                            onPressed: () async {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SpecificFeedback(
+                                                        bookingss: bookings.id,
+                                                      ),
+                                                ),
+                                              );
+                                            },
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize: Size(
+                                                screenWidth * 0.96,
+                                                45,
+                                              ),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              backgroundColor: Color(
+                                                0xFF01ABAB,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                "See your given feedback",
+                                                style: GoogleFonts.poppins(
+                                                  color: Colors.white,
+
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16.sp,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
                 ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              const Icon(Icons.access_time, size: 18, color: Color(0xFF717680)),
-              SizedBox(width: 8.w),
-              Text(
-                "Timing : $timing",
-                style: GoogleFonts.poppins(
-                  fontSize: 14.sp,
-                  color: const Color(0xFF717680),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Row(
-            children: [
-              const Icon(
-                Icons.location_on_rounded,
-                size: 18,
-                color: Color(0xFF717680),
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                "Location: $location",
-                style: GoogleFonts.poppins(
-                  fontSize: 14.sp,
-                  color: const Color(0xFF717680),
-                ),
-              ),
-            ],
-          ),
-          SizedBox(height: 20.h),
-          InkWell(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => Specificfeedback(
-                    image: imagePath,
-                    whoBook: bookedBy,
-                    time: timing,
-                    loc: location,
-                    tit: title,
-                  ),
-                ),
-              );
-            },
-            child: Container(
-              height: 48.h,
-              decoration: BoxDecoration(
-                color: const Color(0xFF01ABAB),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: Center(
-                child: Text(
-                  "Your feedback",
-                  style: GoogleFonts.poppins(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16.sp,
-                  ),
-                ),
-              ),
+              ],
             ),
           ),
         ],
