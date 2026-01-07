@@ -1,3 +1,4 @@
+import 'package:KGlam/Services/clientApi.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:KGlam/View/CustomWidgets/User_sidebar.dart';
@@ -13,6 +14,35 @@ class Usernavigationbar extends StatefulWidget {
 
 class _UsernavigationbarState extends State<Usernavigationbar> {
   int index = 0;
+
+  bool hasNewNotification = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    checkNewNotifications();
+
+    // checkNewappointments();
+  }
+
+  Future<void> checkNewNotifications() async {
+    final data = await client_Api().ownerNotifications();
+
+    if (!mounted || data == null || data.isEmpty) return;
+
+    final hasUnread = data.any((notif) => notif['is_read'] == false);
+
+    if (hasUnread) {
+      setState(() {
+        hasNewNotification = true;
+      });
+    } else {
+      setState(() {
+        hasNewNotification = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +68,11 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
             index = 0;
           });
         },
+        onMarkAllRead: () {
+          setState(() {
+            hasNewNotification = false;
+          });
+        },
       ),
     ];
 
@@ -54,9 +89,10 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
         Icons.person_outline_outlined,
         color: index == 2 ? Colors.black : Colors.black26
       ),
-      Icon(
+      alertIcon(
         Icons.notifications_none_rounded,
-        color: index == 3 ? Colors.black : Colors.black26
+        hasNewNotification,
+        color: index == 3 ? Colors.black : Colors.black26,
       ),
     ];
 
@@ -83,9 +119,44 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
           index: index,
           animationCurve: Curves.easeInOut,
           animationDuration: Duration(milliseconds: 300),
-          onTap: (i) => setState(() => index = i),
+          onTap: (i) {
+            setState(() {
+              index = i;
+            });
+
+            if (i == 1 || i == 2 || i==0 ) {
+              checkNewNotifications();
+              print('API called for index 1');
+            }
+          },
         ),
       ),
+    );
+  }
+  Widget alertIcon(
+    IconData icon,
+    bool showBadge, {
+    Color color = Colors.black,
+  }) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Icon(icon, color: color, size: 30),
+        if (showBadge)
+          Positioned(
+            top: -2,
+            right: -2,
+            child: Container(
+              height: 10,
+              width: 10,
+              decoration: BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.5),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

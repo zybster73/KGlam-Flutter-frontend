@@ -28,7 +28,7 @@ void main() async {
         ChangeNotifierProvider(create: (_) => SalonApiProvider()),
         ChangeNotifierProvider(create: (_) => Validations()),
         ChangeNotifierProvider(create: (_) => client_Api()),
-        ChangeNotifierProvider(create: (_) => Notificationservices()),
+        ChangeNotifierProvider(create: (_) => Notificationservices()..init()),
       ],
       child: const MyApp(),
     ),

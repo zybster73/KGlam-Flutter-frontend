@@ -17,12 +17,11 @@ class OtpVerification extends StatefulWidget {
 }
 
 class _OtpVerificationState extends State<OtpVerification> {
-  
   final TextEditingController _pinController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-     Utils.instance.initToast(context);
+    Utils.instance.initToast(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -187,20 +186,16 @@ class _OtpVerificationState extends State<OtpVerification> {
                                       .forgotEmailOtp(_pinController.text);
 
                                   if (resetToken != null) {
-                                    Future.microtask((){
-                                        
+                                    Future.microtask(() {
                                       Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => ConfirmPassword(
-                                          resetToken: resetToken,
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) => ConfirmPassword(
+                                            resetToken: resetToken,
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                    }
-
-                                    );
-                                    
+                                      );
+                                    });
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -212,15 +207,16 @@ class _OtpVerificationState extends State<OtpVerification> {
                                   ),
                                 ),
                                 child: Center(
-                                  child: authProvider.isLoading ? CircularProgressIndicator() :
-                                  Text(
-                                    "Continue",
-                                    style: GoogleFonts.poppins(
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                    ),
-                                  ),
+                                  child: authProvider.isLoading
+                                      ? CircularProgressIndicator()
+                                      : Text(
+                                          "Continue",
+                                          style: GoogleFonts.poppins(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 16,
+                                          ),
+                                        ),
                                 ),
                               ),
                               SizedBox(height: 10),
@@ -238,8 +234,9 @@ class _OtpVerificationState extends State<OtpVerification> {
                                   ),
                                   TextButton(
                                     onPressed: () {
+                                      print(widget.email);
                                       authProvider.resendOtp(widget.email);
-                                      Utils.instance.toastMessage('OTP Resend');
+                                   
                                       // Navigator.push(
                                       //   context,
                                       //   MaterialPageRoute(

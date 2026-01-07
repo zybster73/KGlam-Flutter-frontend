@@ -236,13 +236,17 @@ class _UserProfileState extends State<UserProfile> {
               ),
       
               SizedBox(height: 10.h),
+
+              isloading
+                ? ShimmerEffectlist(itemCount: 6, height: 50)
+                :
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 1.h),
                 child:Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          isloading ? ShimmerEffectlist(itemCount: 6, height: 50) :
+                          
                           CustomTextField(
                             controller: userName,
                             labelText: 'User Name',
@@ -305,6 +309,7 @@ class _UserProfileState extends State<UserProfile> {
                       oldPassword: oldPassword.text,
                       newPassword: newPassword.text,
                       confirmPassword: confirmPassword.text,
+                      phoneNumber: PhoneNum.text,
                       profileImage: _selectedImage,
                     );
       

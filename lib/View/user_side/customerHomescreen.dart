@@ -69,9 +69,7 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     Utils.instance.initToast(context);
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: Container(
+    return  Container(
         color: Colors.white,
         child: SingleChildScrollView(
           child: Column(
@@ -277,8 +275,8 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
             ],
           ),
         ),
-      ),
-    );
+      );
+  
   }
 
   Widget _buildSaloonCard(

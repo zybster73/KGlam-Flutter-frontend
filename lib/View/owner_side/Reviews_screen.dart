@@ -110,6 +110,27 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                 SizedBox(height: 30.h),
                 Expanded(
                   child: isloading ? shimmerEffect(itemCount: 6, height: 200) :
+                  allFeedbacks.isEmpty ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.feedback_rounded,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "No feedback given yet",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ) :
                    ListView.builder(
                     padding: EdgeInsets.only(bottom: 70.h, top: 0),
                     itemCount: allFeedbacks.length,
@@ -138,8 +159,8 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                               children: [
                                 CircleAvatar(
                                   radius: 30.r,
-                                  backgroundImage: AssetImage(
-                                    "assets/images/xxx.jpg",
+                                  backgroundImage:  NetworkImage(
+                                    feedback['customer_profile_image'],
                                   ),
                                 ),
                                 SizedBox(width: 10.w),
@@ -154,7 +175,7 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                                       ),
                                     ),
                                     Text(
-                                      "Samaan12@gmail.com",
+                                      feedback['customer_email'],
                                       style: GoogleFonts.poppins(
                                         fontSize: 14.sp,
                                         color: Color(0xFF717680),

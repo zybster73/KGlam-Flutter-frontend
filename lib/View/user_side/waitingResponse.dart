@@ -49,115 +49,130 @@ class _waitingResponseState extends State<waitingResponse> {
 
   @override
   Widget build(BuildContext context) {
-   return Scaffold(
-  body: isloading
-      ?  Center(child:LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50))
-      : Stack(
-          children: [
-            /// Background Image
-            Image(
-              image: (specificService?['service_image'] != null &&
-                      specificService!['service_image'].toString().isNotEmpty)
-                  ? NetworkImage(specificService!['service_image'])
-                  : const AssetImage('assets/images/unsplash.jpg')
-                      as ImageProvider,
-              width: double.infinity,
-              height:600.h,
-              fit: BoxFit.cover,
-            ),
-
-            /// Bottom Sheet
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 30, vertical: 25),
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(25),
-                    topRight: Radius.circular(25),
-                  ),
-                ),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Request Sent",
-                        style: GoogleFonts.poppins(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "The service you sent to your barber will take a little time to be accepted, so please wait.",
-                        style: GoogleFonts.poppins(
-                          fontSize: 13.sp,
-                          fontWeight: FontWeight.w500,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      const CircleAvatar(
-                        backgroundImage:
-                            AssetImage('assets/images/Request.png'),
-                        radius: 50,
-                      ),
-                      SizedBox(height: 25.h),
-                      ElevatedButton(
-                        onPressed: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                                builder: (_) => Usernavigationbar()),
-                            (route) => false,
-                          );
-                        },
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(double.infinity, 52),
-                          backgroundColor: const Color(0xFF01ABAB),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: Text(
-                          "Continue",
-                          style: GoogleFonts.poppins(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+    return Scaffold(
+      body: isloading
+          ? Center(
+              child: LoadingAnimationWidget.hexagonDots(
+                color: Color(0xFF01ABAB),
+                size: 50,
               ),
-            ),
-
-            /// Back Button
-            Positioned(
-              top: 50,
-              left: 16,
-              child: CircleAvatar(
-                radius: 16,
-                backgroundColor: Colors.white.withOpacity(0.8),
-                child: IconButton(
-                  icon: const Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 14,
-                  ),
-                  onPressed: () => Navigator.pop(context),
+            )
+          : Stack(
+              children: [
+                /// Background Image
+                Image(
+                  image:
+                      (specificService?['service_image'] != null &&
+                          specificService!['service_image']
+                              .toString()
+                              .isNotEmpty)
+                      ? NetworkImage(specificService!['service_image'])
+                      : const AssetImage('assets/images/unsplash.jpg')
+                            as ImageProvider,
+                  width: double.infinity,
+                  height: 600.h,
+                  fit: BoxFit.cover,
                 ),
-              ),
-            ),
-          ],
-        ),
-);
 
+                /// Bottom Sheet
+                Align(
+                  alignment: Alignment.bottomCenter,
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 30,
+                      vertical: 25,
+                    ),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(25),
+                        topRight: Radius.circular(25),
+                      ),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            "By: ${specificService!['salon_name']}",
+                            style: GoogleFonts.poppins(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "Request Sent",
+                            style: GoogleFonts.poppins(
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          Text(
+                            "The service you sent to your barber will take a little time to be accepted, so please wait.",
+                            style: GoogleFonts.poppins(
+                              fontSize: 13.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 20),
+                          const CircleAvatar(
+                            backgroundImage: AssetImage(
+                              'assets/images/Request.png',
+                            ),
+                            radius: 50,
+                          ),
+                          SizedBox(height: 25.h),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => Usernavigationbar(),
+                                ),
+                                (route) => false,
+                              );
+                            },
+                            style: ElevatedButton.styleFrom(
+                              minimumSize: const Size(double.infinity, 52),
+                              backgroundColor: const Color(0xFF01ABAB),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: Text(
+                              "Continue",
+                              style: GoogleFonts.poppins(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+
+                /// Back Button
+                Positioned(
+                  top: 50,
+                  left: 16,
+                  child: CircleAvatar(
+                    radius: 16,
+                    backgroundColor: Colors.white.withOpacity(0.8),
+                    child: IconButton(
+                      icon: const Icon(Icons.arrow_back_ios_new, size: 14),
+                      onPressed: () => Navigator.pop(context),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+    );
   }
 }

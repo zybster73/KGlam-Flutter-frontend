@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/owner_side/portfolio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +26,7 @@ class _UploaddportfolioState extends State<Upload_portfolio> {
   TextEditingController serviceDescription = TextEditingController();
   @override
   Widget build(BuildContext context) {
-    Utils.instance.initToast(context); 
+    Utils.instance.initToast(context);
     final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -173,10 +174,14 @@ class _UploaddportfolioState extends State<Upload_portfolio> {
                                     serviceDescription.text,
                                     selectedImage,
                                   );
-                                  if(result['success']){
-                                    Navigator.pop(context);
+                                  if (result['success']) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (builder) => portfolio(),
+                                      ),
+                                    );
                                   }
-                                 
                                 },
                                 style: ElevatedButton.styleFrom(
                                   shape: RoundedRectangleBorder(
@@ -188,20 +193,21 @@ class _UploaddportfolioState extends State<Upload_portfolio> {
                                     48,
                                   ),
                                 ),
-                                child: salonApi.isLoading ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: Colors.white,
-                                  ),
-                                ):
-                                 Text(
-                                  'Save',
-                                  textAlign: TextAlign.center,
-                                  style: GoogleFonts.poppins(
-                                    color: Colors.white,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
+                                child: salonApi.isLoading
+                                    ? Center(
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                        ),
+                                      )
+                                    : Text(
+                                        'Save',
+                                        textAlign: TextAlign.center,
+                                        style: GoogleFonts.poppins(
+                                          color: Colors.white,
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
                               ),
 
                               SizedBox(height: 20),

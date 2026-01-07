@@ -9,6 +9,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class AppointmentScreen extends StatefulWidget {
+  
   final VoidCallback? onBack;
   const AppointmentScreen({super.key, this.onBack});
 
@@ -17,27 +18,78 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
+  
   bool isloading = true;
   List<getBookings> getallBookings = [];
 
   TextEditingController searchController = TextEditingController();
+  ScrollController scrollController = ScrollController();
+  bool pageLoading = false;
+  int pageNumber = 1;
 
   @override
   void initState() {
     super.initState();
     getBookingsOwner();
+    scrollController.addListener(scrollListner);
   }
 
-  Future<void> getBookingsOwner() async {
-    final data = await client_Api().ownerGetAllBookings();
-
-    if (data != null) {
-      getallBookings = data.map((e) => getBookings.fromJson(e)).toList();
-      setState(() {
-        isloading = false;
-      });
+  void scrollListner() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !pageLoading &&
+        !isloading) {
+      getBookingsOwner(isLoadMore: true);
     }
   }
+
+
+  Future<void> getBookingsOwner({bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      setState(() {
+        pageLoading = true;
+      });
+    } else {
+      setState(() {
+        isloading = true;
+        pageNumber = 1;
+      });
+    }
+
+    final data = await client_Api().ownerGetAllBookings(pageNumber);
+
+    if (data != null && data.isNotEmpty) {
+      setState(() {
+        if (isLoadMore) {
+          getallBookings.addAll(
+            data.map((e) => getBookings.fromJson(e)).toList(),
+          );
+        } else {
+          getallBookings = data
+              .map((e) => getBookings.fromJson(e))
+              .toList();
+        }
+
+        pageNumber++;
+      });
+    }
+
+    setState(() {
+      isloading = false;
+      pageLoading = false;
+    });
+  }
+
+  // Future<void> getBookingsOwner() async {
+  //   final data = await client_Api().ownerGetAllBookings();
+
+  //   if (data != null) {
+  //     getallBookings = data.map((e) => getBookings.fromJson(e)).toList();
+  //     setState(() {
+  //       isloading = false;
+  //     });
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -161,12 +213,40 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 Expanded(
                   child: isloading
                       ? Center(
-                          child: LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50)
+                          child: LoadingAnimationWidget.hexagonDots(
+                            color: Color(0xFF01ABAB),
+                            size: 50,
+                          ),
                         )
-                      : ListView.builder(
-                          itemCount: getallBookings.length,
+                      : getallBookings.isEmpty ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                            
+                              Text(
+                                "No bookings yet",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ) :
+                       ListView.builder(
+                          itemCount: getallBookings.length + (pageLoading ? 1 : 0),
+                          controller: scrollController,
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemBuilder: (_, index) {
+                            if (index == getallBookings.length) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
                             final bookings = getallBookings[index];
                             return Container(
                               margin: EdgeInsets.only(bottom: 20.h),
@@ -249,9 +329,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     "accept",
                                                     bookings.id,
                                                   );
-                                                  setState(() {
-                                                    
-                                                  });
+                                              if (result != null) {
+                                                setState(() {
+                                                  getallBookings[index].Status =
+                                                      'accept';
+                                                });
+                                              }
                                             },
                                             child: Container(
                                               height: 48.h,
@@ -267,7 +350,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     BorderRadius.circular(12.r),
                                               ),
                                               child: Center(
-                                                child: clientApi.isLoading
+                                                child: client_Api().isLoading
                                                     ? Center(
                                                         child:
                                                             CircularProgressIndicator(
@@ -302,9 +385,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     "reject",
                                                     bookings.id,
                                                   );
-                                              setState(() {
-                                                
-                                              });
+                                              if (result != null) {
+                                                setState(() {
+                                                  getallBookings[index].Status =
+                                                      'reject';
+                                                });
+                                              }
                                             },
                                             child: Container(
                                               height: 48.h,
@@ -357,9 +443,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                                     bookings.id,
                                                     "completed",
                                                   );
-                                                  setState(() {
-                                                    
-                                                  });
+                                              if (result != null) {
+                                                setState(() {
+                                                  getallBookings[index].Status =
+                                                      'completed';
+                                                });
+                                              }
                                             },
                                             style: ElevatedButton.styleFrom(
                                               minimumSize: Size(
@@ -376,11 +465,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             ),
                                             child: Center(
                                               child: clientApi.isLoading
-                                                  ? Center(
-                                                      child:
-                                                          CircularProgressIndicator(),
-                                                    )
-                                                  : Text(
+                                                  ? CircularProgressIndicator():
+                                                            
+                                                   Text(
                                                       "Mark as completed",
                                                       style:
                                                           GoogleFonts.poppins(
@@ -398,9 +485,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () async {
-                                              setState(() {
-                                                
-                                              });
+                                              setState(() {});
                                               // final result = await client_Api()
                                               //     .ownerCompleteBooking(
                                               //       bookings.id,

@@ -25,14 +25,63 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
   int value = 0;
   bool isloading = true;
   List<CustomerBooking> getallBookings = [];
-
+  ScrollController scrollController = ScrollController();
   String? name;
+  bool pageLoading = false;
+  int pageNumber = 1;
 
   @override
   void initState() {
     super.initState();
     getBookingsCustomer();
     nameEmail();
+    scrollController.addListener(scrollListner);
+  }
+
+    void scrollListner() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !pageLoading &&
+        !isloading) {
+      getBookingsCustomer(isLoadMore: true);
+    }
+  }
+
+
+  Future<void> getBookingsCustomer({bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      setState(() {
+        pageLoading = true;
+      });
+    } else {
+      setState(() {
+        isloading = true;
+        pageNumber = 1;
+      });
+    }
+
+    final data = await client_Api().customerGetAllBookings(pageNumber);
+
+    if (data != null && data.isNotEmpty) {
+      setState(() {
+        if (isLoadMore) {
+          getallBookings.addAll(
+            data.map((e) => CustomerBooking.fromJson(e)).toList(),
+          );
+        } else {
+          getallBookings = data
+              .map((e) => CustomerBooking.fromJson(e))
+              .toList();
+        }
+
+        pageNumber++;
+      });
+    }
+
+    setState(() {
+      isloading = false;
+      pageLoading = false;
+    });
   }
 
   Future<void> nameEmail() async {
@@ -45,16 +94,17 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
     }
   }
 
-  Future<void> getBookingsCustomer() async {
-    final data = await client_Api().customerGetAllBookings();
+  // Future<void> getBookingsCustomer() async {
+  //   final data = await client_Api().customerGetAllBookings();
 
-    if (data != null) {
-      getallBookings = data.map((e) => CustomerBooking.fromJson(e)).toList();
-      setState(() {
-        isloading = false;
-      });
-    }
-  }
+  //   if (data != null) {
+  //     getallBookings = data.map((e) => CustomerBooking.fromJson(e)).toList();
+  //     setState(() {
+  //       isloading = false;
+  //     });
+  //   }
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -177,10 +227,41 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                             size: 50,
                           ),
                         )
-                      : ListView.builder(
-                          itemCount: getallBookings.length,
+                      : getallBookings.isEmpty ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.event_note_rounded,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "Please create a booking first.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          )
+                      ) :
+                       ListView.builder(
+                          itemCount:
+                              getallBookings.length + (pageLoading ? 1 : 0),
+                          controller: scrollController,
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemBuilder: (_, index) {
+                            if (index == getallBookings.length) {
+                              return Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
                             final bookings = getallBookings[index];
                             return Container(
                               margin: EdgeInsets.only(bottom: 20.h),
@@ -384,7 +465,8 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                           ),
                                         ),
 
-                                      if (bookings.status == 'completed')
+                                      if (bookings.status == 'completed' &&
+                                          bookings.feedbackId != null)
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () async {
@@ -393,7 +475,8 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                                 MaterialPageRoute(
                                                   builder: (context) =>
                                                       SpecificFeedback(
-                                                        bookingss: bookings.id,
+                                                        bookingss: bookings
+                                                            .feedbackId!,
                                                       ),
                                                 ),
                                               );

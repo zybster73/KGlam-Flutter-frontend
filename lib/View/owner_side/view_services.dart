@@ -8,6 +8,7 @@ import 'package:KGlam/View/owner_side/manage_saloon_services.dart';
 import 'package:http/http.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class viewServices extends StatefulWidget {
   const viewServices({super.key});
@@ -17,7 +18,9 @@ class viewServices extends StatefulWidget {
 }
 
 class _viewServicesState extends State<viewServices> {
+  final GlobalKey addButtonKey = GlobalKey();
   List<dynamic> services = [];
+  bool isLoading = false;
 
   TextEditingController searchController = TextEditingController();
   //int value = 0;
@@ -27,14 +30,63 @@ class _viewServicesState extends State<viewServices> {
     super.initState();
 
     fetchServices();
+    showAddPortfolioSnackbar();
+  }
+
+  void showAddPortfolioSnackbar() async {
+    final prefs = await SharedPreferences.getInstance();
+    bool hasShown = prefs.getBool('addPortfolioShown') ?? false;
+
+    if (hasShown) {
+      Future.delayed(Duration(milliseconds: 500), () {
+        final overlay = Overlay.of(context);
+        final renderBox =
+            addButtonKey.currentContext?.findRenderObject() as RenderBox?;
+        final position = renderBox?.localToGlobal(Offset.zero);
+
+        if (overlay != null && position != null) {
+          final entry = OverlayEntry(
+            builder: (context) => Positioned(
+              top: position.dy - 50,
+              left: position.dx - 45,
+              child: Material(
+                color: Colors.transparent,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: Color(0xFF01ABAB),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    'Add services',
+                    style: TextStyle(color: Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          );
+
+          overlay.insert(entry);
+          Future.delayed(Duration(seconds: 3), () {
+            entry.remove();
+          });
+        }
+      });
+
+      await prefs.setBool('addPortfolioShown', true);
+    }
   }
 
   Future<void> fetchServices() async {
+    setState(() {
+      isLoading = true;
+    });
     final response = await SalonApiProvider().viewservicesofspecificSalon();
 
     if (response != null) {
       setState(() {
         services = response;
+        isLoading = false;
       });
     }
   }
@@ -148,21 +200,25 @@ class _viewServicesState extends State<viewServices> {
                         ),
                       ),
                     ),
+                    SizedBox(width: 12.w),
                     InkWell(
-                      onTap: () {
-                        Navigator.push(
+                      key: addButtonKey,
+                      onTap: () async {
+                        bool updated = await Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => uploadService(),
                           ),
                         );
+                        if (updated == true) {
+                          fetchServices();
+                        }
                       },
                       child: Container(
                         height: 49,
                         width: 54,
                         padding: EdgeInsets.all(12.w),
                         decoration: BoxDecoration(
-                          color: Color(0xFF01ABAB) ,
                           border: Border.all(
                             color: const Color(0xFF717680),
                             width: 0.7,
@@ -177,11 +233,33 @@ class _viewServicesState extends State<viewServices> {
 
                 SizedBox(height: 25.h),
                 Expanded(
-                  child: services.isEmpty
+                  child: isLoading
                       ? Center(
                           child: LoadingAnimationWidget.threeArchedCircle(
                             size: 50,
                             color: Color(0xFF01ABAB),
+                          ),
+                        )
+                      : services.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.photo_library_outlined,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "Service not created yet",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
                           ),
                         )
                       : ListView.builder(
@@ -361,6 +439,9 @@ class _viewServicesState extends State<viewServices> {
                                                                           index,
                                                                         );
                                                                   });
+                                                                  Navigator.pop(
+                                                                    context,
+                                                                  );
                                                                 }
                                                               },
                                                               style: ElevatedButton.styleFrom(

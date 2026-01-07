@@ -92,20 +92,22 @@ class UserSidebar extends StatelessWidget {
                           'Appointment',
                         ),
                       ),
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => UserNotifications(),
-                            ),
-                          );
-                        },
-                        child: drawerItem(
-                          Icons.notifications_none_rounded,
-                          'Notification',
-                        ),
-                      ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     Navigator.push(
+                      //       context,
+                      //       MaterialPageRoute(
+                      //         builder: (context) => UserNotifications(
+                                
+                      //         ),
+                      //       ),
+                      //     );
+                      //   },
+                      //   child: drawerItem(
+                      //     Icons.notifications_none_rounded,
+                      //     'Notification',
+                      //   ),
+                      // ),
                       // InkWell(
                       //   onTap: () {
                       //     Navigator.push(

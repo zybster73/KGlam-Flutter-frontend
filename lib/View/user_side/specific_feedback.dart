@@ -34,21 +34,19 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
   }
 
   Future<void> fetchFeedback() async {
-  final result =
-      await client_Api().customerSeefeedback(widget.bookingss);
+    final result = await client_Api().customerSeefeedback(widget.bookingss);
 
-  if (result['success'] == true && result['data'] != null) {
-    setState(() {
-      feedbackData = result['data']; 
-      isLoading = false;
-    });
-  } else {
-    setState(() {
-      isLoading = false;
-    });
+    if (result['success'] == true && result['data'] != null) {
+      setState(() {
+        feedbackData = result['data'];
+        isLoading = false;
+      });
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
-}
-
 
   @override
   Widget build(BuildContext context) {
@@ -62,11 +60,7 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
           if (widget.backuplogic == 1) {
             Navigator.pop(context);
           } else {
-            Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (_) => Usernavigationbar()),
-              (route) => false,
-            );
+            Navigator.pop(context);
           }
         }
       },
@@ -83,7 +77,7 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
                 child: Column(
                   children: [
                     SizedBox(
-                      height: 250.h,
+                      height: 200.h,
                       child: Stack(
                         children: [
                           Positioned(
@@ -112,13 +106,7 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
                                     if (widget.backuplogic == 1) {
                                       Navigator.pop(context);
                                     } else {
-                                      Navigator.pushAndRemoveUntil(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (_) => Usernavigationbar(),
-                                        ),
-                                        (route) => false,
-                                      );
+                                      Navigator.pop(context);
                                     }
                                   },
                                   iconSize: 18,
@@ -164,61 +152,6 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
                                     ],
                                   ),
                                 ),
-                              ],
-                            ),
-                          ),
-
-                          Positioned(
-                            top: 170.h,
-                            left: 20.w,
-                            right: 20.w,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    // controller: searchController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Search Feedback',
-                                      hintStyle: GoogleFonts.poppins(
-                                        fontSize: 14.sp,
-                                        color: const Color(0xFF717680),
-                                      ),
-                                      prefixIcon: const Icon(
-                                        Icons.search_outlined,
-                                        color: Color(0xFF717680),
-                                      ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: const Color(0xFF717680),
-                                          width: 0.7,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
-                                      ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: const Color(0xFF01ABAB),
-                                          width: 1.4,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
-                                      ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
-                                      ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 14.w,
-                                        vertical: 10.h,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                //SizedBox(width: 12.w),
                               ],
                             ),
                           ),
@@ -294,7 +227,7 @@ class _SpecificFeedbackscreenState extends State<SpecificFeedback> {
                     image: DecorationImage(
                       image: image.isNotEmpty
                           ? NetworkImage(image)
-                          : const AssetImage('assets/images/placeholder.png')
+                          : const AssetImage('assets/images/unsplash.jpg')
                                 as ImageProvider,
 
                       fit: BoxFit.cover,

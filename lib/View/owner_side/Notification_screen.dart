@@ -1,12 +1,19 @@
 import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class NotificationScreen extends StatefulWidget {
+  final VoidCallback? onMarkAllRead;
   final VoidCallback? onBack;
-  const NotificationScreen({super.key, this.onBack});
+  const NotificationScreen({
+    super.key,
+    this.onBack,
+    required this.onMarkAllRead,
+  });
 
   @override
   State<NotificationScreen> createState() => _NotificationScreenState();
@@ -18,10 +25,12 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchNotifications();
+   // markAllAsRead();
   }
+
+ 
 
   Future<void> fetchNotifications() async {
     final data = await client_Api().ownerNotifications();
@@ -42,6 +51,8 @@ class _NotificationScreenState extends State<NotificationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final clientapi = Provider.of<client_Api>(context);
+    Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -110,12 +121,63 @@ class _NotificationScreenState extends State<NotificationScreen> {
                     color: Color(0xFF717680),
                   ),
                 ),
-                const SizedBox(height: 34),
+
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final result = await clientapi
+                            .markallnotificationasRead();
+                        if (result['success']) {
+                          setState(() {
+                            Notifications = Notifications.map((notif) {
+                              notif['is_read'] = true;
+                              return notif;
+                            }).toList();
+                          });
+                          widget.onMarkAllRead;
+                        }
+                      },
+                      child: Text(
+                        'Mark all as read',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
 
                 Expanded(
                   child: isLoading
                       ? shimmerEffect(itemCount: 4, height: 150)
-                      : ListView.builder(
+                      :  Notifications.isEmpty ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "No notifications.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ):
+                      ListView.builder(
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemCount: Notifications.length,
                           itemBuilder: (context, index) {
@@ -125,7 +187,9 @@ class _NotificationScreenState extends State<NotificationScreen> {
                               margin: const EdgeInsets.only(bottom: 16),
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE9FAFA),
+                                color: notify['is_read'] == true
+                                    ? const Color(0xFFE9FAFA)
+                                    : Colors.black12,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(

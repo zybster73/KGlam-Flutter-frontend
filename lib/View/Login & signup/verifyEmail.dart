@@ -268,21 +268,19 @@ class _VerifyemailState extends State<Verifyemail> {
                                     ),
                                   ),
                                   TextButton(
-                                    onPressed: timeLeft == 0
-                                        ? () async {
-                                            await authProvier.resendOtp(
+                                    onPressed:
+                                         () async {
+                                          print(widget.email);
+                                            await authProvier.resendOtpatsignUp(
                                               widget.email,
                                             );
-                                            Utils.instance.toastMessage(
-                                              'OTP Resend',
-                                            );
-                                            // startCountdown();
-                                          }
-                                        : null,
+                                            
+                                          
+                                          },
+                                        
                                     child: Text(
-                                      timeLeft == 0
-                                          ? 'Resend OTP'
-                                          : '$timeLeft s',
+                                       'Resend OTP'
+                                         ,
                                       style: GoogleFonts.poppins(
                                         color: Color(0xFF01ABAB),
                                         fontSize: 14,

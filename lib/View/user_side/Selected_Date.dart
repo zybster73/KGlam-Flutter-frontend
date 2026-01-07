@@ -104,7 +104,7 @@ class _Selected_DateState extends State<Selected_Date> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  "By: ${specificService!['service_name']}",
+                                  "By: ${specificService!['salon_name']}",
                                   style: GoogleFonts.poppins(
                                     fontSize: 20.sp,
                                     fontWeight: FontWeight.w500,

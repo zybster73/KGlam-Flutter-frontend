@@ -4,6 +4,7 @@ import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/View/CustomWidgets/CustomTextField.dart';
 import 'package:KGlam/View/CustomWidgets/ShimmerText.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/CustomWidgets/shimmerEffect.dart';
 import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
 import 'package:KGlam/View/selectRole.dart';
@@ -93,6 +94,7 @@ class _PersonalinformationState extends State<Personalinformation> {
 
   @override
   Widget build(BuildContext context) {
+    Utils.instance.initToast(context);
     final salonApi = Provider.of<SalonApiProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -296,6 +298,7 @@ class _PersonalinformationState extends State<Personalinformation> {
                     oldPassword: oldPassword.text,
                     newPassword: newPassword.text,
                     confirmPassword: confirmPassword.text,
+                    phoneNumber: PhoneNum.text,
                     profileImage: _selectedImage,
                   );
 

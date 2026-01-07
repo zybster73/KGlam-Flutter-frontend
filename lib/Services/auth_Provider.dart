@@ -156,11 +156,12 @@ class AuthProvider extends ChangeNotifier {
         } else if (responseData['msg'] != null) {
           message = responseData['msg'];
         }
-        Utils.instance.toastMessage(message);
+        Utils.instance.toastMessage('invalid credentials');
         print(response.body);
         return {'success': false, 'message': message};
       }
     } catch (e) {
+      Utils.instance.toastMessage('invalid credentials');
       print(e.toString());
       return {'success': false, 'message': e.toString()};
     } finally {
@@ -294,7 +295,7 @@ class AuthProvider extends ChangeNotifier {
       Response response = await http.post(
         Uri.parse(url + 'resend-otp/'),
         headers: {"Content-Type": "application/json"},
-        body: jsonEncode({'email_or_username': email_username}),
+        body: jsonEncode({'username_or_email': email_username}),
       );
       var responseData = jsonDecode(response.body);
 
@@ -320,6 +321,46 @@ class AuthProvider extends ChangeNotifier {
         return {'success': false, 'message': message};
       }
     } catch (e) {
+      print(e);
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
+    }
+  }
+  Future<Map<String, dynamic>> resendOtpatsignUp(String email_username) async {
+    setLoading(true);
+    try {
+      Response response = await http.post(
+        Uri.parse(url + 'resend-signup-otp/'),
+        headers: {"Content-Type": "application/json"},
+        body: jsonEncode({'email': email_username}),
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData['msg']);
+        print(response.body);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
+      } else {
+        String message = '';
+        if (responseData['errors'] != null &&
+            responseData['errors'].isNotEmpty) {
+          var firstField = responseData['errors'].keys.first;
+          message = responseData['errors'][firstField][0];
+        } else if (responseData['msg'] != null) {
+          message = responseData['msg'];
+        }
+        Utils.instance.toastMessage(message);
+        print(response.body);
+        return {'success': false, 'message': message};
+      }
+    } catch (e) {
+      print(e);
       Utils.instance.toastMessage("Error: ${e.toString()}");
       return {'success': false, 'message': e.toString()};
     } finally {

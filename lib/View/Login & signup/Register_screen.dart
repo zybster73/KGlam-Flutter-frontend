@@ -187,7 +187,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                       MaterialPageRoute(
                                         builder: (context) => Verifyemail(
                                           email:
-                                              emailphoneNumberController.text,
+                                              emailphoneNumberController.text.trim(),
                                           index: widget.index,
                                         ),
                                       ),

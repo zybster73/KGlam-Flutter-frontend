@@ -16,31 +16,71 @@ class seeAllSalons extends StatefulWidget {
 class _seeAllSalonsState extends State<seeAllSalons> {
   TextEditingController searchController = TextEditingController();
   List<viewSalon> salons = [];
-  bool isLoading = true;
+  bool isloading = true;
   ScrollController scrollController = ScrollController();
-
-  void scrollListner() {
-    if (scrollController.position.pixels >=
-        scrollController.position.maxScrollExtent - 200) {
-      //   loadmore//
-    }
-  }
-
+  bool pageLoading = false;
+  int pageNumber = 1;
   @override
   void initState() {
     super.initState();
     fetchSalons();
   }
 
-  Future<void> fetchSalons() async {
-    final data = await client_Api().viewSalons();
-    if (data != null) {
-      salons = data.map((e) => viewSalon.fromJson(e)).toList();
+  void scrollListner() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !pageLoading &&
+        !isloading) {
+      fetchSalons(isLoadMore: true);
     }
+  }
+
+  Future<void> fetchSalons({bool isLoadMore = false}) async {
+    if (isLoadMore) {
+      setState(() {
+        pageLoading = true;
+      });
+    } else {
+      setState(() {
+        isloading = true;
+        pageNumber = 1;
+      });
+    }
+
+    final data = await client_Api().viewSalons(pageNumber);
+
+    if (data != null && data.isNotEmpty) {
+      setState(() {
+        if (isLoadMore) {
+          salons.addAll(
+            data.map((e) => viewSalon.fromJson(e)).toList(),
+          );
+        } else {
+          salons = data
+              .map((e) => viewSalon.fromJson(e))
+              .toList();
+        }
+
+        pageNumber++;
+      });
+    }
+
     setState(() {
-      isLoading = false;
+      isloading = false;
+      pageLoading = false;
     });
   }
+  
+
+  // Future<void> fetchSalons() async {
+  //   final data = await client_Api().viewSalons();
+  //   if (data != null) {
+  //     salons = data.map((e) => viewSalon.fromJson(e)).toList();
+  //   }
+  //   setState(() {
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +89,7 @@ class _seeAllSalonsState extends State<seeAllSalons> {
     Utils.instance.initToast(context);
     return Scaffold(
       backgroundColor: Colors.white,
-      body: isLoading
+      body: isloading
           ? Center(
               child: LoadingAnimationWidget.hexagonDots(
                 color: Color(0xFF01ABAB),
@@ -58,147 +98,146 @@ class _seeAllSalonsState extends State<seeAllSalons> {
             )
           : Container(
               color: Colors.white,
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: 250.h,
-                      child: Stack(
-                        children: [
-                         Positioned(
-                      top: 50.h,
-                      left: 20.w,
-                      child: Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          color: Color(0xFF01ABAB),
-                          shape: BoxShape.circle,
-                        ),
-                        child: Center(
-                          child: IconButton(
-                            onPressed: () {
-                              
-                                Navigator.pop(context);
-                              },
-                          
-                            iconSize: 18,
-                            padding: EdgeInsets.zero,
-                            color: Colors.white,
-      
-                            icon: Icon(Icons.arrow_back_ios_sharp),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 250.h,
+                    child: Stack(
+                      children: [
+                       
+                        Positioned(
+                          top: -0.05 * screenHeight,
+                          left: -10,
+                          child: Image.asset(
+                            'assets/images/Eclipse2.png',
+                            height: screenHeight * 0.35,
+                            width: screenWidth * 0.9,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                      ),
-                    ),
-                          Positioned(
-                            top: -0.05 * screenHeight,
-                            left: -10,
-                            child: Image.asset(
-                              'assets/images/Eclipse2.png',
-                              height: screenHeight * 0.35,
-                              width: screenWidth * 0.9,
-                              fit: BoxFit.contain,
+              
+                        Positioned(
+                          top: 90.h,
+                          left: 20,
+                          child: Text(
+                            'Here you can see all\n the salons',
+                            style: GoogleFonts.poppins(
+                              fontSize: 20.sp,
+                              fontWeight: FontWeight.w700,
+                              color: Colors.black,
                             ),
                           ),
-
-                          Positioned(
-                            top: 90.h,
-                            left: 20,
-                            child: Text(
-                              'Here you can see all\n the salons',
-                              style: GoogleFonts.poppins(
-                                fontSize: 20.sp,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              ),
-                            ),
-                          ),
-
-                          Positioned(
-                            top: 170.h,
-                            left: 20.w,
-                            right: 20.w,
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextFormField(
-                                    controller: searchController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Search Salon',
-                                      hintStyle: GoogleFonts.poppins(
-                                        fontSize: 14.sp,
+                        ),
+              
+                        Positioned(
+                          top: 170.h,
+                          left: 20.w,
+                          right: 20.w,
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: TextFormField(
+                                  controller: searchController,
+                                  decoration: InputDecoration(
+                                    hintText: 'Search Salon',
+                                    hintStyle: GoogleFonts.poppins(
+                                      fontSize: 14.sp,
+                                      color: const Color(0xFF717680),
+                                    ),
+                                    prefixIcon: const Icon(
+                                      Icons.search_outlined,
+                                      color: Color(0xFF717680),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
                                         color: const Color(0xFF717680),
+                                        width: 0.7,
                                       ),
-                                      prefixIcon: const Icon(
-                                        Icons.search_outlined,
-                                        color: Color(0xFF717680),
+                                      borderRadius: BorderRadius.circular(
+                                        12.r,
                                       ),
-                                      enabledBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: const Color(0xFF717680),
-                                          width: 0.7,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: const Color(0xFF01ABAB),
+                                        width: 1.4,
                                       ),
-                                      focusedBorder: OutlineInputBorder(
-                                        borderSide: BorderSide(
-                                          color: const Color(0xFF01ABAB),
-                                          width: 1.4,
-                                        ),
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
+                                      borderRadius: BorderRadius.circular(
+                                        12.r,
                                       ),
-                                      border: OutlineInputBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          12.r,
-                                        ),
+                                    ),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(
+                                        12.r,
                                       ),
-                                      contentPadding: EdgeInsets.symmetric(
-                                        horizontal: 14.w,
-                                        vertical: 10.h,
-                                      ),
+                                    ),
+                                    contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 14.w,
+                                      vertical: 10.h,
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 12.w),
-                              ],
-                            ),
+                              ),
+                              SizedBox(width: 12.w),
+                            ],
                           ),
-                        ],
+                        ),
+                        Positioned(
+                    top: 50.h,
+                    left: 20.w,
+                    child: Container(
+                      height: 30,
+                      width: 30,
+                      decoration: BoxDecoration(
+                        color: Color(0xFF01ABAB),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: IconButton(
+                          onPressed: () {
+                              Navigator.pop(context);
+                            },
+                        
+                          iconSize: 18,
+                          padding: EdgeInsets.zero,
+                          color: Colors.white,
+                    
+                          icon: Icon(Icons.arrow_back_ios_sharp),
+                        ),
                       ),
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 15.w,
-                        vertical: 10.h,
-                      ),
-                      child: Row(
-                        children: [
-                          Text(
-                            'Salons For You',
-                            style: GoogleFonts.poppins(
-                              color: Colors.black,
-                              fontSize: 20.sp,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                  ),
+                      ],
                     ),
-                    isLoading
-                        ? shimmerEffect(itemCount: 5, height: 100)
-                        : ListView.builder(
-                            shrinkWrap: true,
-                            controller: scrollController,
-                            physics: const NeverScrollableScrollPhysics(),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 15.w,
+                      vertical: 10.h,
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Salons For You',
+                          style: GoogleFonts.poppins(
+                            color: Colors.black,
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                 Expanded(
+                   child: ListView.builder(
+                           
+                          controller: scrollController,
+                           physics: BouncingScrollPhysics(),
                             itemCount: salons.length,
                             itemBuilder: (context, index) {
+                            
                               final salon = salons[index];
-
+                   
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 10.h),
                                 child: _buildSaloonCard(
@@ -214,8 +253,8 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                               );
                             },
                           ),
-                  ],
-                ),
+                 ),
+                ],
               ),
             ),
     );

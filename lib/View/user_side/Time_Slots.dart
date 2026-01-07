@@ -134,13 +134,13 @@ class _Time_SlotsState extends State<Time_Slots> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                "By: ${specificService!['service_name']}",
+                                "By: ${specificService!['salon_name']}",
                                 style: GoogleFonts.poppins(
                                   fontSize: 20.sp,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
-
+                              
                               Text(
                                 'Available Time Slots',
                                 style: GoogleFonts.poppins(

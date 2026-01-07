@@ -23,14 +23,14 @@ class client_Api with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<dynamic>?> viewSalons() async {
+  Future<List<dynamic>?> viewSalons(int pageNumber) async {
     setLoading(true);
 
     String? token = await Storetoken.getToken();
 
     try {
       final response = await http.get(
-        Uri.parse(url1 + "viewsalons/"),
+        Uri.parse(url1 + "viewsalons/?page=${pageNumber}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -39,9 +39,9 @@ class client_Api with ChangeNotifier {
 
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        //  Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
-        return responseData['results'];
+        return responseData['data'];
       } else {
         if (responseData["msg"] != null) {
           Utils.instance.toastMessage(responseData["msg"]);
@@ -103,14 +103,14 @@ class client_Api with ChangeNotifier {
     }
   }
 
-  Future<List<dynamic>?> ownerGetAllBookings() async {
+  Future<List<dynamic>?> ownerGetAllBookings(int? pageNumber) async {
     setLoading(true);
 
     String? token = await Storetoken.getToken();
 
     try {
       final response = await http.get(
-        Uri.parse(url2 + "owner-get-all-bookings/"),
+        Uri.parse(url2 + "owner-get-all-bookings/?page=${pageNumber}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -119,7 +119,7 @@ class client_Api with ChangeNotifier {
 
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        //Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -138,14 +138,14 @@ class client_Api with ChangeNotifier {
     }
   }
 
-  Future<List<dynamic>?> customerGetAllBookings() async {
+  Future<List<dynamic>?> customerGetAllBookings(int pageNumber) async {
     setLoading(true);
 
     String? token = await Storetoken.getToken();
 
     try {
       final response = await http.get(
-        Uri.parse(url2 + "customer-get-all-bookings/"),
+        Uri.parse(url2 + "customer-get-all-bookings/?page=${pageNumber}"),
         headers: {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
@@ -154,7 +154,7 @@ class client_Api with ChangeNotifier {
 
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -289,7 +289,7 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -355,9 +355,10 @@ class client_Api with ChangeNotifier {
       );
       var responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        //Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
+        print(responseData['data']);
         return responseData['data'];
       } else {
         if (responseData["msg"] != null) {
@@ -422,8 +423,8 @@ class client_Api with ChangeNotifier {
       );
       var responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+      if (response.statusCode == 200 || response.statusCode == 201) {
+       // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -456,7 +457,7 @@ class client_Api with ChangeNotifier {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
         },
-        body: jsonEncode({'rating': bookingId, 'feedback_text': fback}),
+        body: jsonEncode({'rating': rating, 'feedback_text': fback}),
       );
       var responseData = jsonDecode(response.body);
 
@@ -492,12 +493,12 @@ class client_Api with ChangeNotifier {
 
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        //  Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
         if (responseData["msg"] != null) {
-          Utils.instance.toastMessage(responseData["msg"]);
+        //  Utils.instance.toastMessage(responseData["msg"]);
         }
         return null;
       }
@@ -527,7 +528,7 @@ class client_Api with ChangeNotifier {
 
       var responseData = jsonDecode(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -546,10 +547,7 @@ class client_Api with ChangeNotifier {
     }
   }
 
-
-  Future<Map<String, dynamic>> customerSeefeedback(
-    int id,
-  ) async {
+  Future<Map<String, dynamic>> customerSeefeedback(int id) async {
     setLoading(true);
 
     String? token = await Storetoken.getToken();
@@ -565,13 +563,43 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
-         return {'success': true, 'data': responseData['data']};
+        return {'success': true, 'data': responseData['data']};
       } else {
         Utils.instance.toastMessage(responseData['msg']);
         return {'success': false};
-       
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return {'success': false};
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<Map<String, dynamic>> markallnotificationasRead() async {
+    setLoading(true);
+
+    String? token = await Storetoken.getToken();
+    try {
+      final response = await http.patch(
+        Uri.parse(url2 + 'notif-read-all/'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        // Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return {'success': true, 'data': responseData['data']};
+      } else {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {'success': false};
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");

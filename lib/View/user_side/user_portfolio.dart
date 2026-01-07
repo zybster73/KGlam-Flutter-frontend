@@ -198,7 +198,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                                   crossAxisCount: 2,
                                   crossAxisSpacing: 10,
                                   mainAxisSpacing: 10,
-                                  childAspectRatio: 0.7,
+                                  childAspectRatio: 0.55,
                                 ),
                             itemCount: services.length,
                             itemBuilder: (context, index) {

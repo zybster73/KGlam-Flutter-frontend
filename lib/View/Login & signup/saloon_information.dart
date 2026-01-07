@@ -135,19 +135,19 @@ class _SaloonInformationState extends State<SaloonInformation> {
                             CustomTextField(
                               controller: saloonContact,
                               labelText: "Salon Contact",
-                              hintText: "Salon Contact",
+                              hintText: "Must contains atleast 10 digits",
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonHours,
                               labelText: "Business Hours",
-                              hintText: "Enter Hours",
+                              hintText: "8am to 9pm",
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: saloonDescription,
                               labelText: 'Salon Description',
-                              hintText: 'Enter Description...',
+                              hintText: 'Description must contains atleast 10 characters',
                               length: 4,
                             ),
                             SizedBox(height: 10),

@@ -36,7 +36,7 @@ class SalonApiProvider with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+       // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -55,366 +55,342 @@ class SalonApiProvider with ChangeNotifier {
   }
 
   Future<bool> updateUserDetails({
-  required String oldPassword,
-  required String newPassword,
-  required String confirmPassword,
-  File? profileImage, // OPTIONAL IMAGE
-}) async {
-  String? token = await Storetoken.getToken();
-  setLoading(true);
+    required String oldPassword,
+    required String newPassword,
+    required String confirmPassword,
+    required String phoneNumber,
+    File? profileImage, // OPTIONAL IMAGE
+  }) async {
+    String? token = await Storetoken.getToken();
+    setLoading(true);
 
-  try {
-    var request = http.MultipartRequest(
-      'PATCH',
-      Uri.parse(url + "updateinfo/"),
-    );
-
-    // Headers
-    request.headers['Authorization'] = 'Bearer $token';
-
-    // Text fields
-    request.fields['old_password'] = oldPassword;
-    request.fields['new_password'] = newPassword;
-    request.fields['confirm_password'] = confirmPassword;
-
-    // Image field (ONLY if user selected one)
-    if (profileImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'profile_image', // MUST match backend field name
-          profileImage.path,
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse(url + "updateinfo/"),
       );
-    }
 
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-    final responseData = jsonDecode(response.body);
+      // Headers
+      request.headers['Authorization'] = 'Bearer $token';
 
-    if (response.statusCode == 200) {
-      Utils.instance.toastMessage(responseData['msg']);
-      return true;
-    } else {
-      if (responseData['errors'] != null &&
-          responseData['errors'].isNotEmpty) {
-        var firstField = responseData['errors'].keys.first;
-        Utils.instance.toastMessage(
-          responseData['errors'][firstField][0],
+      // Text fields
+      request.fields['old_password'] = oldPassword;
+      request.fields['new_password'] = newPassword;
+      request.fields['confirm_password'] = confirmPassword;
+      request.fields['contact_number'] = phoneNumber;
+
+      if (profileImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('profile_image', profileImage.path),
         );
-      } else if (responseData['msg'] != null) {
-        Utils.instance.toastMessage(responseData['msg']);
       }
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+      final responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage('Saved changes');
+        return true;
+      } else {
+        if (responseData['errors'] != null &&
+            responseData['errors'].isNotEmpty) {
+          var firstField = responseData['errors'].keys.first;
+          Utils.instance.toastMessage(responseData['errors'][firstField][0]);
+        } else if (responseData['msg'] != null) {
+          Utils.instance.toastMessage(responseData['msg']);
+        }
+        return false;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
       return false;
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    Utils.instance.toastMessage("Error: ${e.toString()}");
-    return false;
-  } finally {
-    setLoading(false);
   }
-}
 
+  Future<Map<String, dynamic>> salonInformation(
+    String salon_name,
+    String salonAddress,
+    String salonContact,
+    String hours,
+    String salonDesc,
+    File? profileImage,
+    File? coverImage,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
 
- Future<Map<String, dynamic>> salonInformation(
-  String salon_name,
-  String salonAddress,
-  String salonContact,
-  String hours,
-  String salonDesc,
-  File? profileImage,
-  File? coverImage,
-) async {
-  setLoading(true);
-  String? token = await Storetoken.getToken();
-
-  try {
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse(url1 + 'createsalon/'),
-    );
-
-    request.headers.addAll({
-      "Authorization": "Bearer $token",
-    });
-
-    // Text fields
-    request.fields.addAll({
-      'salon_name': salon_name,
-      'salon_address': salonAddress,
-      'salon_contact': salonContact,
-      'hours_of_operation': hours,
-      'salon_desc': salonDesc,
-    });
-
-    // Profile image
-    if (profileImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'salon_profile_image', 
-          profileImage.path,
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(url1 + 'createsalon/'),
       );
-    }
 
-    // Cover / second image
-    if (coverImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'salon_cover_image', 
-          coverImage.path,
-        ),
-      );
-    }
+      request.headers.addAll({"Authorization": "Bearer $token"});
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
+      // Text fields
+      request.fields.addAll({
+        'salon_name': salon_name,
+        'salon_address': salonAddress,
+        'salon_contact': salonContact,
+        'hours_of_operation': hours,
+        'salon_desc': salonDesc,
+      });
 
-    print("Response body: ${response.body}");
-
-    var responseData = jsonDecode(response.body);
-
-    var salonId = responseData['data']?['id'];
-    if (salonId != null) {
-      await Storetoken.saveSalonId(salonId);
-    }
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {
-        'success': true,
-        'message': responseData['msg'],
-        'data': responseData['data'],
-      };
-    } else {
-      String errorMsg = responseData['msg'] ?? 'Something went wrong';
-      if (responseData['errors'] != null &&
-          responseData['errors'].isNotEmpty) {
-        var firstField = responseData['errors'].keys.first;
-        errorMsg = responseData['errors'][firstField][0];
+      // Profile image
+      if (profileImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'salon_profile_image',
+            profileImage.path,
+          ),
+        );
       }
-      Utils.instance.toastMessage(errorMsg);
-      return {'success': false, 'message': errorMsg};
-    }
-  } catch (e) {
-    Utils.instance.toastMessage("Error: ${e.toString()}");
-    return {'success': false, 'message': e.toString()};
-  } finally {
-    setLoading(false);
-  }
-}
 
+      // Cover / second image
+      if (coverImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'salon_cover_image',
+            coverImage.path,
+          ),
+        );
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      print("Response body: ${response.body}");
+
+      var responseData = jsonDecode(response.body);
+
+      var salonId = responseData['data']?['id'];
+      if (salonId != null) {
+        await Storetoken.saveSalonId(salonId);
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData['data'],
+        };
+      } else {
+        String errorMsg = responseData['msg'] ?? 'Something went wrong';
+        if (responseData['errors'] != null &&
+            responseData['errors'].isNotEmpty) {
+          var firstField = responseData['errors'].keys.first;
+          errorMsg = responseData['errors'][firstField][0];
+        }
+        Utils.instance.toastMessage(errorMsg);
+        return {'success': false, 'message': errorMsg};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
+    }
+  }
 
   Future<Map<String, dynamic>> serviceInformation(
-  String serviceName,
-  String servicePrice,
-  String serviceDuration,
-  String serviceDesc,
-  File? serviceImage,
-) async {
-  setLoading(true);
-  String? token = await Storetoken.getToken();
-  int? id = await Storetoken.getSalonId();
+    String serviceName,
+    String servicePrice,
+    String serviceDuration,
+    String serviceDesc,
+    File? serviceImage,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
+    int? id = await Storetoken.getSalonId();
 
-  try {
-    var request = http.MultipartRequest(
-      'POST',
-      Uri.parse(url1 + "salon/${id}/service/create/"),
-    );
-
-    request.headers.addAll({
-      "Authorization": "Bearer $token",
-    });
-
-    // Text fields
-    request.fields.addAll({
-      'service_name': serviceName,
-      'service_price': servicePrice,
-      'service_duration': serviceDuration,
-      'service_desc': serviceDesc,
-    });
-
-    // Image
-    if (serviceImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'service_image', 
-          serviceImage.path,
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'POST',
+        Uri.parse(url1 + "salon/${id}/service/create/"),
       );
-    }
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
+      request.headers.addAll({"Authorization": "Bearer $token"});
 
-    print("Response body: ${response.body}");
+      // Text fields
+      request.fields.addAll({
+        'service_name': serviceName,
+        'service_price': servicePrice,
+        'service_duration': serviceDuration,
+        'service_desc': serviceDesc,
+      });
 
-    var responseData = jsonDecode(response.body);
-
-    var serviceID = responseData['data']?['id'];
-    if (serviceID != null) {
-      await Storetoken.saveServiceId(serviceID);
-      print("Service id is = $serviceID");
-    }
-
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {
-        'success': true,
-        'message': responseData['msg'],
-        'data': responseData['data'],
-      };
-    } else {
-      String errorMsg = responseData['msg'] ?? 'Something went wrong';
-      if (responseData['errors'] != null &&
-          responseData['errors'].isNotEmpty) {
-        var firstField = responseData['errors'].keys.first;
-        errorMsg = responseData['errors'][firstField][0];
+      // Image
+      if (serviceImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('service_image', serviceImage.path),
+        );
       }
-      Utils.instance.toastMessage(errorMsg);
-      return {'success': false, 'message': errorMsg};
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+
+      print("Response body: ${response.body}");
+
+      var responseData = jsonDecode(response.body);
+
+      var serviceID = responseData['data']?['id'];
+      if (serviceID != null) {
+        await Storetoken.saveServiceId(serviceID);
+        print("Service id is = $serviceID");
+      }
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData['data'],
+        };
+      } else {
+        String errorMsg = responseData['msg'] ?? 'Something went wrong';
+        if (responseData['errors'] != null &&
+            responseData['errors'].isNotEmpty) {
+          var firstField = responseData['errors'].keys.first;
+          errorMsg = responseData['errors'][firstField][0];
+        }
+        Utils.instance.toastMessage(errorMsg);
+        return {'success': false, 'message': errorMsg};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    Utils.instance.toastMessage("Error: ${e.toString()}");
-    return {'success': false, 'message': e.toString()};
-  } finally {
-    setLoading(false);
   }
-}
 
+  Future<Map<String, dynamic>> updateSolonDetails(
+    String salon_name,
+    String salonAddress,
+    String salonContact,
+    String hours,
+    String salonDesc,
+    File? profileImage,
+    File? coverImage,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
 
- Future<Map<String, dynamic>> updateSolonDetails(
-  String salon_name,
-  String salonAddress,
-  String salonContact,
-  String hours,
-  String salonDesc,
-  File? profileImage,
-  File? coverImage,
-) async {
-  setLoading(true);
-  String? token = await Storetoken.getToken();
-
-  try {
-    var request = http.MultipartRequest(
-      'PATCH',
-      Uri.parse(url1 + 'updatesalon/'),
-    );
-
-    request.headers.addAll({
-      "Authorization": "Bearer $token",
-    });
-
-  
-    request.fields.addAll({
-      'salon_name': salon_name,
-      'salon_address': salonAddress,
-      'salon_contact': salonContact,
-      'hours_of_operation': hours,
-      'salon_desc': salonDesc,
-    });
-
-    
-    if (profileImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'salon_profile_image', 
-          profileImage.path,
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse(url1 + 'updatesalon/'),
       );
-    }
 
-    if (coverImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'salon_cover_image', 
-          coverImage.path,
-        ),
-      );
-    }
+      request.headers.addAll({"Authorization": "Bearer $token"});
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-    var responseData = jsonDecode(response.body);
+      request.fields.addAll({
+        'salon_name': salon_name,
+        'salon_address': salonAddress,
+        'salon_contact': salonContact,
+        'hours_of_operation': hours,
+        'salon_desc': salonDesc,
+      });
 
-    if (response.statusCode == 200) {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {
-        'success': true,
-        'message': responseData['msg'],
-        'data': responseData['data'],
-      };
-    } else {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {'success': false, 'message': responseData['msg']};
+      if (profileImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'salon_profile_image',
+            profileImage.path,
+          ),
+        );
+      }
+
+      if (coverImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'salon_cover_image',
+            coverImage.path,
+          ),
+        );
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData['data'],
+        };
+      } else {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {'success': false, 'message': responseData['msg']};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    Utils.instance.toastMessage("Error: ${e.toString()}");
-    return {'success': false, 'message': e.toString()};
-  } finally {
-    setLoading(false);
   }
-}
 
-Future<Map<String, dynamic>> updateService(
-  int serviceId,
-  String serviceName,
-  String servicePrice,
-  String serviceDuration,
-  String serviceDesc,
-  File? serviceImage,
-) async {
-  setLoading(true);
-  String? token = await Storetoken.getToken();
+  Future<Map<String, dynamic>> updateService(
+    int serviceId,
+    String serviceName,
+    String servicePrice,
+    String serviceDuration,
+    String serviceDesc,
+    File? serviceImage,
+  ) async {
+    setLoading(true);
+    String? token = await Storetoken.getToken();
 
-  try {
-    var request = http.MultipartRequest(
-      'PATCH',
-      Uri.parse(url1 + 'updateservice/$serviceId/'),
-    );
-
-    request.headers.addAll({
-      "Authorization": "Bearer $token",
-    });
-
-    request.fields.addAll({
-      'service_name': serviceName,
-      'service_price': servicePrice,
-      'service_duration': serviceDuration,
-      'service_desc': serviceDesc,
-    });
-
-    if (serviceImage != null) {
-      request.files.add(
-        await http.MultipartFile.fromPath(
-          'service_image',
-          serviceImage.path,
-        ),
+    try {
+      var request = http.MultipartRequest(
+        'PATCH',
+        Uri.parse(url1 + 'updateservice/$serviceId/'),
       );
-    }
 
-    var streamedResponse = await request.send();
-    var response = await http.Response.fromStream(streamedResponse);
-    var responseData = jsonDecode(response.body);
+      request.headers.addAll({"Authorization": "Bearer $token"});
 
-    if (response.statusCode == 200 || response.statusCode == 201) {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {
-        'success': true,
-        'message': responseData['msg'],
-        'data': responseData['data'],
-      };
-    } else {
-      Utils.instance.toastMessage(responseData['msg']);
-      return {'success': false, 'message': responseData['msg']};
+      request.fields.addAll({
+        'service_name': serviceName,
+        'service_price': servicePrice,
+        'service_duration': serviceDuration,
+        'service_desc': serviceDesc,
+      });
+
+      if (serviceImage != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('service_image', serviceImage.path),
+        );
+      }
+
+      var streamedResponse = await request.send();
+      var response = await http.Response.fromStream(streamedResponse);
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Utils.instance.toastMessage('Service updated successfully');
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData['data'],
+        };
+      } else {
+        Utils.instance.toastMessage(responseData['msg']);
+        return {'success': false, 'message': responseData['msg']};
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
     }
-  } catch (e) {
-    Utils.instance.toastMessage("Error: ${e.toString()}");
-    return {'success': false, 'message': e.toString()};
-  } finally {
-    setLoading(false);
   }
-}
- 
 
   Future<List<dynamic>?> viewservicesofspecificSalon() async {
     String? token = await Storetoken.getToken();
@@ -432,7 +408,7 @@ Future<Map<String, dynamic>> updateService(
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        //Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -466,15 +442,14 @@ Future<Map<String, dynamic>> updateService(
 
       var responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 || response.statusCode==200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+      if (response.statusCode == 200 || response.statusCode == 200) {
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
         print(response.body);
-       
+
         return null;
-        
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
@@ -515,7 +490,7 @@ Future<Map<String, dynamic>> updateService(
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.instance.toastMessage(responseData['msg']);
+        Utils.instance.toastMessage('Portfolio created successfully');
         print(response.body);
         return {'success': true, 'data': responseData['data']};
       } else {
@@ -531,7 +506,6 @@ Future<Map<String, dynamic>> updateService(
   }
 
   Future<List<dynamic>?> viewPortfolio() async {
-
     String? token = await Storetoken.getToken();
 
     setLoading(true);
@@ -547,7 +521,7 @@ Future<Map<String, dynamic>> updateService(
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        //Utils.instance.toastMessage('Loading.....');
         print(response.body);
         return responseData['data'];
       } else {
@@ -595,7 +569,7 @@ Future<Map<String, dynamic>> updateService(
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-        Utils.instance.toastMessage(responseData['msg']);
+        Utils.instance.toastMessage("Portfolio updated successfully");
         return {'success': true, 'data': responseData['data']};
       } else {
         Utils.instance.toastMessage(responseData['msg']);
@@ -639,7 +613,7 @@ Future<Map<String, dynamic>> updateService(
     }
   }
 
-   Future<Map<String, dynamic>> deleteService(int serviceId) async {
+  Future<Map<String, dynamic>> deleteService(int serviceId) async {
     String? token = await Storetoken.getToken();
 
     setLoading(true);
@@ -655,7 +629,7 @@ Future<Map<String, dynamic>> updateService(
       final responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 204) {
-        Utils.instance.toastMessage("Portfolio deleted successfully");
+        Utils.instance.toastMessage("Service deleted successfully");
         return {'success': true, 'message': 'Deleted successfully'};
       } else {
         Utils.instance.toastMessage(responseData['msg'] ?? 'Delete failed');
@@ -668,5 +642,4 @@ Future<Map<String, dynamic>> updateService(
       setLoading(false);
     }
   }
-  
 }

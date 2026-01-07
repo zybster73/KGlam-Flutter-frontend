@@ -8,6 +8,7 @@ class CustomerBooking {
   final String bookingTime;
   final String status;
   final String? image;
+  final int? feedbackId;
 
   CustomerBooking({
     required this.id,
@@ -19,6 +20,7 @@ class CustomerBooking {
     required this.bookingTime,
     required this.status,
     this.image,
+     this.feedbackId,
   });
 
   factory CustomerBooking.fromJson(Map<String, dynamic> json) {
@@ -32,6 +34,7 @@ class CustomerBooking {
       bookingTime: json['booking_time'],
       status: json['status'],
       image: json['service_image'],
+      feedbackId: json['feedback_id']
     );
   }
 }

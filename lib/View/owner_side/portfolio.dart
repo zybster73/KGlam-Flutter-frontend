@@ -7,6 +7,7 @@ import 'package:KGlam/View/owner_side/UpdatePortfolio.dart';
 import 'package:KGlam/View/owner_side/Upload_portfolio.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class portfolio extends StatefulWidget {
   const portfolio({super.key});
@@ -16,9 +17,11 @@ class portfolio extends StatefulWidget {
 }
 
 class _portfolioState extends State<portfolio> {
-  String BASE_URL = "https://unsurviving-snuffier-marylyn.ngrok-free.dev";
+  final GlobalKey addButtonKey = GlobalKey();
+  // String BASE_URL = "https://unsurviving-snuffier-marylyn.ngrok-free.dev";
 
   List<dynamic> portfolios = [];
+  bool isLoading = true;
   TextEditingController searchController = TextEditingController();
 
   @override
@@ -26,14 +29,67 @@ class _portfolioState extends State<portfolio> {
     super.initState();
 
     fetchPortfolio();
+     WidgetsBinding.instance.addPostFrameCallback((_) {
+    showAddPortfolioSnackbar();
+  });
   }
 
+
+  void showAddPortfolioSnackbar() async {
+  final prefs = await SharedPreferences.getInstance();
+  bool hasShown = prefs.getBool('addPortfolioShown') ?? false;
+
+  if (hasShown) {
+    
+    Future.delayed(Duration(milliseconds: 500), () {
+      final overlay = Overlay.of(context);
+      final renderBox = addButtonKey.currentContext?.findRenderObject() as RenderBox?;
+      final position = renderBox?.localToGlobal(Offset.zero);
+
+      if (overlay != null && position != null) {
+        final entry = OverlayEntry(
+          builder: (context) => Positioned(
+            top: position.dy - 50, 
+            left: position.dx - 45,
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                decoration: BoxDecoration(
+                  color: Color(0xFF01ABAB),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  'Add portfolio',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        overlay.insert(entry);
+        Future.delayed(Duration(seconds: 3), () {
+          entry.remove();
+        });
+      }
+    });
+
+    await prefs.setBool('addPortfolioShown', true);
+  }
+}
+
+
   Future<void> fetchPortfolio() async {
+    setState(() {
+      isLoading = true;
+    });
     final data = await SalonApiProvider().viewPortfolio();
 
     if (data != null) {
       setState(() {
         portfolios = data;
+        isLoading = false;
       });
     }
   }
@@ -148,6 +204,7 @@ class _portfolioState extends State<portfolio> {
                     ),
                     SizedBox(width: 12.w),
                     InkWell(
+                      key: addButtonKey,
                       onTap: () {
                         Navigator.push(
                           context,
@@ -174,26 +231,36 @@ class _portfolioState extends State<portfolio> {
                 ),
                 SizedBox(height: 10),
                 Expanded(
-                  child: portfolios.isEmpty
+                  child: isLoading
                       ? Center(
-                          child: AnimatedOpacity(
-                            opacity: 1.0,
-                            duration: const Duration(seconds: 5),
-                            curve: Curves.easeInOut,
-                            child: Text(
-                              'No Portfolio created yet!',
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                color: Colors.black,
-                                fontSize: 16,
-                              ),
-                            ),
+                          child: LoadingAnimationWidget.hexagonDots(
+                            color: Color(0xFF01ABAB),
+                            size: 50,
                           ),
                         )
-                      : portfolios.isNotEmpty ? Center(
-                        child: LoadingAnimationWidget.hexagonDots(color:Color(0xFF01ABAB),  size: 50),
-                      ) :
-                      GridView.builder(
+                      : portfolios.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.photo_library_outlined,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "Portfolio not created yet",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : GridView.builder(
                           padding: EdgeInsets.only(top: 10),
                           gridDelegate:
                               SliverGridDelegateWithMaxCrossAxisExtent(
@@ -201,7 +268,7 @@ class _portfolioState extends State<portfolio> {
                                 //crossAxisCount: 2,
                                 crossAxisSpacing: 10,
                                 mainAxisSpacing: 10,
-                                // childAspectRatio: 0.65,
+                                childAspectRatio: 0.55,
                               ),
                           itemCount: portfolios.length,
                           itemBuilder: (context, index) {
@@ -267,17 +334,21 @@ class _portfolioState extends State<portfolio> {
                                                     size: 16.sp,
                                                     color: Color(0xFF01ABAB),
                                                   ),
-                                                  onPressed: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            Updateportfolio(
-                                                              portfolioId:
-                                                                  index,
-                                                            ),
-                                                      ),
-                                                    );
+                                                  onPressed: () async {
+                                                    bool updated =
+                                                        await Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                Updateportfolio(
+                                                                  portfolioId:
+                                                                      index,
+                                                                ),
+                                                          ),
+                                                        );
+                                                    if (updated == true) {
+                                                      fetchPortfolio();
+                                                    }
                                                   },
                                                 ),
                                               ),
@@ -332,13 +403,14 @@ class _portfolioState extends State<portfolio> {
 
                                     SizedBox(height: 4.h),
 
-                                    Text(
-                                      maxLines: 3,
-                                      description,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w300,
+                                    Flexible(
+                                      child: Text(
+                                        description,
+
+                                        style: GoogleFonts.poppins(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w300,
+                                        ),
                                       ),
                                     ),
                                   ],

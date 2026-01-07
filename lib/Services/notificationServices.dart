@@ -3,17 +3,58 @@ import 'package:KGlam/Services/Base_Urls.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart' as http;
 
 class Notificationservices with ChangeNotifier {
   final url = BaseUrls.baseUrl;
   bool isLoading = false;
 
+  Future<void> init() async {
+    await initLocalNotifications();
+    requestNotificationPermissions();
+    listenForegroundMessages();
+    listenToTokenRefresh();
+  }
+
   FirebaseMessaging messaging = FirebaseMessaging.instance;
 
   void setLoading(bool value) {
     isLoading = value;
     notifyListeners();
+  }
+
+  void listenForegroundMessages() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      debugPrint('FCM foreground message received');
+
+      final notification = message.notification;
+      if (notification != null) {
+        showNotification(notification.title ?? '', notification.body ?? '');
+      }
+    });
+  }
+
+  Future<void> showNotification(String title, String body) async {
+    const AndroidNotificationDetails androidDetails =
+        AndroidNotificationDetails(
+          'foreground_channel',
+          'Foreground Notifications',
+          channelDescription: 'Notifications while app is open',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
+
+    const NotificationDetails details = NotificationDetails(
+      android: androidDetails,
+    );
+
+    await localNotifications.show(
+      DateTime.now().millisecondsSinceEpoch ~/ 1000,
+      title,
+      body,
+      details,
+    );
   }
 
   void requestNotificationPermissions() async {
@@ -96,5 +137,19 @@ class Notificationservices with ChangeNotifier {
       await sendTokenToBackend(fcmToken);
       print('token sent');
     }
+  }
+
+  final FlutterLocalNotificationsPlugin localNotifications =
+      FlutterLocalNotificationsPlugin();
+
+  Future<void> initLocalNotifications() async {
+    const AndroidInitializationSettings androidSettings =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+
+    const InitializationSettings settings = InitializationSettings(
+      android: androidSettings,
+    );
+
+    await localNotifications.initialize(settings);
   }
 }

@@ -188,28 +188,16 @@ class _UpdateportfolioState extends State<Updateportfolio> {
                                       length: 4,
                                     ),
                                     SizedBox(height: 10),
-                                    selectedImage != null
-                                        ? Image.file(
-                                            selectedImage!,
-                                            height: 150,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : existingImageUrl != null
-                                        ? Image.network(
-                                            "$BASE_URL$existingImageUrl",
-                                            height: 150,
-                                            fit: BoxFit.cover,
-                                          )
-                                        : UploadImageCard(
-                                          text: "Upload Portfolio image",
-                                            title:
-                                                "Upload Service Image Or Video",
-                                            onImageSelected: (image) {
-                                              setState(() {
-                                                selectedImage = image;
-                                              });
-                                            },
-                                          ),
+                                    UploadImageCard(
+                                    text: "Upload Profile image",
+                                    initialImageUrl:existingImageUrl ,
+                                    title: "Upload Service Image Or Video",
+                                    onImageSelected: (image) {
+                                    
+                                      selectedImage = image;
+                                    },
+                                  ),
+                               
 
                                     SizedBox(height: 20),
                                     ElevatedButton(
@@ -222,7 +210,7 @@ class _UpdateportfolioState extends State<Updateportfolio> {
                                               selectedImage,
                                             );
                                         if (result['success']) {
-                                          Navigator.pop(context);
+                                          Navigator.pop(context,true);
                                         }
                                       },
                                       style: ElevatedButton.styleFrom(

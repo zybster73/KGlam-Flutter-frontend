@@ -31,14 +31,18 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   TextEditingController confirmPassword = TextEditingController();
- 
-   @override
+
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    final notifyService = Provider.of<Notificationservices>(context,listen: false);
+    final notifyService = Provider.of<Notificationservices>(
+      context,
+      listen: false,
+    );
     notifyService.listenToTokenRefresh();
   }
+
   @override
   Widget build(BuildContext context) {
     final notifyService = Provider.of<Notificationservices>(context);
@@ -193,10 +197,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                   passwordController.text,
                                 );
 
-                                
                                 if (result['success'] == true) {
                                   await notifyService.tokensentAfterLogin();
-                                  if (widget.index == 'owner') {
+                                  if (result['data']['data']['role'] == 'owner') {
+                                    print(result['data']['role']);
                                     final salon =
                                         result['data']['data']['salon'];
                                     if (salon == null) {
@@ -218,7 +222,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ModalRoute.withName('/'),
                                       );
                                     }
-                                  } else if (widget.index == 'customer') {
+                                  } else if (result['data']['data']['role'] == 'customer') {
                                     Future.microtask(() {
                                       Navigator.pushAndRemoveUntil(
                                         context,
@@ -231,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     });
                                   }
                                 }
-                              
+
                                 // if (widget.index == 1) {
                                 //   Navigator.pushAndRemoveUntil(
                                 //     context,
@@ -309,12 +313,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    if (widget.logicIndex == 1 ||
-                                        widget.logicIndexUser == 2) {
-                                      Utils.instance.toastMessage(
-                                        'You are already Have an Account Please Log in',
-                                      );
-                                    } else {
+                                    
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -323,16 +322,14 @@ class _LoginScreenState extends State<LoginScreen> {
                                           ),
                                         ),
                                       );
-                                    }
+                              
                                   },
                                   child: Text(
                                     'Register',
                                     style: GoogleFonts.poppins(
                                       color:
-                                          widget.logicIndex == 1 ||
-                                              widget.logicIndexUser == 2
-                                          ? Colors.grey
-                                          : Color(0xFF01ABAB),
+                                    
+                                          Color(0xFF01ABAB),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                     ),

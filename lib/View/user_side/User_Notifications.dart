@@ -4,10 +4,12 @@ import 'package:KGlam/View/user_side/write_Feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
 
 class UserNotifications extends StatefulWidget {
+  final VoidCallback onMarkAllRead;
   final VoidCallback? onBack;
-  const UserNotifications({super.key, this.onBack});
+  const UserNotifications({super.key, this.onBack,required this.onMarkAllRead,});
 
   @override
   State<UserNotifications> createState() => _UserNotificationsState();
@@ -43,6 +45,7 @@ class _UserNotificationsState extends State<UserNotifications> {
 
   @override
   Widget build(BuildContext context) {
+    final clientapi = Provider.of<client_Api>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
@@ -111,12 +114,62 @@ class _UserNotificationsState extends State<UserNotifications> {
                     color: Color(0xFF717680),
                   ),
                 ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        final result = await clientapi
+                            .markallnotificationasRead();
+                        if (result['success']) {
+                          setState(() {
+                            Notifications = Notifications.map((notif) {
+                              notif['is_read'] = true;
+                              return notif;
+                            }).toList();
+                          });
+                          widget.onMarkAllRead();
+                        }
+                      },
+                      child: Text(
+                        'Mark all as read',
+                        style: GoogleFonts.poppins(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w400,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: 24),
 
                 Expanded(
                   child: isLoading
                       ? shimmerEffect(itemCount: 5, height: 130)
-                      : ListView.builder(
+                      : Notifications.isEmpty ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications,
+                                size: 60,
+                                color: Colors.grey,
+                              ),
+                              SizedBox(height: 12),
+                              Text(
+                                "No Notifications.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ):
+                      ListView.builder(
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemCount: Notifications.length,
                           itemBuilder: (context, index) {
