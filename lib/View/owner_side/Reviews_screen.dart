@@ -154,36 +154,46 @@ class _ReviewsScreenState extends State<ReviewsScreen> {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                CircleAvatar(
-                                  radius: 30.r,
-                                  backgroundImage:  NetworkImage(
-                                    feedback['customer_profile_image'],
+                            SingleChildScrollView(
+                              scrollDirection: Axis.horizontal,
+                              child: Row(
+                                
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CircleAvatar(
+                                    radius: 30.r,
+                                    backgroundImage:  NetworkImage(
+                                      feedback['customer_profile_image'],
+                                    ),
                                   ),
-                                ),
-                                SizedBox(width: 10.w),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      feedback['customer_name'],
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 18.sp,
-                                        fontWeight: FontWeight.bold,
+                                  SizedBox(width: 10.w),
+                                  Row(
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            feedback['customer_name'],
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 18.sp,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                          Text(
+                                            
+                                      
+                                            feedback['customer_email'],
+                                            style: GoogleFonts.poppins(
+                                              fontSize: 14.sp,
+                                              color: Color(0xFF717680),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
-                                    Text(
-                                      feedback['customer_email'],
-                                      style: GoogleFonts.poppins(
-                                        fontSize: 14.sp,
-                                        color: Color(0xFF717680),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
 
                             SizedBox(height: 18.h),

@@ -175,12 +175,7 @@ class _UploaddportfolioState extends State<Upload_portfolio> {
                                     selectedImage,
                                   );
                                   if (result['success']) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (builder) => portfolio(),
-                                      ),
-                                    );
+                                    Navigator.pop(context, true);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(

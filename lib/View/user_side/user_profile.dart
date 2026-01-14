@@ -193,7 +193,6 @@ class _UserProfileState extends State<UserProfile> {
                         radius: 50.r,
                         backgroundColor: Colors.black12,
       
-                        // 🔹 Priority logic
                         backgroundImage: _selectedImage != null
                             ? FileImage(_selectedImage!) // 1️⃣ Local image
                             : (_profileImageUrl.isNotEmpty
@@ -248,12 +247,14 @@ class _UserProfileState extends State<UserProfile> {
                         children: [
                           
                           CustomTextField(
+                            readonly: true,
                             controller: userName,
                             labelText: 'User Name',
                             hintText: "Abdullah Khan",
                           ),
                           SizedBox(height: 10),
                           CustomTextField(
+                            readonly: true,
                             controller: emailCtrl,
                             labelText: "Email",
                             hintText: "abdullahkhanh2@gmail.com",

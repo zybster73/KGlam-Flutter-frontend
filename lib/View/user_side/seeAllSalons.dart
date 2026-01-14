@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 
 class seeAllSalons extends StatefulWidget {
   @override
@@ -20,13 +21,16 @@ class _seeAllSalonsState extends State<seeAllSalons> {
   ScrollController scrollController = ScrollController();
   bool pageLoading = false;
   int pageNumber = 1;
+  bool isSearching = false;
   @override
   void initState() {
     super.initState();
     fetchSalons();
+    scrollController.addListener(scrollListner);
   }
 
   void scrollListner() {
+    if (isSearching) return;
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200 &&
         !pageLoading &&
@@ -52,13 +56,9 @@ class _seeAllSalonsState extends State<seeAllSalons> {
     if (data != null && data.isNotEmpty) {
       setState(() {
         if (isLoadMore) {
-          salons.addAll(
-            data.map((e) => viewSalon.fromJson(e)).toList(),
-          );
+          salons.addAll(data.map((e) => viewSalon.fromJson(e)).toList());
         } else {
-          salons = data
-              .map((e) => viewSalon.fromJson(e))
-              .toList();
+          salons = data.map((e) => viewSalon.fromJson(e)).toList();
         }
 
         pageNumber++;
@@ -70,7 +70,6 @@ class _seeAllSalonsState extends State<seeAllSalons> {
       pageLoading = false;
     });
   }
-  
 
   // Future<void> fetchSalons() async {
   //   final data = await client_Api().viewSalons();
@@ -84,6 +83,7 @@ class _seeAllSalonsState extends State<seeAllSalons> {
 
   @override
   Widget build(BuildContext context) {
+    final clientApi = Provider.of<client_Api>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     Utils.instance.initToast(context);
@@ -104,7 +104,6 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                     height: 250.h,
                     child: Stack(
                       children: [
-                       
                         Positioned(
                           top: -0.05 * screenHeight,
                           left: -10,
@@ -115,7 +114,7 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                             fit: BoxFit.contain,
                           ),
                         ),
-              
+
                         Positioned(
                           top: 90.h,
                           left: 20,
@@ -128,7 +127,7 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                             ),
                           ),
                         ),
-              
+
                         Positioned(
                           top: 170.h,
                           left: 20.w,
@@ -137,6 +136,30 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                             children: [
                               Expanded(
                                 child: TextFormField(
+                                  // onChanged: (value) async {
+                                  //   if (value.isNotEmpty) {
+                                  //     setState(() {
+                                  //       isSearching = true;
+                                  //     });
+                                      
+
+                                  //     final data = await clientApi.searchSalon(
+                                  //       value,
+                                  //     );
+
+                                  //     if (data != null) {
+                                  //       setState(() {
+                                  //         salons = data
+                                  //             .map((e) => viewSalon.fromJson(e))
+                                  //             .toList();
+                                  //       });
+                                  //     }
+                                  //   } else {
+                                  //     isSearching = false;
+
+                                  //     fetchSalons();
+                                  //   }
+                                  // },
                                   controller: searchController,
                                   decoration: InputDecoration(
                                     hintText: 'Search Salon',
@@ -153,23 +176,17 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                                         color: const Color(0xFF717680),
                                         width: 0.7,
                                       ),
-                                      borderRadius: BorderRadius.circular(
-                                        12.r,
-                                      ),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     focusedBorder: OutlineInputBorder(
                                       borderSide: BorderSide(
                                         color: const Color(0xFF01ABAB),
                                         width: 1.4,
                                       ),
-                                      borderRadius: BorderRadius.circular(
-                                        12.r,
-                                      ),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(
-                                        12.r,
-                                      ),
+                                      borderRadius: BorderRadius.circular(12.r),
                                     ),
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 14.w,
@@ -183,30 +200,30 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                           ),
                         ),
                         Positioned(
-                    top: 50.h,
-                    left: 20.w,
-                    child: Container(
-                      height: 30,
-                      width: 30,
-                      decoration: BoxDecoration(
-                        color: Color(0xFF01ABAB),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: IconButton(
-                          onPressed: () {
-                              Navigator.pop(context);
-                            },
-                        
-                          iconSize: 18,
-                          padding: EdgeInsets.zero,
-                          color: Colors.white,
-                    
-                          icon: Icon(Icons.arrow_back_ios_sharp),
+                          top: 50.h,
+                          left: 20.w,
+                          child: Container(
+                            height: 30,
+                            width: 30,
+                            decoration: BoxDecoration(
+                              color: Color(0xFF01ABAB),
+                              shape: BoxShape.circle,
+                            ),
+                            child: Center(
+                              child: IconButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                },
+
+                                iconSize: 18,
+                                padding: EdgeInsets.zero,
+                                color: Colors.white,
+
+                                icon: Icon(Icons.arrow_back_ios_sharp),
+                              ),
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  ),
                       ],
                     ),
                   ),
@@ -228,16 +245,58 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                       ],
                     ),
                   ),
-                 Expanded(
-                   child: ListView.builder(
-                           
-                          controller: scrollController,
-                           physics: BouncingScrollPhysics(),
-                            itemCount: salons.length,
+                  Expanded(
+                    child: isloading
+                        ? Center(
+                            child: LoadingAnimationWidget.hexagonDots(
+                              color: Color(0xFF01ABAB),
+                              size: 50,
+                            ),
+                          )
+                        : salons.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.cut, size: 60, color: Colors.grey),
+                                SizedBox(height: 12),
+                                Text(
+                                  isSearching == true
+                                      ? 'No appointments found'
+                                      : "All salons will be shown here",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                                Text(
+                                  isSearching
+                                      ? "Try searching with a different keyword."
+                                      : " ",
+                                  style: GoogleFonts.poppins(
+                                    fontSize: 13,
+                                    color: Colors.grey.shade500,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            controller: scrollController,
+                            physics: BouncingScrollPhysics(),
+                            itemCount: salons.length + (pageLoading ? 1 : 0),
                             itemBuilder: (context, index) {
-                            
+                              if (index == salons.length) {
+                                return Padding(
+                                  padding: const EdgeInsets.all(16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                );
+                              }
                               final salon = salons[index];
-                   
                               return Padding(
                                 padding: EdgeInsets.only(bottom: 10.h),
                                 child: _buildSaloonCard(
@@ -253,7 +312,7 @@ class _seeAllSalonsState extends State<seeAllSalons> {
                               );
                             },
                           ),
-                 ),
+                  ),
                 ],
               ),
             ),

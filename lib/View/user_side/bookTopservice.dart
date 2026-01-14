@@ -1,4 +1,5 @@
 import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/videoPlayerWidget.dart';
 import 'package:KGlam/View/user_side/Selected_Date.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -15,6 +16,8 @@ class Booktopservice extends StatefulWidget {
 
 class _BooktopserviceState extends State<Booktopservice> {
   bool isloading = true;
+  PageController pageController = PageController();
+  int currentIndex = 0;
   @override
   void initState() {
     super.initState();
@@ -70,28 +73,18 @@ class _BooktopserviceState extends State<Booktopservice> {
         ),
       ),
       body: isloading
-          ? Center(child: LoadingAnimationWidget.hexagonDots(
-            color: Color(0xFF01ABAB),
-            size: 50,
-          ))
+          ? Center(
+              child: LoadingAnimationWidget.hexagonDots(
+                color: Color(0xFF01ABAB),
+                size: 50,
+              ),
+            )
           : Stack(
               children: [
                 SizedBox(
                   height: 400,
                   width: double.infinity,
-                  child: Image(
-                    image:
-                        (specificService?['service_image'] != null &&
-                            specificService!['service_image']
-                                .toString()
-                                .isNotEmpty)
-                        ? NetworkImage(specificService!['service_image'])
-                        : const AssetImage('assets/images/unsplash.jpg')
-                              as ImageProvider,
-                    width: double.infinity,
-                    height: 400.h,
-                    fit: BoxFit.cover,
-                  ),
+                  child: _imageVideoscroll(specificService),
                 ),
 
                 Positioned(
@@ -156,6 +149,67 @@ class _BooktopserviceState extends State<Booktopservice> {
                 ),
               ],
             ),
+    );
+  }
+
+  Widget _imageVideoscroll(Map<String, dynamic>? service) {
+    List<Widget> media = [];
+
+    media.add(
+      Image(
+        image:
+            (service?['service_image'] != null &&
+                service!['service_image'].toString().isNotEmpty)
+            ? NetworkImage(service['service_image'])
+            : const AssetImage('assets/images/unsplash.jpg') as ImageProvider,
+        width: double.infinity,
+        height: 400,
+        fit: BoxFit.cover,
+      ),
+    );
+
+    if (service?['service_video'] != null &&
+        service!['service_video'].toString().isNotEmpty) {
+      media.add(VideoPlayerWidget(url: service['service_video']));
+    }
+
+    if (media.length == 1) return media[0];
+    return Stack(
+      alignment: Alignment.bottomCenter, 
+      children: [
+        PageView.builder(
+          controller: pageController,
+          itemCount: media.length,
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            return media[index];
+          },
+        ),
+        Positioned(
+          top: 350,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(media.length, (index) {
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                width: currentIndex == index ? 12 : 8,
+                height: currentIndex == index ? 12 : 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: currentIndex == index
+                      ? Color(0xFF01ABAB)
+                      : Colors.grey,
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 }

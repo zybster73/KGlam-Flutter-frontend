@@ -39,7 +39,7 @@ class _portfolioState extends State<portfolio> {
   final prefs = await SharedPreferences.getInstance();
   bool hasShown = prefs.getBool('addPortfolioShown') ?? false;
 
-  if (hasShown) {
+  if (!hasShown) {
     
     Future.delayed(Duration(milliseconds: 500), () {
       final overlay = Overlay.of(context);
@@ -205,13 +205,16 @@ class _portfolioState extends State<portfolio> {
                     SizedBox(width: 12.w),
                     InkWell(
                       key: addButtonKey,
-                      onTap: () {
-                        Navigator.push(
+                      onTap: () async {
+                       bool updated = await  Navigator.push(
                           context,
                           MaterialPageRoute(
                             builder: (context) => Upload_portfolio(),
                           ),
                         );
+                        if (updated == true) {
+                          fetchPortfolio();
+                        }
                       },
                       child: Container(
                         height: 49,

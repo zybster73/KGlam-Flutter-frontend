@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/UploadVideo.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/owner_side/view_services.dart';
 import 'package:flutter/material.dart';
@@ -20,6 +21,7 @@ class uploadService extends StatefulWidget {
 
 class _ServiceInforamtionState extends State<uploadService> {
   File? selectedImage;
+  File? selectedVideo;
 
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
@@ -64,7 +66,7 @@ class _ServiceInforamtionState extends State<uploadService> {
                       fit: BoxFit.contain,
                     ),
                   ),
-      
+
                   Positioned(
                     top: screenHeight * 0.05 + 20,
                     child: Column(
@@ -81,7 +83,7 @@ class _ServiceInforamtionState extends State<uploadService> {
                 ],
               ),
             ),
-      
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -113,7 +115,9 @@ class _ServiceInforamtionState extends State<uploadService> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
@@ -144,7 +148,7 @@ class _ServiceInforamtionState extends State<uploadService> {
                                 hintText: 'Must be greater than 0',
                               ),
                               SizedBox(height: 10),
-      
+
                               CustomTextField(
                                 controller: serviceHours,
                                 labelText: "Service Estimated Duration",
@@ -154,7 +158,8 @@ class _ServiceInforamtionState extends State<uploadService> {
                               CustomTextField(
                                 controller: serviceDescription,
                                 labelText: 'Service Description',
-                                hintText: 'Description must contains atleast 10 characters',
+                                hintText:
+                                    'Description must contains atleast 10 characters',
                                 length: 4,
                               ),
                               SizedBox(height: 10),
@@ -165,8 +170,14 @@ class _ServiceInforamtionState extends State<uploadService> {
                                   selectedImage = image;
                                 },
                               ),
-                              SizedBox(height: 5),
-      
+                              SizedBox(height: 10),
+                              UploadVideoCard(
+                                text: "Upload Service video",
+                                title: "Upload Service video (Optional)",
+                                onVideoSelected: (video) {
+                                  selectedVideo = video;
+                                },
+                              ),
                               SizedBox(height: 20),
                               ElevatedButton(
                                 onPressed: () async {
@@ -177,8 +188,9 @@ class _ServiceInforamtionState extends State<uploadService> {
                                         serviceHours.text,
                                         serviceDescription.text,
                                         selectedImage,
+                                        selectedVideo,
                                       );
-      
+
                                   print(result);
                                   if (result['success']) {
                                     Navigator.pop(context, true);
@@ -196,7 +208,10 @@ class _ServiceInforamtionState extends State<uploadService> {
                                 ),
                                 child: Center(
                                   child: salonApi.isLoading
-                                      ? LoadingAnimationWidget.progressiveDots(color: Colors.white, size: 50)
+                                      ? LoadingAnimationWidget.progressiveDots(
+                                          color: Colors.white,
+                                          size: 50,
+                                        )
                                       : Text(
                                           'Save',
                                           textAlign: TextAlign.center,
@@ -208,7 +223,7 @@ class _ServiceInforamtionState extends State<uploadService> {
                                         ),
                                 ),
                               ),
-      
+
                               SizedBox(height: 20),
                             ],
                           ),

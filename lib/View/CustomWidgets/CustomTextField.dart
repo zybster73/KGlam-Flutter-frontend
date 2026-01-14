@@ -9,6 +9,8 @@ class CustomTextField extends StatefulWidget {
   final int? length;
   final String? errorText;
   final ValueChanged<String>? onChanged;
+  final bool? readonly;
+  final int? mxlength;
 
   const CustomTextField({
     Key? key,
@@ -19,6 +21,8 @@ class CustomTextField extends StatefulWidget {
     this.obscureText = false,
     this.errorText,
     this.onChanged,
+    this.readonly,
+    this.mxlength,
   }) : super(key: key);
 
   @override
@@ -41,7 +45,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          /// LABEL
           Text(
             widget.labelText,
             style: GoogleFonts.poppins(
@@ -57,9 +60,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               color: Colors.white,
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: widget.errorText != null
-                    ? Colors.red
-                    : Colors.black12,
+                color: widget.errorText != null ? Colors.red : Colors.black12,
               ),
               boxShadow: [
                 BoxShadow(
@@ -70,14 +71,13 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ],
             ),
             child: TextFormField(
+              readOnly: widget.readonly ?? false,
               controller: widget.controller,
               obscureText: _obscureText,
+              maxLength: widget.mxlength,
               maxLines: widget.obscureText ? 1 : widget.length,
               onChanged: widget.onChanged,
-              style: GoogleFonts.poppins(
-                fontSize: 16,
-                color: Colors.black87,
-              ),
+              style: GoogleFonts.poppins(fontSize: 16, color: Colors.black87),
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 hintStyle: GoogleFonts.poppins(
@@ -92,7 +92,9 @@ class _CustomTextFieldState extends State<CustomTextField> {
                   borderRadius: BorderRadius.circular(8),
                   borderSide: BorderSide.none,
                 ),
-                suffixIcon: widget.obscureText
+                suffixIcon: widget.readonly == true
+                    ? const Icon(Icons.lock, size: 18, color: Colors.grey)
+                    : widget.obscureText
                     ? IconButton(
                         icon: Icon(
                           _obscureText
@@ -116,10 +118,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
               padding: const EdgeInsets.only(top: 6, left: 4),
               child: Text(
                 widget.errorText!,
-                style: GoogleFonts.poppins(
-                  color: Colors.red,
-                  fontSize: 12,
-                ),
+                style: GoogleFonts.poppins(color: Colors.red, fontSize: 12),
               ),
             ),
         ],

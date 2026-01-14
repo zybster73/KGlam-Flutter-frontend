@@ -131,7 +131,7 @@ class _UserPortfolioState extends State<UserPortfolio> {
                         ),
 
                         Positioned(
-                          top: 180.h,
+                          top: 190.h,
                           left: 20.w,
                           right: 20.w,
                           child: Row(

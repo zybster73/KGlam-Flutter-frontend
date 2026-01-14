@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/UploadVideo.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -18,6 +19,7 @@ class ServiceInforamtion extends StatefulWidget {
 
 class _ServiceInforamtionState extends State<ServiceInforamtion> {
   File? selectedImage;
+   File? selectedVideo;
 
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
@@ -62,7 +64,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                       fit: BoxFit.contain,
                     ),
                   ),
-      
+
                   // Logo in center
                   Positioned(
                     top: screenHeight * 0.05 + 20,
@@ -80,7 +82,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                 ],
               ),
             ),
-      
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -112,7 +114,9 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
@@ -143,7 +147,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                                 hintText: 'Must be greater than 0',
                               ),
                               SizedBox(height: 10),
-      
+
                               CustomTextField(
                                 controller: serviceHours,
                                 labelText: "Service Estimated Duration",
@@ -153,19 +157,28 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                               CustomTextField(
                                 controller: serviceDescription,
                                 labelText: 'Service Description',
-                                hintText: 'Description must contains atleast 10 characters',
+                                hintText:
+                                    'Description must contains atleast 10 characters',
                                 length: 4,
                               ),
                               SizedBox(height: 10),
                               UploadImageCard(
                                 text: "Upload Service image",
-                                title: "Upload Service Image Or Video",
-                                onImageSelected: (image){
+                                title: "Upload Service Image",
+                                onImageSelected: (image) {
                                   selectedImage = image;
                                 },
                               ),
                               SizedBox(height: 5),
-      
+                              UploadVideoCard(
+                                text: "Upload Service video (Optional)",
+                                title: "Upload Service video (Optional)",
+                                onVideoSelected: (video) {
+                                  selectedVideo = video;
+                                },
+                              ),
+                              SizedBox(height: 5),
+
                               SizedBox(height: 20),
                               ElevatedButton(
                                 onPressed: () async {
@@ -176,11 +189,11 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                                         serviceHours.text,
                                         serviceDescription.text,
                                         selectedImage,
+                                        selectedVideo,
                                       );
-      
+
                                   print(result);
                                   if (result['success']) {
-                                    
                                     Navigator.pushAndRemoveUntil(
                                       context,
                                       MaterialPageRoute(
@@ -215,7 +228,7 @@ class _ServiceInforamtionState extends State<ServiceInforamtion> {
                                         ),
                                 ),
                               ),
-      
+
                               SizedBox(height: 20),
                             ],
                           ),

@@ -222,7 +222,7 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+       // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -254,7 +254,7 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+       // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -390,7 +390,7 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-        Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -424,7 +424,7 @@ class client_Api with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200 || response.statusCode == 201) {
-       // Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -461,12 +461,15 @@ class client_Api with ChangeNotifier {
       );
       var responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        print(responseData["msg"]);
         Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return {'success': true, 'data': responseData['data']};
       } else {
-        Utils.instance.toastMessage(responseData['msg']);
+        Utils.instance.toastMessage('feedback already submitted');
+        print(responseData["msg"]);
+       // Utils.instance.toastMessage(responseData['msg']);
         return {'success': false};
       }
     } catch (e) {
@@ -498,7 +501,7 @@ class client_Api with ChangeNotifier {
         return responseData['data'];
       } else {
         if (responseData["msg"] != null) {
-        //  Utils.instance.toastMessage(responseData["msg"]);
+          //  Utils.instance.toastMessage(responseData["msg"]);
         }
         return null;
       }
@@ -609,4 +612,111 @@ class client_Api with ChangeNotifier {
       setLoading(false);
     }
   }
+
+  Future<List<dynamic>?> ownerBookingSearch(String query) async {
+    String? token = await Storetoken.getToken();
+
+    setLoading(true);
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'owner-booking-search/?q=$query'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+       // Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+          print(response.body);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<List<dynamic>?> customerBookingSearch(String query) async {
+    String? token = await Storetoken.getToken();
+
+    setLoading(true);
+    try {
+      final response = await http.get(
+        Uri.parse(url2 + 'customer-booking-search/?q=$query'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+       // Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+          print(response.body);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+ Future<List<dynamic>?> searchSalon(String query) async {
+    String? token = await Storetoken.getToken();
+
+    setLoading(true);
+    try {
+      final response = await http.get(
+        Uri.parse(url1 + 'salon/search/?q=$query'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+      );
+
+      var responseData = jsonDecode(response.body);
+
+      if (response.statusCode == 200 ) {
+       // Utils.instance.toastMessage(responseData["msg"]);
+        print(response.body);
+        return responseData['data'];
+      } else {
+        if (responseData["msg"] != null) {
+          Utils.instance.toastMessage(responseData["msg"]);
+          print(response.body);
+        }
+        return null;
+      }
+    } catch (e) {
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      print(e);
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+  
 }

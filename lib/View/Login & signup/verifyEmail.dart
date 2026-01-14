@@ -12,9 +12,9 @@ import 'package:provider/provider.dart';
 
 class Verifyemail extends StatefulWidget {
   final String email;
-  final String? index;
 
-  Verifyemail({required this.email, required this.index});
+
+  Verifyemail({required this.email,});
   @override
   State<Verifyemail> createState() => _VerifyemailState();
 }
@@ -224,7 +224,7 @@ class _VerifyemailState extends State<Verifyemail> {
                                         context,
                                         MaterialPageRoute(
                                           builder: (context) => LoginScreen(
-                                            index: widget.index,
+                                           
                                           ),
                                         ),
                                       );

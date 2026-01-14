@@ -9,7 +9,6 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  
   final VoidCallback? onBack;
   const AppointmentScreen({super.key, this.onBack});
 
@@ -18,7 +17,6 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  
   bool isloading = true;
   List<getBookings> getallBookings = [];
 
@@ -26,6 +24,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   ScrollController scrollController = ScrollController();
   bool pageLoading = false;
   int pageNumber = 1;
+  bool isSearching = false;
 
   @override
   void initState() {
@@ -42,7 +41,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       getBookingsOwner(isLoadMore: true);
     }
   }
-
 
   Future<void> getBookingsOwner({bool isLoadMore = false}) async {
     if (isLoadMore) {
@@ -65,9 +63,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             data.map((e) => getBookings.fromJson(e)).toList(),
           );
         } else {
-          getallBookings = data
-              .map((e) => getBookings.fromJson(e))
-              .toList();
+          getallBookings = data.map((e) => getBookings.fromJson(e)).toList();
         }
 
         pageNumber++;
@@ -171,6 +167,27 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        onChanged: (value) async {
+                          if (value.isNotEmpty) {
+                            isSearching = true;
+
+                            final data = await clientApi.ownerBookingSearch(
+                              value,
+                            );
+
+                            if (data != null) {
+                              setState(() {
+                                getallBookings = data
+                                    .map((e) => getBookings.fromJson(e))
+                                    .toList();
+                              });
+                            }
+                          } else {
+                           isSearching = false;
+                            getBookingsOwner();
+                          }
+                        },
+
                         controller: searchController,
                         decoration: InputDecoration(
                           hintText: 'Search Appointment',
@@ -218,12 +235,14 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                             size: 50,
                           ),
                         )
-                      : getallBookings.isEmpty ? Center(
+                      : getallBookings.isEmpty
+                      ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                            
                               Text(
+                                isSearching == true ?
+                                '':
                                 "No bookings yet",
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
@@ -231,11 +250,23 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                   color: Colors.grey,
                                 ),
                               ),
+                              Text(
+                                isSearching
+                                    ? "No matching bookings found."
+                                    : "Your booked appointments will appear here.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.grey,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
                           ),
-                        ) :
-                       ListView.builder(
-                          itemCount: getallBookings.length + (pageLoading ? 1 : 0),
+                        )
+                      : ListView.builder(
+                          itemCount:
+                              getallBookings.length + (pageLoading ? 1 : 0),
                           controller: scrollController,
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemBuilder: (_, index) {
@@ -465,9 +496,8 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                             ),
                                             child: Center(
                                               child: clientApi.isLoading
-                                                  ? CircularProgressIndicator():
-                                                            
-                                                   Text(
+                                                  ? CircularProgressIndicator()
+                                                  : Text(
                                                       "Mark as completed",
                                                       style:
                                                           GoogleFonts.poppins(

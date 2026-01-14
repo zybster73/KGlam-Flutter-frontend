@@ -35,7 +35,7 @@ class _HomePageState extends State<HomePage> {
 
     if (data != null) {
       setState(() {
-        image = data['profile_image'];
+        image = data['profile_image'] ?? '';
         username = data['username'];
       });
     }
@@ -71,8 +71,18 @@ class _HomePageState extends State<HomePage> {
                     child: Row(
                       children: [
                         CircleAvatar(
-                          backgroundImage: NetworkImage(image),
+                           backgroundColor: Colors.white,
                           radius: 30.r,
+                          backgroundImage: (image.isNotEmpty)
+                              ? NetworkImage(image)
+                              : null,
+                          child: (image.isEmpty)
+                              ? Icon(
+                                  Icons.person,
+                                  size: 30.r,
+                                  color: Colors.grey,
+                                )
+                              : null,
                         ),
                         Expanded(
                           child: ListTile(

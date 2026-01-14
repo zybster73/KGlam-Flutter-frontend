@@ -36,37 +36,55 @@ class _salonRowState extends State<salonRow> {
 
   @override
   Widget build(BuildContext context) {
-    return isloading? Center(
-      child: LoadingAnimationWidget.hexagonDots(
-           color: Color(0xFF01ABAB),
-           size: 50
-      ),
-    ) : Padding(
-      padding: EdgeInsets.symmetric(horizontal: 15.w),
-      child: SizedBox(
-        height: 170,
-        child: Expanded(
-          child: ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: servicesss?.length,
-            itemBuilder: (context, index) {
-              final item = servicesss![index];
-              return Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _buildServiceCard(
-                    item['id'],
-                    item['service_name'],
-                    item['service_image'],
+    return isloading
+        ? Center(
+            child: LoadingAnimationWidget.hexagonDots(
+              color: Color(0xFF01ABAB),
+              size: 50,
+            ),
+          )
+        : servicesss.isEmpty
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.design_services_sharp, size: 60, color: Colors.grey),
+                SizedBox(height: 12),
+                Text(
+                  "All services will be shown here",
+                  style: GoogleFonts.poppins(
+                    fontSize: 13,
+                    color: Colors.grey.shade500,
                   ),
-                  SizedBox(width: 10.w),
-                ],
-              );
-            },
-          ),
-        ),
-      ),
-    );
+                  textAlign: TextAlign.center,
+                ),
+              ],
+            ),
+          )
+        : Padding(
+            padding: EdgeInsets.symmetric(horizontal: 15.w),
+            child: SizedBox(
+              height: 170,
+              child: ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: servicesss?.length,
+                itemBuilder: (context, index) {
+                  final item = servicesss![index];
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildServiceCard(
+                        item['id'],
+                        item['service_name'],
+                        item['service_image'],
+                      ),
+                      SizedBox(width: 10.w),
+                    ],
+                  );
+                },
+              ),
+            ),
+          );
   }
 
   Widget _buildServiceCard(int id, String title, String? imagePath) {

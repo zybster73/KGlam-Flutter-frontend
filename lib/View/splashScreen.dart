@@ -1,4 +1,9 @@
 import 'package:KGlam/Services/notificationServices.dart';
+import 'package:KGlam/View/CustomWidgets/CustomNavigationBar.dart';
+import 'package:KGlam/View/CustomWidgets/helperClass.dart';
+import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
+import 'package:KGlam/View/selectRole.dart';
+import 'package:KGlam/View/user_side/UserNavigationBar.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -22,7 +27,7 @@ class _SplashscreenState extends State<splash_screen>
   void initState() {
     super.initState();
     notificationservices.requestNotificationPermissions();
-    
+    _navigateNext();
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(seconds: 2),
@@ -38,13 +43,41 @@ class _SplashscreenState extends State<splash_screen>
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
 
     _controller.forward();
+  }
 
-    Timer(const Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => Onboardingscreen()),
-      );
-    });
+  void _navigateNext() async {
+    await Future.delayed(Duration(seconds: 3));
+    bool hasSeenOnboarding = await Prefs.getBool(Prefs.onboarding);
+   
+    String? role = await Prefs.getRole();
+    
+    bool isLoggedIn = await Prefs.getBool(Prefs.loggedIn);
+    
+
+    Widget nextScreen;
+
+    if (!hasSeenOnboarding) {
+      print(hasSeenOnboarding);
+      nextScreen = Onboardingscreen();
+    } else if (role == null) {
+      print(role);
+      nextScreen = SelectRole();
+    } else if (!isLoggedIn) {
+      print(isLoggedIn);
+      nextScreen = LoginScreen(index: role);
+    } else {
+      nextScreen = role == 'owner'
+          ? CustomNavigationBar()
+          : Usernavigationbar();
+    }
+
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => nextScreen),
+    );
+     print(hasSeenOnboarding);
+     print(role);
+     print(isLoggedIn);
   }
 
   @override

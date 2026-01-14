@@ -174,7 +174,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
       clipBehavior: Clip.none,
       children: [
         Icon(icon, color: color, size: 30),
-        if (showBadge) // show badge only when true
+        if (showBadge) 
           Positioned(
             top: -2,
             right: -2,

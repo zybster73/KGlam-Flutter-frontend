@@ -55,7 +55,20 @@ class Storetoken {
     return prefs.getInt('portfolio_Id');
   }
 
-  //save salon id at the time of salon Creation
+  //save refresh token at the time ogf login
+ 
+  static Future<void> saveRefreshToken(String refresh) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('refresh_token', refresh);
+  }
+
+  static Future<String?> getRefreshToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getString('refresh_token');
+  }
+
+ //save instance
+
  
 
 }

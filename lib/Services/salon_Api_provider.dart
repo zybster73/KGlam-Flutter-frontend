@@ -8,6 +8,7 @@ import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 
 class SalonApiProvider with ChangeNotifier {
   final url = BaseUrls.baseUrl;
@@ -36,7 +37,7 @@ class SalonApiProvider with ChangeNotifier {
       var responseData = jsonDecode(response.body);
 
       if (response.statusCode == 200) {
-       // Utils.instance.toastMessage(responseData["msg"]);
+        // Utils.instance.toastMessage(responseData["msg"]);
         print(response.body);
         return responseData['data'];
       } else {
@@ -170,7 +171,7 @@ class SalonApiProvider with ChangeNotifier {
       if (salonId != null) {
         await Storetoken.saveSalonId(salonId);
       }
-
+      print(response.statusCode);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Utils.instance.toastMessage(responseData['msg']);
         return {
@@ -202,6 +203,7 @@ class SalonApiProvider with ChangeNotifier {
     String serviceDuration,
     String serviceDesc,
     File? serviceImage,
+    File? serviceVideo,
   ) async {
     setLoading(true);
     String? token = await Storetoken.getToken();
@@ -215,7 +217,6 @@ class SalonApiProvider with ChangeNotifier {
 
       request.headers.addAll({"Authorization": "Bearer $token"});
 
-      // Text fields
       request.fields.addAll({
         'service_name': serviceName,
         'service_price': servicePrice,
@@ -223,10 +224,18 @@ class SalonApiProvider with ChangeNotifier {
         'service_desc': serviceDesc,
       });
 
-      // Image
       if (serviceImage != null) {
         request.files.add(
           await http.MultipartFile.fromPath('service_image', serviceImage.path),
+        );
+      }
+      if (serviceVideo != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath(
+            'service_video',
+            serviceVideo.path,
+            contentType: MediaType('video', 'mp4'),
+          ),
         );
       }
 
@@ -245,6 +254,7 @@ class SalonApiProvider with ChangeNotifier {
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         Utils.instance.toastMessage(responseData['msg']);
+        print(responseData['msg']);
         return {
           'success': true,
           'message': responseData['msg'],
@@ -258,9 +268,11 @@ class SalonApiProvider with ChangeNotifier {
           errorMsg = responseData['errors'][firstField][0];
         }
         Utils.instance.toastMessage(errorMsg);
+        print(errorMsg);
         return {'success': false, 'message': errorMsg};
       }
     } catch (e) {
+      print(e);
       Utils.instance.toastMessage("Error: ${e.toString()}");
       return {'success': false, 'message': e.toString()};
     } finally {
@@ -301,6 +313,7 @@ class SalonApiProvider with ChangeNotifier {
           await http.MultipartFile.fromPath(
             'salon_profile_image',
             profileImage.path,
+            contentType: MediaType('video', 'mp4'),
           ),
         );
       }
@@ -344,6 +357,7 @@ class SalonApiProvider with ChangeNotifier {
     String serviceDuration,
     String serviceDesc,
     File? serviceImage,
+    File? serviceVideo,
   ) async {
     setLoading(true);
     String? token = await Storetoken.getToken();
@@ -366,6 +380,12 @@ class SalonApiProvider with ChangeNotifier {
       if (serviceImage != null) {
         request.files.add(
           await http.MultipartFile.fromPath('service_image', serviceImage.path),
+        );
+      }
+
+      if (serviceVideo != null) {
+        request.files.add(
+          await http.MultipartFile.fromPath('service_video', serviceVideo.path),
         );
       }
 
@@ -412,10 +432,11 @@ class SalonApiProvider with ChangeNotifier {
         print(response.body);
         return responseData['data'];
       } else {
-        if (responseData["msg"] != null) {
-          Utils.instance.toastMessage(responseData["msg"]);
+        if (responseData["errors"] != null) {
+          Utils.instance.toastMessage(responseData["errors"]);
+          print(response.body);
         }
-        return null;
+        return responseData['data'];
       }
     } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");

@@ -1,3 +1,4 @@
+import 'package:KGlam/View/CustomWidgets/helperClass.dart';
 import 'package:KGlam/View/Login%20&%20signup/Login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -138,10 +139,11 @@ class _SelectRoleState extends State<SelectRole> {
     final bool isSelected = selectedRole == value;
 
     return GestureDetector(
-      onTap: () {
+      onTap: () async{
         setState(() {
           selectedRole = value;
         });
+        await Prefs.setRole(value);
         print(value);
         Navigator.push(
           context,

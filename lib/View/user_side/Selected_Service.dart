@@ -37,7 +37,10 @@ class _Selected_ServiceState extends State<Selected_Service> {
     saloonPrice = services['service_price'] ?? '';
 
     serviceDescription = services['service_desc'] ?? '';
-    profileImageUrl = services['service_image'];
+    profileImageUrl = (services['service_image'] != null &&
+        services['service_image'].toString().isNotEmpty)
+    ? services['service_image']
+    : 'assets/images/unsplash.jpg';
     isLoading = false;
 
     mediaList = [
@@ -45,10 +48,9 @@ class _Selected_ServiceState extends State<Selected_Service> {
         "type": "image",
         "path": (profileImageUrl.isNotEmpty)
             ? profileImageUrl
-            : "assets/images/wet.jpg", // fallback if backend image is empty
+            : "assets/images/unsplash.jpg", 
       },
       {"type": "image", "path": "assets/images/wet.jpg"},
-      {"type": "image", "path": "assets/images/STRAIGHT.jpg"},
       {"type": "video", "path": "assets/video/BlackVideo.mp4"},
     ];
 
@@ -70,17 +72,15 @@ class _Selected_ServiceState extends State<Selected_Service> {
 
   Widget buildMediaItem(Map item) {
     if (item["type"] == "image") {
-      // Check if path is a network URL
       if (item["path"].toString().startsWith("http")) {
         return ClipRRect(
-          borderRadius: BorderRadius.circular(12), // round edges
+          borderRadius: BorderRadius.circular(12),
           child: Image.network(
             item["path"],
             width: double.infinity,
             height: 500,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
-              // fallback in case network image fails
               return Image.asset(
                 'assets/images/unsplash.jpg',
                 width: double.infinity,

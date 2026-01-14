@@ -1,3 +1,4 @@
+import 'package:KGlam/View/CustomWidgets/helperClass.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -233,7 +234,8 @@ class _OnboardingscreenState extends State<Onboardingscreen> {
 
   Widget buildGetStartedButton() {
     return ElevatedButton(
-      onPressed: () {
+      onPressed: () async{
+        await Prefs.setBool(Prefs.onboarding, true);
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => SelectRole()),

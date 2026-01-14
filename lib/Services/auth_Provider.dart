@@ -59,7 +59,7 @@ class AuthProvider extends ChangeNotifier {
         }
         Utils.instance.toastMessage(message);
         print(response.body);
-        return {'success': false, 'message': message};
+        return {'success': false, 'message': message,'errors': responseData['errors'], };
       }
     } catch (e) {
       Utils.instance.toastMessage(e.toString());
@@ -136,8 +136,11 @@ class AuthProvider extends ChangeNotifier {
         Utils.instance.toastMessage('Login Successfully');
         print(response.body);
         var accessToken = responseData['tokens']?['access'];
+        var refreshToken = responseData['tokens']?['refresh'];
         if (accessToken != null) {
           await Storetoken.saveToken(accessToken);
+          await Storetoken.saveRefreshToken(refreshToken);
+          print(refreshToken);
           print(accessToken);
         } else {
           print('token is not saved');
@@ -328,6 +331,7 @@ class AuthProvider extends ChangeNotifier {
       setLoading(false);
     }
   }
+
   Future<Map<String, dynamic>> resendOtpatsignUp(String email_username) async {
     setLoading(true);
     try {
@@ -361,6 +365,57 @@ class AuthProvider extends ChangeNotifier {
       }
     } catch (e) {
       print(e);
+      Utils.instance.toastMessage("Error: ${e.toString()}");
+      return {'success': false, 'message': e.toString()};
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  Future<Map<String, dynamic>> logout(String? refreshtoken) async {
+    String? token = await Storetoken.getToken();
+    String? refreshToken = await Storetoken.getRefreshToken();
+    setLoading(true);
+    try {
+      Response response = await http.post(
+        Uri.parse(url + 'logout/'),
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+        },
+        body: jsonEncode({'refresh': refreshtoken}),
+      );
+
+      var responseData = jsonDecode(response.body);
+      print(response.statusCode);
+
+      if (response.statusCode == 200 || response.statusCode == 201 || response.statusCode == 205 ) {
+        Utils.instance.toastMessage(responseData['msg']);
+        print(response.body);
+
+        return {
+          'success': true,
+          'message': responseData['msg'],
+          'data': responseData,
+        };
+      } else {
+        String message = '';
+        if (responseData['errors'] != null &&
+            responseData['errors'].isNotEmpty) {
+          var firstField = responseData['errors'].keys.first;
+          message = responseData['errors'][firstField][0];
+        } else if (responseData['msg'] != null) {
+          message = responseData['msg'];
+        } else {
+          message = 'Logout failed';
+        }
+
+        Utils.instance.toastMessage(message);
+        print(response.body);
+
+        return {'success': false, 'message': message};
+      }
+    } catch (e) {
       Utils.instance.toastMessage("Error: ${e.toString()}");
       return {'success': false, 'message': e.toString()};
     } finally {

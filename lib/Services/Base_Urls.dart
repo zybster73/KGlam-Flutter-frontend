@@ -1,8 +1,5 @@
 class BaseUrls {
-  static String baseUrl =
-      'https://unsurviving-snuffier-marylyn.ngrok-free.dev/z/';
-  static String salonUrl =
-      'https://unsurviving-snuffier-marylyn.ngrok-free.dev/s/';
-  static String clientUrl =
-      'https://unsurviving-snuffier-marylyn.ngrok-free.dev/b/';
+  static String baseUrl = 'https://kglam.octoflyte.com/z/';
+  static String salonUrl = 'https://kglam.octoflyte.com/s/';
+  static String clientUrl = 'https://kglam.octoflyte.com/b/';
 }

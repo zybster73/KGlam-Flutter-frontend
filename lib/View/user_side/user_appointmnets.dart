@@ -11,6 +11,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:provider/provider.dart';
 
 class UserAppointmnets extends StatefulWidget {
   final VoidCallback? onBack;
@@ -22,6 +23,7 @@ class UserAppointmnets extends StatefulWidget {
 
 class _UserAppointmnetsState extends State<UserAppointmnets> {
   TextEditingController searchController = TextEditingController();
+  bool isSearching = false;
   int value = 0;
   bool isloading = true;
   List<CustomerBooking> getallBookings = [];
@@ -38,7 +40,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
     scrollController.addListener(scrollListner);
   }
 
-    void scrollListner() {
+  void scrollListner() {
     if (scrollController.position.pixels >=
             scrollController.position.maxScrollExtent - 200 &&
         !pageLoading &&
@@ -46,7 +48,6 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
       getBookingsCustomer(isLoadMore: true);
     }
   }
-
 
   Future<void> getBookingsCustomer({bool isLoadMore = false}) async {
     if (isLoadMore) {
@@ -105,9 +106,9 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
   //   }
   // }
 
-
   @override
   Widget build(BuildContext context) {
+    final clientApi = Provider.of<client_Api>(context);
     Utils.instance.initToast(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -181,6 +182,26 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                   children: [
                     Expanded(
                       child: TextFormField(
+                        onChanged: (value) async {
+                          if (value.isNotEmpty) {
+                            isSearching = true;
+
+                            final data = await clientApi.customerBookingSearch(
+                              value,
+                            );
+
+                            if (data != null) {
+                              setState(() {
+                                getallBookings = data
+                                    .map((e) => CustomerBooking.fromJson(e))
+                                    .toList();
+                              });
+                            }
+                          } else {
+                            isSearching = false;
+                            getBookingsCustomer();
+                          }
+                        },
                         controller: searchController,
                         decoration: InputDecoration(
                           hintText: 'Search Appointment',
@@ -227,7 +248,8 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                             size: 50,
                           ),
                         )
-                      : getallBookings.isEmpty ? Center(
+                      : getallBookings.isEmpty
+                      ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -238,6 +260,8 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                               ),
                               SizedBox(height: 12),
                               Text(
+                                isSearching == true ?
+                                '' :
                                 "Please create a booking first.",
                                 style: GoogleFonts.poppins(
                                   fontSize: 16,
@@ -245,10 +269,20 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                   color: Colors.grey,
                                 ),
                               ),
+                              Text(
+                                isSearching
+                                    ? "Try searching with a different keyword."
+                                    : "Your booked appointments will appear here.",
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13,
+                                  color: Colors.grey.shade500,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
                             ],
-                          )
-                      ) :
-                       ListView.builder(
+                          ),
+                        )
+                      : ListView.builder(
                           itemCount:
                               getallBookings.length + (pageLoading ? 1 : 0),
                           controller: scrollController,
@@ -405,6 +439,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                         ),
 
                                       SizedBox(width: 12.w),
+                                     
                                       if (bookings.status == 'reject')
                                         Expanded(
                                           child: GestureDetector(
@@ -436,7 +471,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                           ),
                                         ),
 
-                                      if (bookings.status == 'accept')
+                                      if (bookings.status == 'accept' )
                                         Expanded(
                                           child: ElevatedButton(
                                             onPressed: () async {},
@@ -464,7 +499,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                             ),
                                           ),
                                         ),
-
+                                       
                                       if (bookings.status == 'completed' &&
                                           bookings.feedbackId != null)
                                         Expanded(
@@ -507,6 +542,7 @@ class _UserAppointmnetsState extends State<UserAppointmnets> {
                                             ),
                                           ),
                                         ),
+                                       
                                     ],
                                   ),
                                 ],

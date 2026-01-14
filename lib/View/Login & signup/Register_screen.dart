@@ -1,6 +1,7 @@
 import 'package:KGlam/Services/auth_Provider.dart';
 import 'package:KGlam/Services/validations.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/Login%20&%20signup/pendingVerification.dart';
 import 'package:KGlam/View/Login%20&%20signup/verifyEmail.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -131,6 +132,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               controller: emailphoneNumberController,
                               labelText: 'Email',
                               hintText: 'Enter Email ',
+                              length: 1,
                               errorText: validations.emailError,
                               onChanged: (value) {
                                 validations.validateEmail(
@@ -142,7 +144,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             CustomTextField(
                               controller: phoneNumberController,
                               labelText: "Phone Number",
-                              hintText: "Enter Phone Number",
+                              hintText: "+00 0000000000",
+                              errorText: validations.phoneError,
+                              onChanged: (value) {
+                                validations.validatePhoneNumber(
+                                  phoneNumber: value
+                                );
+                                setState(() {});
+                              },
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
@@ -153,6 +162,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                               errorText: validations.passwordError,
                               onChanged: (value) {
                                 validations.validatePassword(value);
+                                setState(() {});
                               },
                             ),
                             SizedBox(height: 10),
@@ -188,12 +198,20 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                         builder: (context) => Verifyemail(
                                           email:
                                               emailphoneNumberController.text.trim(),
-                                          index: widget.index,
+                                         
                                         ),
                                       ),
                                     );
                                   });
-                                }
+                                }else if(result['errors']['temp_email'][0]=='This email is pending verification.' ){
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              Pendingverification(),
+                                        ),
+                                      );
+                                  }
                               },
                               style: ElevatedButton.styleFrom(
                                 shape: RoundedRectangleBorder(

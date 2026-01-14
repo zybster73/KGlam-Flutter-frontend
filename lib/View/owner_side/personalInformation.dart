@@ -248,12 +248,14 @@ class _PersonalinformationState extends State<Personalinformation> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         CustomTextField(
+                          readonly: true,
                           controller: userName,
                           labelText: 'User Name',
                           hintText: "Imtisal Hassan",
                         ),
                         SizedBox(height: 10),
                         CustomTextField(
+                          readonly: true,
                           controller: emailCtrl,
                           labelText: "Email",
                           hintText: "Imtisalhassan968@gmail.com",

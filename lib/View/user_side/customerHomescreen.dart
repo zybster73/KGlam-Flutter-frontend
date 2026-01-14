@@ -69,214 +69,244 @@ class _CustomerhomescreenState extends State<Customerhomescreen> {
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     Utils.instance.initToast(context);
-    return  Container(
-        color: Colors.white,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              SizedBox(
-                height: 250.h,
-                child: Stack(
-                  children: [
-                    Positioned(
-                      top: -0.05 * screenHeight,
-                      left: -10,
-                      child: Image.asset(
-                        'assets/images/Eclipse2.png',
-                        height: screenHeight * 0.35,
-                        width: screenWidth * 0.9,
-                        fit: BoxFit.contain,
-                      ),
+    return Container(
+      height: double.infinity,
+      color: Colors.white,
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 250.h,
+              child: Stack(
+                children: [
+                  Positioned(
+                    top: -0.05 * screenHeight,
+                    left: -10,
+                    child: Image.asset(
+                      'assets/images/Eclipse2.png',
+                      height: screenHeight * 0.35,
+                      width: screenWidth * 0.9,
+                      fit: BoxFit.contain,
                     ),
+                  ),
 
-                    Padding(
-                      padding: EdgeInsets.only(
-                        top: 80.h,
-                        left: 20.w,
-                        right: 20.w,
-                      ),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          CircleAvatar(
-                            backgroundImage: NetworkImage(image),
-                            radius: 30.r,
-                          ),
-                          SizedBox(width: 10.w),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  'Hi, ${username}',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                                Text(
-                                  'Welcome, Client',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13.sp,
-                                    color: Colors.black54,
-                                  ),
-                                ),
-                                Text(
-                                  'Lahore, Pakistan',
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 13.sp,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Builder(
-                            builder: (context) {
-                              return InkWell(
-                                onTap: () {
-                                  Scaffold.of(context).openDrawer();
-                                },
-                                child: Image(
-                                  image: AssetImage('assets/images/MENU.png'),
-                                  height: 24.h,
-                                  width: 24.w,
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-
-                    Positioned(
-                      top: 170.h,
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 80.h,
                       left: 20.w,
                       right: 20.w,
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: TextFormField(
-                              controller: searchController,
-                              decoration: InputDecoration(
-                                hintText: 'Search Salon or Service',
-                                hintStyle: GoogleFonts.poppins(
-                                  fontSize: 14.sp,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CircleAvatar(
+                          backgroundColor: Colors.white,
+                          radius: 30.r,
+                          backgroundImage: (image.isNotEmpty)
+                              ? NetworkImage(image)
+                              : null,
+                          child: (image.isEmpty)
+                              ? Icon(
+                                  Icons.person,
+                                  size: 30.r,
+                                  color: Colors.grey,
+                                )
+                              : null,
+                        ),
+                        SizedBox(width: 10.w),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Hi, ${username}',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              Text(
+                                'Welcome, Client',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13.sp,
+                                  color: Colors.black54,
+                                ),
+                              ),
+                              Text(
+                                'Lahore, Pakistan',
+                                style: GoogleFonts.poppins(
+                                  fontSize: 13.sp,
+                                  color: Colors.black87,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Builder(
+                          builder: (context) {
+                            return InkWell(
+                              onTap: () {
+                                Scaffold.of(context).openDrawer();
+                              },
+                              child: Image(
+                                image: AssetImage('assets/images/MENU.png'),
+                                height: 24.h,
+                                width: 24.w,
+                              ),
+                            );
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  Positioned(
+                    top: 170.h,
+                    left: 20.w,
+                    right: 20.w,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: TextFormField(
+                            controller: searchController,
+                            decoration: InputDecoration(
+                              hintText: 'Search Salon or Service',
+                              hintStyle: GoogleFonts.poppins(
+                                fontSize: 14.sp,
+                                color: const Color(0xFF717680),
+                              ),
+                              prefixIcon: const Icon(
+                                Icons.search_outlined,
+                                color: Color(0xFF717680),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
                                   color: const Color(0xFF717680),
+                                  width: 0.7,
                                 ),
-                                prefixIcon: const Icon(
-                                  Icons.search_outlined,
-                                  color: Color(0xFF717680),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: const Color(0xFF01ABAB),
+                                  width: 1.4,
                                 ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color(0xFF717680),
-                                    width: 0.7,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: const Color(0xFF01ABAB),
-                                    width: 1.4,
-                                  ),
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 14.w,
-                                  vertical: 10.h,
-                                ),
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              contentPadding: EdgeInsets.symmetric(
+                                horizontal: 14.w,
+                                vertical: 10.h,
                               ),
                             ),
                           ),
-                          SizedBox(width: 12.w),
-                        ],
-                      ),
+                        ),
+                        SizedBox(width: 12.w),
+                      ],
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    Text(
-                      'Top Services For You',
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+            ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+              child: Row(
+                children: [
+                  Text(
+                    'Top Services For You',
+                    style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-              Service_Row(),
-              SizedBox(height: 10.h),
+            ),
+            Service_Row(),
+            SizedBox(height: 10.h),
 
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-                child: Row(
-                  children: [
-                    Text(
-                      'Top Salons For You',
-                      style: GoogleFonts.poppins(
-                        color: Colors.black,
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
+              child: Row(
+                children: [
+                  Text(
+                    'Top Salons For You',
+                    style: GoogleFonts.poppins(
+                      color: Colors.black,
+                      fontSize: 20.sp,
+                      fontWeight: FontWeight.bold,
                     ),
-                    Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => seeAllSalons(),
+                  ),
+                  Spacer(),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => seeAllSalons()),
+                      );
+                    },
+                    child: Text(
+                      'See All',
+                      style: GoogleFonts.poppins(color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            isLoading
+                ? ShimmerEffectlist(itemCount: 3, height: 200)
+                : salons.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.cut,
+                          size: 60,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(height: 12),
+                        Text(
+                          "Top salons will be shown here",
+                          style: GoogleFonts.poppins(
+                            fontSize: 13,
+                            color: Colors.grey.shade500,
                           ),
-                        );
-                      },
-                      child: Text(
-                        'See All',
-                        style: GoogleFonts.poppins(color: Colors.black),
-                      ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-              isLoading
-                  ? ShimmerEffectlist(itemCount: 3, height: 200)
-                  : ListView.builder(
-                      shrinkWrap: true,
-                      controller: scrollController,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: salons.length,
-                      itemBuilder: (context, index) {
-                        final salon = salons[index];
+                  )
+                : ListView.builder(
+                    shrinkWrap: true,
+                    controller: scrollController,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: salons.length,
+                    itemBuilder: (context, index) {
+                      final salon = salons[index];
 
-                        return Padding(
-                          padding: EdgeInsets.only(bottom: 10.h),
-                          child: _buildSaloonCard(
-                            salon['id'],
-                            salon['salon_name'],
-                            salon['salon_cover_image'],
+                      return Padding(
+                        padding: EdgeInsets.only(bottom: 10.h),
+                        child: _buildSaloonCard(
+                          salon['id'],
+                          salon['salon_name'],
+                          salon['salon_cover_image'],
 
-                            salon['salon_address'],
-                            salon['salon_desc'],
-                            // salon.hours,
-                          ),
-                        );
-                      },
-                    ),
-            ],
-          ),
+                          salon['salon_address'],
+                          salon['salon_desc'],
+                          // salon.hours,
+                        ),
+                      );
+                    },
+                  ),
+          ],
         ),
-      );
-  
+      ),
+    );
   }
 
   Widget _buildSaloonCard(

@@ -2,6 +2,8 @@ import 'package:KGlam/Services/auth_Provider.dart';
 import 'package:KGlam/Services/notificationServices.dart';
 import 'package:KGlam/Services/storeToken.dart';
 import 'package:KGlam/Services/validations.dart';
+import 'package:KGlam/View/CustomWidgets/helperClass.dart';
+import 'package:KGlam/View/Login%20&%20signup/pendingVerification.dart';
 import 'package:KGlam/View/Login%20&%20signup/service_inforamtion.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -144,12 +146,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           children: [
                             SizedBox(height: 10),
                             CustomTextField(
+                              length: 1,
                               controller: emailController,
                               labelText: 'Email / Phone Number',
                               hintText: 'Enter Email Or Phone Number',
                               errorText: validations.emailError,
                               onChanged: (value) {
+                                // Live validate the email
                                 validations.validateEmail(value);
+                                setState(
+                                  () {},
+                                ); // Update the UI to show/hide the error
                               },
                             ),
                             SizedBox(height: 10),
@@ -158,6 +165,12 @@ class _LoginScreenState extends State<LoginScreen> {
                               labelText: "Password",
                               hintText: "Enter Password",
                               obscureText: true,
+                              errorText: validations.passwordError,
+                              onChanged: (value) {
+                              
+                                validations.checkPassword(password: value);
+                                setState(() {});
+                              },
                             ),
                             Row(
                               mainAxisAlignment: MainAxisAlignment.end,
@@ -186,6 +199,19 @@ class _LoginScreenState extends State<LoginScreen> {
                             SizedBox(height: 30),
                             ElevatedButton(
                               onPressed: () async {
+                                bool isEmailValid = validations.validateEmail(
+                                  emailController.text,
+                                );
+                                bool isPasswordValid = validations
+                                    .checkPassword(
+                                      password: passwordController.text,
+                                    );
+
+                                if (!isEmailValid || !isPasswordValid) {
+                                  setState(() {});
+                                  return;
+                                }
+                                await notifyService.tokensentAfterLogin();
                                 final userInput =
                                     emailController.text.isNotEmpty
                                     ? emailController.text
@@ -198,9 +224,17 @@ class _LoginScreenState extends State<LoginScreen> {
                                 );
 
                                 if (result['success'] == true) {
-                                  await notifyService.tokensentAfterLogin();
-                                  if (result['data']['data']['role'] == 'owner') {
+                                  await Prefs.setBool(Prefs.loggedIn, true);
+
+                                  if (result['data']['data']['role'] ==
+                                      'owner') {
                                     print(result['data']['role']);
+
+                                    final role = result['data']['data']['role'];
+                                    await Prefs.setRole(role);
+                                    print('new');
+                                    print(role);
+
                                     final salon =
                                         result['data']['data']['salon'];
                                     if (salon == null) {
@@ -222,7 +256,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                         ModalRoute.withName('/'),
                                       );
                                     }
-                                  } else if (result['data']['data']['role'] == 'customer') {
+                                  } else if (result['data']['data']['role'] ==
+                                      'customer') {
                                     Future.microtask(() {
                                       Navigator.pushAndRemoveUntil(
                                         context,
@@ -313,23 +348,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 ),
                                 TextButton(
                                   onPressed: () {
-                                    
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) => RegisterScreen(
-                                            index: widget.index,
-                                          ),
-                                        ),
-                                      );
-                              
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) =>
+                                            RegisterScreen(index: widget.index),
+                                      ),
+                                    );
                                   },
                                   child: Text(
                                     'Register',
                                     style: GoogleFonts.poppins(
-                                      color:
-                                    
-                                          Color(0xFF01ABAB),
+                                      color: Color(0xFF01ABAB),
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                     ),

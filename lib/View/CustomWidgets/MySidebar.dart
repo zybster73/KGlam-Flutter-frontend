@@ -1,4 +1,9 @@
+import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/Services/storeToken.dart';
+import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/helperClass.dart';
 import 'package:KGlam/View/owner_side/personalInformation.dart';
+import 'package:KGlam/View/selectRole.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -9,12 +14,25 @@ import 'package:KGlam/View/owner_side/Profile.dart';
 import 'package:KGlam/View/owner_side/Reviews_screen.dart';
 import 'package:KGlam/View/owner_side/view_services.dart';
 import 'package:KGlam/View/owner_side/portfolio.dart';
+import 'package:provider/provider.dart';
 
 class CustomDrawer extends StatelessWidget {
   //ustomDrawer({this.logicIndex});
   int loginScreen = 1;
   @override
   Widget build(BuildContext context) {
+    void showLoading(BuildContext context) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) =>
+            Center(child: CircularProgressIndicator(color: Colors.white)),
+      );
+    }
+
+    Utils.instance.initToast(context);
+
+    final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
     return Drawer(
@@ -96,7 +114,7 @@ class CustomDrawer extends StatelessWidget {
                           'Portfolio',
                         ),
                       ),
-                      
+
                       InkWell(
                         onTap: () {
                           Navigator.push(
@@ -124,7 +142,9 @@ class CustomDrawer extends StatelessWidget {
                         onTap: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => Personalinformation()),
+                            MaterialPageRoute(
+                              builder: (context) => Personalinformation(),
+                            ),
                           );
                         },
                         child: drawerItem(
@@ -135,16 +155,36 @@ class CustomDrawer extends StatelessWidget {
 
                       SizedBox(height: 20),
                       InkWell(
-                        onTap: () {
-                          Navigator.pushAndRemoveUntil(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => LoginScreen(
-                                logicIndex : loginScreen,
-                              ),
-                            ),
-                            ModalRoute.withName('/'),
-                          );
+                        onTap: () async {
+                          showLoading(context);
+
+                          try {
+                            String? token = await Storetoken.getRefreshToken();
+
+                            final result = await authProvider.logout(token);
+
+                            Navigator.pop(context);
+
+                            await Prefs.setBool(Prefs.loggedIn, false);
+                            await Prefs.removeRole();
+
+                            if (result['success'] == true) {
+                              Navigator.pushAndRemoveUntil(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => SelectRole(),
+                                ),
+                                (route) => false,
+                              );
+                            } else {
+                              Utils.instance.toastMessage(
+                                'Logout failed. Try again.',
+                              );
+                            }
+                          } catch (e) {
+                            Navigator.pop(context); // close loading
+                            Utils.instance.toastMessage('Something went wrong');
+                          }
                         },
                         child: drawerItem(Icons.logout, 'Logout'),
                       ),

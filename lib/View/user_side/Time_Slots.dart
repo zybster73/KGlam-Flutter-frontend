@@ -1,4 +1,5 @@
 import 'package:KGlam/Services/clientApi.dart';
+import 'package:KGlam/View/CustomWidgets/videoPlayerWidget.dart';
 import 'package:KGlam/View/user_side/waitingResponse.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -30,6 +31,8 @@ class Time_Slots extends StatefulWidget {
 }
 
 class _Time_SlotsState extends State<Time_Slots> {
+  PageController pageController = PageController();
+  int currentIndex = 0;
   String? selectedTime;
 
   bool isloading = true;
@@ -88,210 +91,202 @@ class _Time_SlotsState extends State<Time_Slots> {
           ? Center(child: LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50))
           : Stack(
               children: [
-                Image(
-                  image:
-                      (specificService?['service_image'] != null &&
-                          specificService!['service_image']
-                              .toString()
-                              .isNotEmpty)
-                      ? NetworkImage(specificService!['service_image'])
-                      : const AssetImage('assets/images/unsplash.jpg')
-                            as ImageProvider,
+                 SizedBox(
+                  height: 400,
                   width: double.infinity,
-                  height: 400.h,
-                  fit: BoxFit.cover,
+                  child: _imageVideoscroll(specificService),
                 ),
 
-                LayoutBuilder(
-                  builder: (context, constraints) {
-                    return SingleChildScrollView(
-                      child: ConstrainedBox(
-                        constraints: BoxConstraints(
-                          minHeight: constraints.maxHeight,
-                        ),
-                        child: Container(
-                          margin: EdgeInsets.only(top: 400 - 30),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(25),
-                              topRight: Radius.circular(25),
-                            ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.2),
-                                blurRadius: 6.r,
-                                spreadRadius: 3.r,
-                              ),
-                            ],
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 20,
-                            vertical: 20,
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "By: ${specificService!['salon_name']}",
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              
-                              Text(
-                                'Available Time Slots',
-                                style: GoogleFonts.poppins(
-                                  fontSize: 20.sp,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-
-                              //SizedBox(height: 15.h),
-                              Padding(
-                                padding: const EdgeInsets.only(
-                                  left: 15,
-                                  bottom: 20,
-                                  right: 15,
-                                ),
-                                child: GridView.builder(
-                                  shrinkWrap: true,
-                                  physics: NeverScrollableScrollPhysics(),
-                                  gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
-                                        crossAxisCount:
-                                            MediaQuery.of(context).size.width <
-                                                350
-                                            ? 2
-                                            : 3,
-                                        mainAxisSpacing: 10,
-                                        crossAxisSpacing: 10,
-                                        childAspectRatio: 2.2,
-                                      ),
-                                  itemCount: timeSlots.length,
-                                  itemBuilder: (context, index) {
-                                    final time = timeSlots[index];
-                                    final isSelected = selectedTime == time;
-
-                                    return GestureDetector(
-                                      onTap: () {
-                                        setState(() {
-                                          selectedTime = time;
-                                        });
-                                      },
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        decoration: BoxDecoration(
-                                          color: isSelected
-                                              ? const Color(0xFF01ABAB)
-                                              : Colors.white,
-                                          border: Border.all(
-                                            color: isSelected
-                                                ? const Color(0xFF01ABAB)
-                                                : Colors.grey,
-                                          ),
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: Colors.grey.withOpacity(
-                                                0.1,
-                                              ),
-                                              blurRadius: 4,
-                                              spreadRadius: 1,
-                                            ),
-                                          ],
-                                        ),
-                                        child: Text(
-                                          time,
-                                          style: GoogleFonts.poppins(
-                                            fontSize: 13,
-                                            color: isSelected
-                                                ? Colors.white
-                                                : Colors.black87,
-                                            fontWeight: isSelected
-                                                ? FontWeight.bold
-                                                : FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-
-                              SizedBox(height: 15.h),
-
-                              ElevatedButton(
-                                onPressed: () async {
-                                  if (selectedTime == null) {
-                                    Utils.instance.toastMessage(
-                                      "Please select a time first",
-                                    );
-                                    return;
-                                  }
-
-                                  String formattedTime = convertToBackendTime(
-                                    selectedTime!,
-                                  );
-                                  print(formattedTime);
-
-                                  final result = await clientApi.createBooking(
-                                    bookingDate: widget.bookingDate,
-                                    bookingTime: formattedTime,
-                                    id: widget.service_id,
-                                  );
-                                  if (result.success == true) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => waitingResponse(
-                                          serviceID: widget.service_id,
-                                          
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    Utils.instance.toastMessage(
-                                      "booking failed",
-                                    );
-                                  }
-                                },
-
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: selectedTime != null
-                                      ? Color(0xFF01ABAB)
-                                      : Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                  ),
-                                  minimumSize: Size(double.infinity, 52),
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 14,
-                                  ),
-                                ),
-                                child: clientApi.isLoading ? Center(
-                                  child: CircularProgressIndicator(),
-                                ) 
-                                : Text(
-                                  "Send Booking",
-                                  style: GoogleFonts.poppins(
-                                    fontSize: 16.sp,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    );
-                  },
-                ),
+                
+                   Column(
+                     children: [
+                       Expanded(
+                         child: Container(
+                           margin: EdgeInsets.only(top: 400 - 30),
+                           width: double.infinity,
+                           decoration: BoxDecoration(
+                             color: Colors.white,
+                             borderRadius: const BorderRadius.only(
+                               topLeft: Radius.circular(25),
+                               topRight: Radius.circular(25),
+                             ),
+                             boxShadow: [
+                               BoxShadow(
+                                 color: Colors.grey.withOpacity(0.2),
+                                 blurRadius: 6.r,
+                                 spreadRadius: 3.r,
+                               ),
+                             ],
+                           ),
+                           padding: const EdgeInsets.symmetric(
+                             horizontal: 20,
+                             vertical: 10,
+                           ),
+                           child: SingleChildScrollView(
+                             child: Column(
+                               crossAxisAlignment: CrossAxisAlignment.start,
+                               children: [
+                                 Text(
+                                   "By: ${specificService!['salon_name']}",
+                                   style: GoogleFonts.poppins(
+                                     fontSize: 20.sp,
+                                     fontWeight: FontWeight.w500,
+                                   ),
+                                 ),
+                                 
+                                 Text(
+                                   'Available Time Slots',
+                                   style: GoogleFonts.poppins(
+                                     fontSize: 20.sp,
+                                     fontWeight: FontWeight.bold,
+                                   ),
+                                 ),
+                                                      
+                                 //SizedBox(height: 15.h),
+                                 Padding(
+                                   padding: const EdgeInsets.only(
+                                     left: 15,
+                                     bottom: 20,
+                                     right: 15,
+                                   ),
+                                   child: GridView.builder(
+                                     shrinkWrap: true,
+                                     physics: NeverScrollableScrollPhysics(),
+                                     gridDelegate:
+                                         SliverGridDelegateWithFixedCrossAxisCount(
+                                           crossAxisCount:
+                                               MediaQuery.of(context).size.width <
+                                                   350
+                                               ? 2
+                                               : 3,
+                                           mainAxisSpacing: 10,
+                                           crossAxisSpacing: 10,
+                                           childAspectRatio: 2.2,
+                                         ),
+                                     itemCount: timeSlots.length,
+                                     itemBuilder: (context, index) {
+                                       final time = timeSlots[index];
+                                       final isSelected = selectedTime == time;
+                                                      
+                                       return GestureDetector(
+                                         onTap: () {
+                                           setState(() {
+                                             selectedTime = time;
+                                           });
+                                         },
+                                         child: Container(
+                                           alignment: Alignment.center,
+                                           decoration: BoxDecoration(
+                                             color: isSelected
+                                                 ? const Color(0xFF01ABAB)
+                                                 : Colors.white,
+                                             border: Border.all(
+                                               color: isSelected
+                                                   ? const Color(0xFF01ABAB)
+                                                   : Colors.grey,
+                                             ),
+                                             borderRadius: BorderRadius.circular(
+                                               8,
+                                             ),
+                                             boxShadow: [
+                                               BoxShadow(
+                                                 color: Colors.grey.withOpacity(
+                                                   0.1,
+                                                 ),
+                                                 blurRadius: 4,
+                                                 spreadRadius: 1,
+                                               ),
+                                             ],
+                                           ),
+                                           child: Text(
+                                             time,
+                                             style: GoogleFonts.poppins(
+                                               fontSize: 13,
+                                               color: isSelected
+                                                   ? Colors.white
+                                                   : Colors.black87,
+                                               fontWeight: isSelected
+                                                   ? FontWeight.bold
+                                                   : FontWeight.w500,
+                                             ),
+                                           ),
+                                         ),
+                                       );
+                                     },
+                                   ),
+                                 ),
+                                                      
+                                 SizedBox(height: 15.h),
+                                                      
+                                 ElevatedButton(
+                                   onPressed: () async {
+                                     if (selectedTime == null) {
+                                       Utils.instance.toastMessage(
+                                         "Please select a time first",
+                                       );
+                                       return;
+                                     }
+                                                      
+                                     String formattedTime = convertToBackendTime(
+                                       selectedTime!,
+                                     );
+                                     print(formattedTime);
+                                                      
+                                     final result = await clientApi.createBooking(
+                                       bookingDate: widget.bookingDate,
+                                       bookingTime: formattedTime,
+                                       id: widget.service_id,
+                                     );
+                                     if (result.success == true) {
+                                       Navigator.push(
+                                         context,
+                                         MaterialPageRoute(
+                                           builder: (context) => waitingResponse(
+                                             serviceID: widget.service_id,
+                                             
+                                           ),
+                                         ),
+                                       );
+                                     } else {
+                                       Utils.instance.toastMessage(
+                                         "booking failed",
+                                       );
+                                     }
+                                   },
+                                                      
+                                   style: ElevatedButton.styleFrom(
+                                     backgroundColor: selectedTime != null
+                                         ? Color(0xFF01ABAB)
+                                         : Colors.grey,
+                                     shape: RoundedRectangleBorder(
+                                       borderRadius: BorderRadius.circular(10),
+                                     ),
+                                     minimumSize: Size(double.infinity, 52),
+                                     padding: const EdgeInsets.symmetric(
+                                       vertical: 14,
+                                     ),
+                                   ),
+                                   child: clientApi.isLoading ? Center(
+                                     child: LoadingAnimationWidget.progressiveDots(color: Colors.white, size: 30),
+                                   ) 
+                                   : Text(
+                                     "Send Booking",
+                                     style: GoogleFonts.poppins(
+                                       fontSize: 16.sp,
+                                       fontWeight: FontWeight.bold,
+                                       color: Colors.white,
+                                     ),
+                                   ),
+                                 ),
+                               ],
+                             ),
+                           ),
+                         ),
+                       ),
+                     ],
+                   ),
+                  
+                
 
                 Positioned(
                   top: 50,
@@ -318,6 +313,66 @@ class _Time_SlotsState extends State<Time_Slots> {
                 ),
               ],
             ),
+    );
+  }
+   Widget _imageVideoscroll(Map<String, dynamic>? service) {
+    List<Widget> media = [];
+
+    media.add(
+      Image(
+        image:
+            (service?['service_image'] != null &&
+                service!['service_image'].toString().isNotEmpty)
+            ? NetworkImage(service['service_image'])
+            : const AssetImage('assets/images/unsplash.jpg') as ImageProvider,
+        width: double.infinity,
+        height: 400,
+        fit: BoxFit.cover,
+      ),
+    );
+
+    if (service?['service_video'] != null &&
+        service!['service_video'].toString().isNotEmpty) {
+      media.add(VideoPlayerWidget(url: service['service_video']));
+    }
+
+    if (media.length == 1) return media[0];
+    return Stack(
+      alignment: Alignment.bottomCenter, 
+      children: [
+        PageView.builder(
+          controller: pageController,
+          itemCount: media.length,
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            return media[index];
+          },
+        ),
+        Positioned(
+          top: 350,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(media.length, (index) {
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                width: currentIndex == index ? 12 : 8,
+                height: currentIndex == index ? 12 : 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: currentIndex == index
+                      ? Color(0xFF01ABAB)
+                      : Colors.grey,
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 }

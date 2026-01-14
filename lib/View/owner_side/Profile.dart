@@ -83,6 +83,7 @@ Future<void> loadPageData() async {
                 'assets/images/Eclipse2.png',
                 height: screenHeight * 0.35,
                 width: screenWidth * 0.9,
+                fit: BoxFit.contain,
               ),
             ),
             Positioned(
@@ -180,7 +181,19 @@ Future<void> loadPageData() async {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(path, height: 215, width: 350.w, fit: BoxFit.cover),
+             Container(
+            height: 215.h,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(8),
+              image: DecorationImage(
+                image: (path != null && path.isNotEmpty)
+                    ? NetworkImage(path)
+                    : AssetImage('assets/unsplash.jpg') 
+                        as ImageProvider,
+                fit: BoxFit.cover,
+              ),
+            ),),
             SizedBox(height: 5.h),
             Text(
               saloonName,

@@ -40,28 +40,54 @@ class _Service_RowState extends State<Service_Row> {
       padding: EdgeInsets.symmetric(horizontal: 15.w),
       child: SizedBox(
         height: 170,
-        child: isloading ? Center(
-          child: LoadingAnimationWidget.hexagonDots(color: Color(0xFF01ABAB), size: 50),
-        ) :
-         ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: topServices.length,
-          itemBuilder: (context, index) {
-            final item = topServices[index];
-            return Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                _buildServiceCard(
-                  item['id'],
-                  item['service_name'],
-                  item['service_image'] ?? '',
-                  item['salon_name'],
+        child: isloading
+            ? Center(
+                child: LoadingAnimationWidget.hexagonDots(
+                  color: Color(0xFF01ABAB),
+                  size: 50,
                 ),
-                SizedBox(width: 10.w),
-              ],
-            );
-          },
-        ),
+              )
+            : topServices.isEmpty
+            ? Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.design_services_sharp,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      "Top services will be shown here",
+                      style: GoogleFonts.poppins(
+                        fontSize: 13,
+                        color: Colors.grey.shade500,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
+              )
+            : ListView.builder(
+                scrollDirection: Axis.horizontal,
+                itemCount: topServices.length,
+                itemBuilder: (context, index) {
+                  final item = topServices[index];
+                  return Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      _buildServiceCard(
+                        item['id'],
+                        item['service_name'],
+                        item['service_image'] ?? '',
+                        item['salon_name'],
+                      ),
+                      SizedBox(width: 10.w),
+                    ],
+                  );
+                },
+              ),
       ),
     );
   }

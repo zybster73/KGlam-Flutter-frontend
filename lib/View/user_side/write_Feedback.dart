@@ -193,9 +193,10 @@ class _WriteFeedbackState extends State<WriteFeedback> {
                                         feed_back.text,
                                         widget.feedback,
                                       );
+                                      print(result);
                                   if (result['success']) {
-
-                                    Navigator.pop(context);
+                                    print('success true ');
+                                    Navigator.pop(context,true);
                                   }
                                 },
                                 style: ElevatedButton.styleFrom(

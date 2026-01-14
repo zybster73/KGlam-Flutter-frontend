@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 
 class Validations with ChangeNotifier {
   String? passwordError;
-   String? emailError;
-    String? confirmPasswordError;
-
+  String? emailError;
+  String? confirmPasswordError;
+  String? phoneError;
   void validatePassword(String value) {
     if (value.isEmpty) {
       passwordError = "Password cannot be empty";
@@ -24,20 +24,25 @@ class Validations with ChangeNotifier {
     notifyListeners();
   }
 
-  void validateEmail(String value) {
+  bool validateEmail(String value) {
     if (value.isEmpty) {
       emailError = "Email cannot be empty";
+      notifyListeners();
+      return false;
     } else if (!RegExp(
-            r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
-        .hasMatch(value)) {
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    ).hasMatch(value)) {
       emailError = "Enter a valid email address";
+      notifyListeners();
+      return false;
     } else {
       emailError = null;
+      notifyListeners();
+      return true;
     }
-    notifyListeners();
   }
 
-   void validateConfirmPassword({
+  void validateConfirmPassword({
     required String password,
     required String confirmPassword,
   }) {
@@ -49,5 +54,30 @@ class Validations with ChangeNotifier {
       confirmPasswordError = null;
     }
     notifyListeners();
+  }
+
+  bool checkPassword({required String password}) {
+    if (password.isEmpty) {
+      passwordError = "Please enter the password";
+      return false;
+    }
+    notifyListeners();
+    return true;
+  }
+
+  bool validatePhoneNumber({required String phoneNumber}) {
+    if (phoneNumber.isEmpty) {
+      phoneError = "Phone number cannot be empty";
+      return false;
+    } else if (!phoneNumber.startsWith('+')) {
+      phoneError = "Phone number must start with '+'";
+      return false;
+    } else if (!RegExp(r'^\+\d+$').hasMatch(phoneNumber)) {
+      phoneError = "Phone number must contain only digits after '+'";
+      return false;
+    } else {
+      phoneError = null;
+      return true;
+    }
   }
 }

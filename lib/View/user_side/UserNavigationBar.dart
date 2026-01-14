@@ -27,7 +27,7 @@ class _UsernavigationbarState extends State<Usernavigationbar> {
   }
 
   Future<void> checkNewNotifications() async {
-    final data = await client_Api().ownerNotifications();
+    final data = await client_Api().customerNotifications();
 
     if (!mounted || data == null || data.isEmpty) return;
 

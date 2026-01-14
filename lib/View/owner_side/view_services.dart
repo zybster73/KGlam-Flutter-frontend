@@ -1,5 +1,6 @@
 import 'package:KGlam/Services/salon_Api_provider.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
+import 'package:KGlam/View/CustomWidgets/videoPlayerWidget.dart';
 import 'package:KGlam/View/owner_side/uploadService.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -21,6 +22,8 @@ class _viewServicesState extends State<viewServices> {
   final GlobalKey addButtonKey = GlobalKey();
   List<dynamic> services = [];
   bool isLoading = false;
+  PageController pageController = PageController();
+  int currentIndex = 0;
 
   TextEditingController searchController = TextEditingController();
   //int value = 0;
@@ -35,9 +38,9 @@ class _viewServicesState extends State<viewServices> {
 
   void showAddPortfolioSnackbar() async {
     final prefs = await SharedPreferences.getInstance();
-    bool hasShown = prefs.getBool('addPortfolioShown') ?? false;
+    bool hasShown = prefs.getBool('addServiceShown') ?? false;
 
-    if (hasShown) {
+    if (!hasShown) {
       Future.delayed(Duration(milliseconds: 500), () {
         final overlay = Overlay.of(context);
         final renderBox =
@@ -73,7 +76,7 @@ class _viewServicesState extends State<viewServices> {
         }
       });
 
-      await prefs.setBool('addPortfolioShown', true);
+      await prefs.setBool('addServiceShown', true);
     }
   }
 
@@ -109,6 +112,7 @@ class _viewServicesState extends State<viewServices> {
               'assets/images/Eclipse2.png',
               height: screenHeight * 0.35,
               width: screenWidth * 0.9,
+              fit: BoxFit.contain,  
             ),
           ),
           Positioned(
@@ -233,6 +237,7 @@ class _viewServicesState extends State<viewServices> {
 
                 SizedBox(height: 25.h),
                 Expanded(
+                
                   child: isLoading
                       ? Center(
                           child: LoadingAnimationWidget.threeArchedCircle(
@@ -291,14 +296,9 @@ class _viewServicesState extends State<viewServices> {
                                 children: [
                                   ClipRRect(
                                     borderRadius: BorderRadius.circular(12.r),
-                                    child: Image.network(
-                                      service['service_image'] ??
-                                          'assets/images/Haircut.jpg',
-
+                                    child: SizedBox(
                                       height: 214.h,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover,
-                                    ),
+                                      child: _imageVideoscroll(service))
                                   ),
                                   SizedBox(height: 12.h),
                                   Text(
@@ -593,6 +593,66 @@ class _viewServicesState extends State<viewServices> {
           ),
         ],
       ),
+    );
+  }
+  Widget _imageVideoscroll(Map<String, dynamic>? service) {
+    List<Widget> media = [];
+
+    media.add(
+      Image(
+        image:
+            (service?['service_image'] != null &&
+                service!['service_image'].toString().isNotEmpty)
+            ? NetworkImage(service['service_image'])
+            : const AssetImage('assets/images/unsplash.jpg') as ImageProvider,
+        width: double.infinity,
+        height: 400,
+        fit: BoxFit.cover,
+      ),
+    );
+
+    if (service?['service_video'] != null &&
+        service!['service_video'].toString().isNotEmpty) {
+      media.add(VideoPlayerWidget(url: service['service_video']));
+    }
+
+    if (media.length == 1) return media[0];
+    return Stack(
+      alignment: Alignment.bottomCenter, 
+      children: [
+        PageView.builder(
+          controller: pageController,
+          itemCount: media.length,
+          onPageChanged: (index) {
+            setState(() {
+              currentIndex = index;
+            });
+          },
+          itemBuilder: (context, index) {
+            return media[index];
+          },
+        ),
+        Positioned(
+          top: 190.h,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(media.length, (index) {
+              return AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                margin: EdgeInsets.symmetric(horizontal: 4),
+                width: currentIndex == index ? 12 : 8,
+                height: currentIndex == index ? 12 : 8,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: currentIndex == index
+                      ? Color(0xFF01ABAB)
+                      : Colors.grey,
+                ),
+              );
+            }),
+          ),
+        ),
+      ],
     );
   }
 }

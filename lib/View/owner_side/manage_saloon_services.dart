@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:KGlam/Services/salon_Api_provider.dart';
+import 'package:KGlam/View/CustomWidgets/UploadVideo.dart';
 import 'package:KGlam/View/CustomWidgets/fluttertoast.dart';
 import 'package:KGlam/View/CustomWidgets/shimmerEffectlist.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,6 @@ import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import 'package:provider/provider.dart';
 
 class ManageSaloonServices extends StatefulWidget {
-  
   final Map<String, dynamic> service;
   ManageSaloonServices({required this.service});
   @override
@@ -23,12 +23,14 @@ class ManageSaloonServices extends StatefulWidget {
 
 class _ManageSaloonServicesState extends State<ManageSaloonServices> {
   File? selectedImage;
+  File? selectedVideo;
   TextEditingController serviceName = TextEditingController();
   TextEditingController saloonPrice = TextEditingController();
   //TextEditingController saloonContact = TextEditingController();
   TextEditingController serviceHours = TextEditingController();
   TextEditingController serviceDescription = TextEditingController();
   String? profileImageUrl;
+  String? profileVideoUrl;
 
   bool isLoading = true;
 
@@ -41,6 +43,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
     serviceHours.text = services['service_duration'] ?? '';
     serviceDescription.text = services['service_desc'] ?? '';
     profileImageUrl = services['service_image'];
+    profileVideoUrl = services['serivce_video'];
     isLoading = false;
   }
 
@@ -98,7 +101,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                 ],
               ),
             ),
-      
+
             Padding(
               padding: EdgeInsets.symmetric(horizontal: 10),
               child: Column(
@@ -130,7 +133,9 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
               child: LayoutBuilder(
                 builder: (context, constraints) {
                   return ConstrainedBox(
-                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
+                    ),
                     child: Container(
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
@@ -184,15 +189,21 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                                     SizedBox(height: 10),
                                     UploadImageCard(
                                       text: "Upload Profile image",
-                                      initialImageUrl:profileImageUrl ,
+                                      initialImageUrl: profileImageUrl,
                                       title: "Upload Service Image Or Video",
                                       onImageSelected: (image) {
-                                      
                                         selectedImage = image;
                                       },
                                     ),
-                                    SizedBox(height: 5),
-      
+                                    SizedBox(height: 10),
+                                    UploadVideoCard(
+                                      text: "Upload Service video (Optional)",
+                                      title: "Upload Service video (Optional)",
+                                      initialVideoUrl: profileVideoUrl,
+                                      onVideoSelected: (video) {
+                                        selectedVideo = video;
+                                      },
+                                    ),
                                     SizedBox(height: 20),
                                     ElevatedButton(
                                       onPressed: () async {
@@ -204,6 +215,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                                               serviceHours.text,
                                               serviceDescription.text,
                                               selectedImage,
+                                              selectedVideo,
                                             );
                                         if (result['success'] == true) {
                                           Navigator.pop(context, true);
@@ -211,17 +223,24 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                                       },
                                       style: ElevatedButton.styleFrom(
                                         shape: RoundedRectangleBorder(
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(
+                                            8,
+                                          ),
                                         ),
                                         backgroundColor: Color(0xFF01ABAB),
                                         minimumSize: Size(
-                                          MediaQuery.sizeOf(context).width * 0.96,
+                                          MediaQuery.sizeOf(context).width *
+                                              0.96,
                                           50,
                                         ),
                                       ),
                                       child: salonApi.isLoading
                                           ? Center(
-                                              child: LoadingAnimationWidget.progressiveDots(color: Colors.white, size: 50)
+                                              child:
+                                                  LoadingAnimationWidget.progressiveDots(
+                                                    color: Colors.white,
+                                                    size: 50,
+                                                  ),
                                             )
                                           : Text(
                                               'Save',
@@ -233,7 +252,7 @@ class _ManageSaloonServicesState extends State<ManageSaloonServices> {
                                               ),
                                             ),
                                     ),
-      
+
                                     SizedBox(height: 20),
                                   ],
                                 ),

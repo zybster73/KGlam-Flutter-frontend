@@ -1,4 +1,5 @@
 import 'package:KGlam/Services/auth_Provider.dart';
+import 'package:KGlam/Services/validations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,6 +23,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
   TextEditingController confirmPassword = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final validations = Provider.of<Validations>(context);
     final authProvider = Provider.of<AuthProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final screenHeight = MediaQuery.of(context).size.height;
@@ -144,12 +146,26 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                               labelText: 'Password',
                               hintText: 'Enter Password',
                               obscureText: true,
+                              errorText: validations.confirmPasswordError,
+                              onChanged: (value) {
+                                validations.validateConfirmPassword(
+                                  password: passwordController.text,
+                                  confirmPassword: value,
+                                );
+                              },
                             ),
                             SizedBox(height: 10),
                             CustomTextField(
                               controller: confirmPassword,
                               labelText: "Confirm Password",
                               hintText: 'Re-Enter Password',
+                               errorText: validations.confirmPasswordError,
+                              onChanged: (value) {
+                                validations.validateConfirmPassword(
+                                  password: passwordController.text,
+                                  confirmPassword: value,
+                                );
+                              },
                               obscureText: true,
                             ),
                             SizedBox(height: 30),
@@ -169,8 +185,7 @@ class _ConfirmPasswordState extends State<ConfirmPassword> {
                                       ),
                                       ModalRoute.withName('/'),
                                     );
-                                  }
-                                  );
+                                  });
                                 }
                               },
                               style: ElevatedButton.styleFrom(

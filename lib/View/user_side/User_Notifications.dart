@@ -9,7 +9,11 @@ import 'package:provider/provider.dart';
 class UserNotifications extends StatefulWidget {
   final VoidCallback onMarkAllRead;
   final VoidCallback? onBack;
-  const UserNotifications({super.key, this.onBack,required this.onMarkAllRead,});
+  const UserNotifications({
+    super.key,
+    this.onBack,
+    required this.onMarkAllRead,
+  });
 
   @override
   State<UserNotifications> createState() => _UserNotificationsState();
@@ -18,6 +22,7 @@ class UserNotifications extends StatefulWidget {
 class _UserNotificationsState extends State<UserNotifications> {
   bool isLoading = true;
   List<dynamic> Notifications = [];
+  bool? updated;
 
   @override
   void initState() {
@@ -148,7 +153,8 @@ class _UserNotificationsState extends State<UserNotifications> {
                 Expanded(
                   child: isLoading
                       ? shimmerEffect(itemCount: 5, height: 130)
-                      : Notifications.isEmpty ? Center(
+                      : Notifications.isEmpty
+                      ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -168,8 +174,8 @@ class _UserNotificationsState extends State<UserNotifications> {
                               ),
                             ],
                           ),
-                        ):
-                      ListView.builder(
+                        )
+                      : ListView.builder(
                           padding: EdgeInsets.only(bottom: 70.h, top: 0),
                           itemCount: Notifications.length,
                           itemBuilder: (context, index) {
@@ -179,7 +185,9 @@ class _UserNotificationsState extends State<UserNotifications> {
                               margin: const EdgeInsets.only(bottom: 16),
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: const Color(0xFFE9FAFA),
+                                color: notify['is_read'] == true
+                                    ? const Color(0xFFE9FAFA)
+                                    : Colors.black12,
                                 borderRadius: BorderRadius.circular(16),
                                 boxShadow: [
                                   BoxShadow(
@@ -230,47 +238,53 @@ class _UserNotificationsState extends State<UserNotifications> {
                                             ),
                                             Spacer(),
                                             if (notify['notification_type'] ==
-                                                'BOOKING_COMPLETED')
-                                              InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          WriteFeedback(
-                                                            feedback : notify['booking_id'],
-                                                          ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Container(
-                                                  decoration: BoxDecoration(
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color:
-                                                            const Color.fromARGB(
-                                                              31,
-                                                              104,
-                                                              96,
-                                                              96,
+                                                'BOOKING_COMPLETED') 
+                                            
+                                                InkWell(
+                                                  onTap: () async {
+                                                    
+                                                    updated = await Navigator.push(
+                                                      context,
+                                                      MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            WriteFeedback(
+                                                              feedback:
+                                                                  notify['booking_id'],
                                                             ),
-                                                        blurRadius: 4,
-                                                        offset: const Offset(
-                                                          0,
-                                                          2,
-                                                        ),
                                                       ),
-                                                    ],
-                                                  ),
-                                                  child: Text(
-                                                    'FeedBack',
-                                                    style: GoogleFonts.poppins(
-                                                      fontSize: 14,
-                                                      color: Color(0xFF01ABAB),
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color:
+                                                              const Color.fromARGB(
+                                                                31,
+                                                                104,
+                                                                96,
+                                                                96,
+                                                              ),
+                                                          blurRadius: 4,
+                                                          offset: const Offset(
+                                                            0,
+                                                            2,
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                    child: Text(
+                                                      'FeedBack',
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                            fontSize: 14,
+                                                            color: Color(
+                                                              0xFF01ABAB,
+                                                            ),
+                                                          ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
                                           ],
                                         ),
                                       ],
